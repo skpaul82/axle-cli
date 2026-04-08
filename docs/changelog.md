@@ -1,0 +1,172 @@
+# Changelog
+
+All notable changes to Buddy Tools will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Planned
+- Unit tests with pytest
+- Configuration file support
+- Tool alias system
+- Progress indicators for long-running tools
+
+## [0.1.0] - 2026-04-08
+
+### Added
+- Initial release of Buddy Tools CLI toolkit
+- Core CLI with 7 commands: list, run, info, scan, doctor, path, help
+- Tool numbering system for easy reference
+- Dynamic tool loading and discovery
+- Community footer in all command outputs
+
+### Tools
+- **SEO Keyword Checker** (01_seo_keyword_checker.py)
+  - Keyword density analysis
+  - Keyword extraction using NLTK
+  - Prominence checking (first 100 words)
+  - SEO optimization suggestions
+  - Visual density indicators
+
+- **Meta Tag Auditor** (02_meta_tag_auditor.py)
+  - URL and HTML file analysis
+  - Title tag optimization (50-60 chars)
+  - Meta description checking (150-160 chars)
+  - Open Graph and Twitter Card detection
+  - Schema.org markup checking
+  - Heading structure analysis
+  - Image alt text verification
+
+- **Daily Life Hack Generator** (03_daily_life_hack_generator.py)
+  - 50+ curated life hacks across 7 categories
+  - Semantic matching for relevant suggestions
+  - Difficulty ratings (Easy/Medium/Hard)
+  - Time estimates for each hack
+  - Categories: Morning, Productivity, Health, Finance, Tech, Organization, Mindfulness
+
+### Installation
+- Interactive installer (scripts/install_buddy.py)
+- System requirements checking
+- Guided setup with prompts
+- Automatic dependency installation
+- spaCy model download
+- Installation verification
+
+### Security
+- Dependency vulnerability scanner (scripts/security_scan.py)
+- pip-audit integration
+- Basic static analysis for Python scripts
+- Secret detection (API keys, passwords)
+- Dangerous function detection (eval, exec)
+- Prioritized security recommendations
+
+### Documentation
+- Comprehensive README with quick start
+- Installation guide with platform-specific instructions
+- Usage guide with examples and best practices
+- Complete command reference
+- Troubleshooting guide
+- Contributing guidelines
+- Changelog
+
+### CI/CD
+- GitHub Actions workflow (.github/workflows/ci.yml)
+- Lint checks with flake8, black, isort
+- Installation testing on Python 3.10 and 3.11
+- Security scan integration
+
+### Dependencies
+- pandas >= 1.5.0
+- numpy >= 1.23.0
+- scikit-learn >= 1.2.0
+- spacy >= 3.5.0
+- sentence-transformers >= 2.2.0
+- beautifulsoup4 >= 4.12.0
+- requests >= 2.28.0
+- nltk >= 3.8.0
+- lxml >= 4.9.0
+- pip-audit >= 2.0.0
+
+### Features
+- Community footer with social links
+- Environment diagnostics (buddy doctor)
+- Tool information display (buddy info)
+- Graceful error handling
+- Helpful error messages
+- Support for running tools by number or name
+
+### System Requirements
+- Python 3.10 or higher
+- 8GB RAM minimum (16GB recommended)
+- 5-8GB free disk space
+- macOS, Linux, or Windows
+
+## [Future Versions]
+
+### [0.2.0] - Planned
+- Add unit tests with pytest
+- Add configuration file support (.buddyrc)
+- Tool alias system (custom names for tools)
+- Progress indicators for long-running tools
+- Improved error messages
+- Tool discovery from multiple directories
+- Plugin system for external tools
+
+### [0.3.0] - Planned
+- More SEO tools (backlink checker, SERP scraper)
+- More productivity tools (habit tracker, time calculator)
+- Web interface (Flask/FastAPI)
+- Database support for storing results
+- Export results to JSON/CSV
+- Batch processing mode
+
+### [1.0.0] - Planned
+- Publish to PyPI
+- Full test coverage (80%+)
+- API documentation
+- Comprehensive plugin system
+- Internationalization support
+- Tool marketplace/community sharing
+- Performance optimizations
+- Reduced memory footprint
+
+---
+
+## Versioning Policy
+
+We use [Semantic Versioning](https://semver.org/):
+
+- **MAJOR**: Incompatible API changes
+- **MINOR**: Backwards-compatible functionality additions
+- **PATCH**: Backwards-compatible bug fixes
+
+## Release Cadence
+
+- **Major releases**: As needed for significant changes
+- **Minor releases**: Every 2-3 months for new features
+- **Patch releases**: As needed for bug fixes
+
+## Support Policy
+
+- Current version (0.1.0): Full support
+- Previous versions: Best-effort support
+- Security updates: Provided for all supported versions
+
+---
+
+## Contributors
+
+- Sanjoy K. Paul - Creator and maintainer
+
+## License
+
+MIT License - see [LICENSE](../LICENSE) for details.
+
+## Links
+
+- GitHub: https://github.com/skpaul82/axle-py
+- X/Twitter: [@_skpaul82](https://x.com/_skpaul82)
+- Instagram: [skpaul82](https://instagram.com/skpaul82)
+- Newsletter: [axle.sanjoypaul.com/agent-aio](https://axle.sanjoypaul.com/agent-aio)

@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "axle"
+version = "0.1.0"
+description = "A modular CLI platform for running Python microtools from a shared tools directory."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Sanjoy K. Paul", email = "hello@skpaul.me"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "pandas>=1.5.0",
+    "openpyxl>=3.0.0",
+    "scikit-learn>=1.2.0",
+    "spacy>=3.5.0",
+    "sentence-transformers>=2.2.0",
+    "beautifulsoup4>=4.12.0",
+    "requests>=2.28.0",
+    "nltk>=3.8.0",
+    "numpy>=1.23.0",
+    "lxml>=4.9.0",
+]
+
+[project.scripts]
+axle = "scripts.axle:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.md"]
