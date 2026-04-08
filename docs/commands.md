@@ -1,22 +1,24 @@
 # Command Reference
 
-Complete reference for all Buddy Tools commands.
+Complete reference for all Axle CLI commands.
 
 ## Commands Overview
 
 | Command | Description |
 |---------|-------------|
-| `buddy list` | List all available tools |
-| `buddy run` | Execute a tool by number or name |
-| `buddy info` | Show detailed tool information |
-| `buddy scan` | Run security vulnerability scan |
-| `buddy doctor` | Run environment diagnostics |
-| `buddy path` | Show tools folder location |
-| `buddy help` | Display help message |
+| `axle list` | List all available tools |
+| `axle run` | Execute a tool by number or name |
+| `axle info` | Show detailed tool information |
+| `axle scan` | Run security vulnerability scan |
+| `axle doctor` | Run environment diagnostics |
+| `axle path` | Show tools folder location |
+| `axle help` | Display help message |
+| `axle security` | Show or configure security policy |
+| `axle uninstall` | Uninstall Axle CLI |
 
 ---
 
-## buddy list
+## axle list
 
 List all available tools in the tools directory.
 
@@ -55,7 +57,7 @@ Hey buddy, let me know how I can help you. Choose a tool from the list or enter 
 
 ---
 
-## buddy run
+## axle run
 
 Execute a tool by number or name.
 

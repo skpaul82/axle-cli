@@ -1,6 +1,6 @@
 # Contributing Guide
 
-Thank you for your interest in contributing to Buddy Tools! This guide will help you get started.
+Thank you for your interest in contributing to Axle CLI! This guide will help you get started.
 
 ## Ways to Contribute
 

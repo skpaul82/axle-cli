@@ -60,20 +60,25 @@ axle security
 
 The interactive installer guides you through the setup process:
 
-The interactive installer guides you through the setup process:
-
 ```bash
-python scripts/install_axle.py
+python -m axle.install_axle
 ```
 
 The installer will:
-1. Check your system requirements
-2. Install all dependencies
-3. Set up the `axle` command
-4. Download required ML models
-5. Verify the installation
+1. **Environment check**: Validates Python version, pip availability, and package installation capability
+2. **System requirements**: Checks RAM, disk space, and dependencies
+3. **Install dependencies**: Installs all required packages
+4. **Set up the `axle` command**: Installs the package in editable mode
+5. **Download required ML models**: Downloads spaCy models
+6. **Verify the installation**: Confirms everything works
 
-### Method 2: Manual Installation
+**Enhanced Environment Checking**:
+- Runs comprehensive validation at the start
+- Provides FAQ links when requirements aren't met
+- Offers common solutions for known issues
+- Allows you to continue or exit if problems are found
+
+### Method 3: Manual Installation
 
 If you prefer manual installation or need more control:
 
@@ -128,7 +133,7 @@ This will run diagnostics to check your environment.
 On macOS, you might need to use `python3` instead of `python`:
 
 ```bash
-python3 scripts/install_axle.py
+python3 -m axle.install_axle
 ```
 
 Or create an alias:
@@ -158,13 +163,13 @@ sudo dnf install python3-pip python3-venv
 On Windows, use the Python launcher:
 
 ```bash
-py scripts/install_axle.py
+py -m axle.install_axle
 ```
 
 Or use `python`:
 
 ```bash
-python scripts/install_axle.py
+python -m axle.install_axle
 ```
 
 ## Virtual Environment (Recommended)
@@ -194,7 +199,8 @@ If you get this error, the installation may not have set up the command properly
 
 1. Make sure you ran `pip install -e .`
 2. Check your PATH includes the pip scripts directory
-3. Try running with python: `python -m scripts.axle`
+3. Try running with python: `python -m axle.axle list`
+4. Check the package is installed: `pip show axle-cli`
 
 ### "ModuleNotFoundError"
 
@@ -222,11 +228,27 @@ If you're low on disk space:
 
 ## Uninstallation
 
-To remove Axle:
+To remove Axle while preserving your tools directory:
 
 ```bash
-pip uninstall axle
+axle uninstall
+# Then follow the prompts
+pip uninstall axle-cli
 ```
+
+To remove Axle and the tools directory:
+
+```bash
+axle uninstall --remove-tools
+# Then follow the prompts
+pip uninstall axle-cli
+```
+
+The uninstall command:
+- Shows what will be removed
+- Preserves tools directory by default
+- Provides clear instructions for pip uninstall
+- Shows reinstallation steps if tools are preserved
 
 To remove the virtual environment (if you created one):
 

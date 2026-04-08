@@ -1,19 +1,57 @@
 # Changelog
 
-All notable changes to Buddy Tools will be documented in this file.
+All notable changes to Axle CLI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-04-08
 
-### Planned
-- Unit tests with pytest
-- Configuration file support
-- Tool alias system
-- Progress indicators for long-running tools
+### Added
+- **Uninstall command** (`axle uninstall`)
+  - Preserves tools directory by default
+  - Clear instructions for complete removal
+  - Shows reinstallation steps
+  - Options to keep or remove tools directory
 
-## [0.1.0] - 2026-04-08
+### Enhanced
+- **Environment checking** in interactive installer
+  - Comprehensive validation at startup
+  - Python version verification (3.10+ required)
+  - pip availability check
+  - Package installation capability test
+  - FAQ links when requirements aren't met
+  - Common solutions for known issues
+  - Option to continue or exit if problems found
+
+### Fixed
+- **Package structure reorganization**
+  - Renamed `scripts/` → `axle/` for standard Python packaging
+  - Fixed entry point: `axle.axle:main`
+  - Updated all internal imports
+  - Resolved CI/CD installation issues
+
+### Changed
+- **Code formatting** - Applied black formatting to all Python files
+- **Updated documentation** to reflect Axle branding and new structure
+- **Enhanced troubleshooting** with Python version and pip solutions
+
+### Technical
+- Updated pyproject.toml with black configuration
+- Fixed GitHub Actions CI workflow paths
+- Updated publish workflow test commands
+- Improved error messages and user guidance
+
+## [1.0.0] - 2026-04-08
+
+### Added
+- Initial production release of Axle CLI platform
+- Core CLI with 8 commands: list, run, info, scan, doctor, path, help, security, uninstall
+- Tool numbering system for easy reference
+- Dynamic tool loading and discovery
+- Community footer in all command outputs
+
+### Tools
 
 ### Added
 - Initial release of Buddy Tools CLI toolkit
@@ -47,7 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Categories: Morning, Productivity, Health, Finance, Tech, Organization, Mindfulness
 
 ### Installation
-- Interactive installer (scripts/install_buddy.py)
+- Interactive installer (`axle.install_axle`)
 - System requirements checking
 - Guided setup with prompts
 - Automatic dependency installation
@@ -55,11 +93,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Installation verification
 
 ### Security
-- Dependency vulnerability scanner (scripts/security_scan.py)
+- **Pre-execution security validation** (MANDATORY for all tools)
+  - Dangerous pattern detection (eval, exec, shell=True)
+  - Hardcoded secret detection (API keys, passwords, tokens)
+  - Unsafe import checking (pickle, marshal)
+  - Configurable security policies (strict, warn, permissive)
+- Dependency vulnerability scanner (axle/security_scan.py)
 - pip-audit integration
 - Basic static analysis for Python scripts
-- Secret detection (API keys, passwords)
-- Dangerous function detection (eval, exec)
 - Prioritized security recommendations
 
 ### Documentation
@@ -67,7 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Installation guide with platform-specific instructions
 - Usage guide with examples and best practices
 - Complete command reference
-- Troubleshooting guide
+- Troubleshooting guide with enhanced FAQ
 - Contributing guidelines
 - Changelog
 
@@ -91,11 +132,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 - Community footer with social links
-- Environment diagnostics (buddy doctor)
-- Tool information display (buddy info)
+- Environment diagnostics (axle doctor)
+- Tool information display (axle info)
+- Security configuration (axle security)
 - Graceful error handling
 - Helpful error messages
 - Support for running tools by number or name
+- Platform philosophy: Run ANY Python tool consistently
 
 ### System Requirements
 - Python 3.10 or higher
@@ -105,16 +148,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Future Versions]
 
-### [0.2.0] - Planned
-- Add unit tests with pytest
-- Add configuration file support (.buddyrc)
+### [1.2.0] - Planned
+- Unit tests with pytest
+- Configuration file support (.axlerc)
 - Tool alias system (custom names for tools)
 - Progress indicators for long-running tools
 - Improved error messages
 - Tool discovery from multiple directories
-- Plugin system for external tools
 
-### [0.3.0] - Planned
+### [1.3.0] - Planned
 - More SEO tools (backlink checker, SERP scraper)
 - More productivity tools (habit tracker, time calculator)
 - Web interface (Flask/FastAPI)
@@ -122,8 +164,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Export results to JSON/CSV
 - Batch processing mode
 
-### [1.0.0] - Planned
-- Publish to PyPI
+### [2.0.0] - Planned
+- PyPI publishing
 - Full test coverage (80%+)
 - API documentation
 - Comprehensive plugin system
@@ -150,7 +192,7 @@ We use [Semantic Versioning](https://semver.org/):
 
 ## Support Policy
 
-- Current version (0.1.0): Full support
+- Current version (1.1.0): Full support
 - Previous versions: Best-effort support
 - Security updates: Provided for all supported versions
 

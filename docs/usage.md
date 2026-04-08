@@ -1,6 +1,6 @@
 # Usage Guide
 
-This guide shows you how to use Buddy Tools effectively.
+This guide shows you how to use Axle CLI effectively.
 
 ## Basic Concepts
 

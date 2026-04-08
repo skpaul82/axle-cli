@@ -1,53 +1,63 @@
 # PyPI Publishing Guide
 
-**Status**: Preparation for v1.0.0  
-**Package Name**: TBD (axle likely taken, need alternative)  
-**Current Version**: 0.1.0
+**Status**: Ready for v1.1.0 publishing
+**Package Name**: axle-cli
+**Current Version**: 1.1.0
+**Repository**: https://github.com/skpaul82/axle-cli
 
 ---
 
 ## Overview
 
-This guide covers publishing Axle to PyPI for simple `pip install axle` installation.
+This guide covers publishing Axle to PyPI for simple `pip install axle-cli` installation.
 
 ---
 
-## Package Name Considerations
+## Package Information
 
-### Problem
-The name "axle" is likely already taken on PyPI.
+### Current Configuration
+- **Package Name**: `axle-cli`
+- **Version**: `1.1.0`
+- **Entry Point**: `axle = "axle.axle:main"`
+- **Python Requirement**: `>=3.10`
 
-### Alternatives
-- **axle-cli** - Follows Python convention (like pytest-py)
-- **axle-cli** - Clear that it's a CLI tool
-- **axle-platform** - Reflects platform positioning
-- **axle-tools** - Emphasizes tool functionality
-- **axle-runner** - Describes what it does
-
-### Recommendation
-**axle-cli** or **axle-cli**
-
-Both are:
-- Descriptive
-- Likely available
-- Follow Python naming conventions
+### Package Structure
+```
+axle-cli/
+├── axle/              # Main package (formerly scripts/)
+│   ├── __init__.py
+│   ├── axle.py       # Main CLI entry point
+│   ├── install_axle.py
+│   ├── security_scan.py
+│   └── tool_validator.py
+├── tools/            # Tool scripts
+├── docs/             # Documentation
+└── pyproject.toml    # Package configuration
+```
 
 ---
 
 ## Pre-Publication Checklist
 
-### 1. Update Package Name in pyproject.toml
+### 1. Verify Package Name in pyproject.toml
 
 ```toml
 [project]
-name = "axle-cli"  # or "axle-cli"
+name = "axle-cli"
+version = "1.1.0"
 ```
 
 ### 2. Verify Metadata
 
 Ensure `pyproject.toml` has:
-- ✅ Unique package name
-- ✅ Version (0.1.0)
+- ✅ Unique package name (axle-cli)
+- ✅ Version (1.1.0)
+- ✅ Description
+- ✅ README reference
+- ✅ License (MIT)
+- ✅ Python requirement (>=3.10)
+- ✅ Entry point (axle = "axle.axle:main")
+- ✅ Dependencies listed
 - ✅ Description
 - ✅ Long description (README.md)
 - ✅ Author email (hello@skpaul.me)
