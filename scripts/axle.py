@@ -10,6 +10,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Import tool security validator
+from scripts.tool_validator import validate_tool_before_execution, get_security_policy
+
 TOOLS_DIR = "tools"
 
 COMMUNITY_FOOTER = """
@@ -102,6 +105,18 @@ def run_tool(tool_identifier, prompt=""):
             print(f"❌ Tool '{tool_identifier}' not found.")
             print(f"   Run 'axle list' to see available tools.")
             return 1
+
+    # 🔒 SECURITY VALIDATION: Validate tool before execution
+    print(f"\n🔒 Validating tool security...")
+    policy = get_security_policy()
+    print(f"   Security Policy: {policy.upper()}")
+
+    if not validate_tool_before_execution(tool_file, policy=policy):
+        print(f"\n❌ Tool execution blocked by security policy.")
+        print(f"   To override: AXLE_SECURITY_POLICY=permissive axle run {tool_identifier}")
+        return 1
+
+    print(f"   ✅ Security validation passed")
 
     # Load and run the tool
     try:
@@ -333,6 +348,62 @@ def show_tools_path():
     return 0
 
 
+def show_security_config(policy=None):
+    """Show or configure security policy."""
+    from scripts.tool_validator import POLICY_STRICT, POLICY_WARN, POLICY_PERMISSIVE
+
+    if policy is None:
+        # Show current policy
+        current_policy = get_security_policy()
+
+        print("\n🔒 Axle Security Configuration")
+        print("=" * 60)
+
+        print(f"\nCurrent Policy: {current_policy.upper()}")
+
+        policies = {
+            POLICY_STRICT: {
+                'description': 'Block execution on ANY security finding',
+                'blocks': ['All severity levels (Critical, High, Medium, Low)'],
+                'use_case': 'Production environments, untrusted tools'
+            },
+            POLICY_WARN: {
+                'description': 'Block only on CRITICAL findings, warn on others',
+                'blocks': ['Critical severity'],
+                'use_case': 'Development environments (default)'
+            },
+            POLICY_PERMISSIVE: {
+                'description': 'Block only on CRITICAL/HIGH findings',
+                'blocks': ['Critical, High severity'],
+                'use_case': 'Trusted tools, local development'
+            }
+        }
+
+        print("\nPolicy Details:")
+        for p_name, p_info in policies.items():
+            is_current = "✓" if p_name == current_policy else " "
+            print(f"\n  {is_current} {p_name.upper()}")
+            print(f"     {p_info['description']}")
+            print(f"     Blocks: {', '.join(p_info['blocks'])}")
+            print(f"     Best for: {p_info['use_case']}")
+
+        print("\n\nHow to Set Policy:")
+        print("  Environment Variable: export AXLE_SECURITY_POLICY=<policy>")
+        print("  Command: axle security --policy <policy>")
+        print("\nAvailable Policies: strict, warn, permissive")
+
+    else:
+        # Set policy
+        print(f"\n🔒 Setting Security Policy: {policy.upper()}")
+        print("\nTo make this permanent, set the environment variable:")
+        print(f"  export AXLE_SECURITY_POLICY={policy}")
+        print("\nThen run your tool:")
+        print("  axle run <tool>")
+
+    print_community_footer()
+    return 0
+
+
 def main():
     """Main entry point for the Axle CLI."""
     parser = argparse.ArgumentParser(
@@ -365,6 +436,11 @@ def main():
     # axle help
     subparsers.add_parser("help", help="Show this help message")
 
+    # axle security
+    security_parser = subparsers.add_parser("security", help="Show or configure security policy")
+    security_parser.add_argument("--policy", choices=["strict", "warn", "permissive"],
+                               help="Set security policy (or use AXLE_SECURITY_POLICY env var)")
+
     args = parser.parse_args()
 
     # Route to appropriate command
@@ -380,6 +456,8 @@ def main():
         return run_diagnostics()
     elif args.command == "path":
         return show_tools_path()
+    elif args.command == "security":
+        return show_security_config(getattr(args, 'policy', None))
     elif args.command == "help":
         parser.print_help()
         return 0

@@ -1,14 +1,15 @@
-# Buddy Tools Documentation
+# Axle Documentation
 
-Welcome to the Buddy Tools documentation! This is your comprehensive guide to using and getting the most out of Buddy Tools.
+Welcome to the Axle documentation! This is your comprehensive guide to using and getting the most out of Axle.
 
-## What is Buddy Tools?
+## What is Axle?
 
-Buddy Tools is a CLI toolkit for SEO analysis and daily-life productivity utilities. It provides a simple command-line interface to run powerful tools for keyword analysis, meta tag auditing, and life hack generation.
+Axle is a modular CLI platform for running Python microtools from a shared tools directory. It provides built-in security validation, automatic tool discovery, and a simple command structure for consistent tool execution.
 
 ## Quick Links
 
-- [Installation Guide](installation.md) - Get Buddy Tools up and running
+- [Installation Guide](installation.md) - Get Axle up and running
+- [Security Guide](security.md) - **MANDATORY**: Learn about built-in security validation
 - [Usage Guide](usage.md) - Learn how to use the tools effectively
 - [Command Reference](commands.md) - Complete command documentation
 - [Troubleshooting](troubleshooting.md) - Solve common problems
@@ -16,11 +17,20 @@ Buddy Tools is a CLI toolkit for SEO analysis and daily-life productivity utilit
 
 ## Features
 
+### 🔒 Built-in Security (MANDATORY)
+- **Pre-execution validation**: All tools scanned for security issues before running
+- **Dangerous pattern detection**: Blocks eval(), exec(), shell=True, and more
+- **Hardcoded secret detection**: Finds passwords, API keys, tokens in code
+- **Configurable policies**: strict, warn (default), permissive modes
+- **Real-time protection**: Automatic validation on every tool execution
+
+### Core Features
+- **Modular Platform**: Drop any Python script in tools/, run with `axle run <tool>`
 - **SEO Tools**: Analyze keywords, audit meta tags, optimize content
 - **Productivity Hacks**: Get personalized tips for daily life improvement
-- **Security Scanning**: Check dependencies for vulnerabilities
+- **Dependency Scanning**: Integrated pip-audit for package security
 - **Easy CLI**: Simple command structure with numbered tools
-- **Extensible**: Add your own tools easily
+- **Extensible**: Add your own tools without modifying core code
 
 ## Getting Started
 
@@ -31,16 +41,22 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-### 2. List Tools
+### 2. Check Security Policy
 
 ```bash
-buddy list
+axle security
 ```
 
-### 3. Run a Tool
+### 3. List Tools
 
 ```bash
-buddy run 1 "your text here"
+axle list
+```
+
+### 4. Run a Tool
+
+```bash
+axle run 1 "your text here"
 ```
 
 ## System Requirements

@@ -1,6 +1,6 @@
-# Buddy Tools
+# Axle
 
-Micro-tools for **SEO** and **daily-life hacks** that you can run from the terminal.
+A modular CLI platform for running Python microtools from a shared tools directory.
 
 ---
 
@@ -27,11 +27,20 @@ axle scan
 
 ## 📦 Features
 
+### 🔒 Built-in Security (MANDATORY)
+- **Pre-execution validation**: All tools are scanned for security issues BEFORE running
+- **Dangerous pattern detection**: Blocks eval(), exec(), shell=True, and more
+- **Hardcoded secret detection**: Finds passwords, API keys, tokens in code
+- **Configurable security policies**: strict, warn (default), permissive modes
+- **Real-time protection**: Automatic validation on every tool execution
+- **Dependency vulnerability scanning**: Integrated pip-audit for package security
+
+### Core Features
+- Modular platform for running ANY Python tool consistently
 - SEO-focused microtools (keyword checker, meta-tag auditor, etc.)
 - Daily-life automation helpers from the terminal
 - `axle list` shows all tools with numbers
 - `axle run <tool_number_or_name> <prompt>` executes a tool
-- Security and dependency checks via `axle scan`
 - Configurable tools folder path
 
 ---
@@ -47,6 +56,7 @@ axle scan
 | `axle scan`              | Scan dependencies for known vulnerabilities. |
 | `axle doctor`            | Check Python, disk, and required modules.    |
 | `axle path`              | Show current tools folder location.          |
+| `axle security`          | Show or configure security policy.           |
 | `axle help`              | Show all commands.                           |
 
 ---
@@ -67,6 +77,7 @@ Install via `pip install -r requirements.txt` and `pip install -e .`
 See:
 
 - `docs/index.md` – overview
+- `docs/security.md` – **security validation (MANDATORY)**
 - `docs/installation.md` – step-by-step setup
 - `docs/usage.md` – how to use tools
 - `docs/commands.md` – detailed command reference
