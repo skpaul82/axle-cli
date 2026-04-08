@@ -166,7 +166,7 @@ MIT License - see [LICENSE](../LICENSE) for details.
 
 ## Links
 
-- GitHub: https://github.com/skpaul82/axle-py
+- GitHub: https://github.com/skpaul82/axle-cli
 - X/Twitter: [@_skpaul82](https://x.com/_skpaul82)
 - Instagram: [skpaul82](https://instagram.com/skpaul82)
 - Newsletter: [axle.sanjoypaul.com/agent-aio](https://axle.sanjoypaul.com/agent-aio)

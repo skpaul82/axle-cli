@@ -43,7 +43,7 @@ Hey buddy, let me know how I can help you. Choose a tool from the list or enter 
 
 ---
 🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-py
+⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
 ...
 ```
 
@@ -147,7 +147,7 @@ $ buddy info seo_keyword_checker
 
 ---
 🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-py
+⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
 ...
 ```
 
@@ -326,7 +326,7 @@ Contains 3 file(s):
 
 ---
 🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-py
+⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
 ...
 ```
 

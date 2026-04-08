@@ -20,8 +20,8 @@ We welcome contributions in many forms:
 ```bash
 # Fork the repository on GitHub
 # Then clone your fork
-git clone https://github.com/your-username/axle-py.git
-cd axle-py
+git clone https://github.com/your-username/axle-cli.git
+cd axle-cli
 ```
 
 ### 2. Set Up Development Environment

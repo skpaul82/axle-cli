@@ -39,7 +39,7 @@ If you need to install Python, download it from [python.org](https://www.python.
 The easiest way to install Axle is directly from GitHub:
 
 ```bash
-pip install git+https://github.com/skpaul82/axle-py.git
+pip install git+https://github.com/skpaul82/axle-cli.git
 ```
 
 That's it! You can now run:

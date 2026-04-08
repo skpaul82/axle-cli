@@ -18,14 +18,14 @@ This guide covers publishing Axle to PyPI for simple `pip install axle` installa
 The name "axle" is likely already taken on PyPI.
 
 ### Alternatives
-- **axle-py** - Follows Python convention (like pytest-py)
+- **axle-cli** - Follows Python convention (like pytest-py)
 - **axle-cli** - Clear that it's a CLI tool
 - **axle-platform** - Reflects platform positioning
 - **axle-tools** - Emphasizes tool functionality
 - **axle-runner** - Describes what it does
 
 ### Recommendation
-**axle-cli** or **axle-py**
+**axle-cli** or **axle-cli**
 
 Both are:
 - Descriptive
@@ -40,7 +40,7 @@ Both are:
 
 ```toml
 [project]
-name = "axle-cli"  # or "axle-py"
+name = "axle-cli"  # or "axle-cli"
 ```
 
 ### 2. Verify Metadata
@@ -259,7 +259,7 @@ If you need to yank (remove) a version:
 If "axle-cli" is taken:
 
 1. Try alternatives:
-   - `axle-py`
+   - `axle-cli`
    - `axle-platform`
    - `axle-runner`
    - `axle-cmd`
@@ -303,7 +303,7 @@ If "axle-cli" is taken:
 ### For v0.1.0
 - **Status**: Use GitHub install method
 - **Reason**: Get feedback, iterate on features
-- **Command**: `pip install git+https://github.com/skpaul82/axle-py.git`
+- **Command**: `pip install git+https://github.com/skpaul82/axle-cli.git`
 
 ### For v1.0.0
 - **Status**: Publish to PyPI

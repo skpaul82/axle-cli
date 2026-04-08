@@ -9,7 +9,7 @@ A modular CLI platform for running Python microtools from a shared tools directo
 ### Method 1: Install from GitHub (Recommended)
 
 ```bash
-pip install git+https://github.com/skpaul82/axle-py.git
+pip install git+https://github.com/skpaul82/axle-cli.git
 ```
 
 That's it! You can now run:
@@ -24,8 +24,8 @@ axle scan
 
 ```bash
 # Clone the repository
-git clone https://github.com/skpaul82/axle-py.git
-cd axle-py
+git clone https://github.com/skpaul82/axle-cli.git
+cd axle-cli
 
 # Install dependencies
 pip install --upgrade pip

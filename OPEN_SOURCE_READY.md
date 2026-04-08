@@ -1,6 +1,6 @@
 # ✅ Open Source Preparation Complete
 
-**Repository**: https://github.com/skpaul82/axle-py  
+**Repository**: https://github.com/skpaul82/axle-cli  
 **Status**: Ready for GitHub  
 **Date**: 2026-04-08  
 
@@ -142,7 +142,7 @@ Contains AI assistant configuration:
 
 5. **Add Remote**:
    ```bash
-   git remote add origin https://github.com/skpaul82/axle-py.git
+   git remote add origin https://github.com/skpaul82/axle-cli.git
    ```
 
 6. **Push to GitHub**:
@@ -159,6 +159,6 @@ Contains AI assistant configuration:
 All internal planning, strategic analysis, and sensitive information are properly protected. The public repository will contain only source code, user documentation, and open source configuration files.
 
 **License**: MIT  
-**Repository**: https://github.com/skpaul82/axle-py  
+**Repository**: https://github.com/skpaul82/axle-cli  
 **Version**: 0.1.0  
 **Status**: Ready for GitHub 🚀

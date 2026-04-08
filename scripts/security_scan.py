@@ -13,7 +13,7 @@ TOOLS_DIR = "tools"
 COMMUNITY_FOOTER = """
 ---
 🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-py
+⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
 🐦 Follow on X: @_skpaul82
 📸 Instagram: skpaul82
 📧 Newsletter: axle.sanjoypaul.com/agent-aio

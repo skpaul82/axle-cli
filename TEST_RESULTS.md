@@ -79,7 +79,7 @@ Shows 3 tool files
 ```
 
 ✅ **Community Footer**: PASSED
-- GitHub URL: https://github.com/skpaul82/axle-py ✅
+- GitHub URL: https://github.com/skpaul82/axle-cli ✅
 - Newsletter: axle.sanjoypaul.com ✅
 - X/Twitter: @_skpaul82 ✅
 - Instagram: @skpaul82 ✅
@@ -152,7 +152,7 @@ Shows 3 tool files
 ✅ **CLI Command**: "axle" (not "buddy")
 ✅ **Package Name**: "axle" (not "buddy-tools")
 ✅ **Script Files**: axle.py, install_axle.py (renamed)
-✅ **GitHub URL**: https://github.com/skpaul82/axle-py (correct)
+✅ **GitHub URL**: https://github.com/skpaul82/axle-cli (correct)
 ✅ **Email**: hello@skpaul.me (correct)
 ✅ **Newsletter**: axle.sanjoypaul.com (correct)
 
@@ -177,13 +177,13 @@ Shows 3 tool files
 - [x] Package configuration correct
 - [x] Documentation complete
 - [x] Rebranding complete
-- [x] GitHub URL correct (axle-py)
+- [x] GitHub URL correct (axle-cli)
 
 ### Ready for Next Steps
 
 1. **Add GitHub Remote**:
    ```bash
-   git remote add origin https://github.com/skpaul82/axle-py.git
+   git remote add origin https://github.com/skpaul82/axle-cli.git
    ```
 
 2. **Push to GitHub**:
@@ -219,10 +219,10 @@ Shows 3 tool files
 
 Repository is **110% ready** for GitHub publication.
 
-**Next Action**: Push to https://github.com/skpaul82/axle-py
+**Next Action**: Push to https://github.com/skpaul82/axle-cli
 
 **Tested By**: Claude Code (AI Assistant)
 **Test Date**: 2026-04-08
-**Repository**: axle-py
+**Repository**: axle-cli
 **Version**: 0.1.0
 **License**: MIT

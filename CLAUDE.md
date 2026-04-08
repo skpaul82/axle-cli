@@ -113,7 +113,7 @@ Core requirements (Python 3.10+):
 
 - **Product Name**: Axle (not Buddy CLI, not Buddy Tools)
 - **Command**: axle (not buddy)
-- **Repository**: https://github.com/skpaul82/axle-py
+- **Repository**: https://github.com/skpaul82/axle-cli
 - **Documentation**: axle.sanjoypaul.com/agent-aio
 - **Email**: hello@skpaul.me
 
@@ -123,7 +123,7 @@ Core requirements (Python 3.10+):
 
 All tool outputs include community footer:
 
-- GitHub: https://github.com/skpaul82/axle-py
+- GitHub: https://github.com/skpaul82/axle-cli
 - X/Twitter: @_skpaul82
 - Instagram: @skpaul82
 - Newsletter: axle.sanjoypaul.com/agent-aio
