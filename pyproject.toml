@@ -12,6 +12,8 @@ license = {text = "MIT"}
 authors = [
     {name = "Sanjoy K. Paul", email = "hello@skpaul.me"}
 ]
+[tool.black]
+target-version = ['py310']
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
