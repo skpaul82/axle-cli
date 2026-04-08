@@ -1,6 +1,6 @@
 # Installation Guide
 
-This guide will help you install Buddy Tools on your system.
+This guide will help you install Axle on your system.
 
 ## System Requirements
 
@@ -34,18 +34,42 @@ If you need to install Python, download it from [python.org](https://www.python.
 
 ## Installation Methods
 
-### Method 1: Interactive Installation (Recommended)
+### Method 1: Install from GitHub (Recommended) ✨
+
+The easiest way to install Axle is directly from GitHub:
+
+```bash
+pip install git+https://github.com/skpaul82/axle-py.git
+```
+
+That's it! You can now run:
+
+```bash
+axle list
+axle run 1 "your prompt"
+axle security
+```
+
+**Advantages**:
+- ✅ Single command installation
+- ✅ Always gets the latest version
+- ✅ No manual dependency management
+- ✅ Works on all platforms
+
+### Method 2: Interactive Installation
+
+The interactive installer guides you through the setup process:
 
 The interactive installer guides you through the setup process:
 
 ```bash
-python scripts/install_buddy.py
+python scripts/install_axle.py
 ```
 
 The installer will:
 1. Check your system requirements
 2. Install all dependencies
-3. Set up the `buddy` command
+3. Set up the `axle` command
 4. Download required ML models
 5. Verify the installation
 
@@ -86,13 +110,13 @@ python -m spacy download en_core_web_sm
 After installation, verify everything works:
 
 ```bash
-buddy list
+axle list
 ```
 
 You should see a list of available tools.
 
 ```bash
-buddy doctor
+axle doctor
 ```
 
 This will run diagnostics to check your environment.
@@ -104,7 +128,7 @@ This will run diagnostics to check your environment.
 On macOS, you might need to use `python3` instead of `python`:
 
 ```bash
-python3 scripts/install_buddy.py
+python3 scripts/install_axle.py
 ```
 
 Or create an alias:
@@ -134,13 +158,13 @@ sudo dnf install python3-pip python3-venv
 On Windows, use the Python launcher:
 
 ```bash
-py scripts/install_buddy.py
+py scripts/install_axle.py
 ```
 
 Or use `python`:
 
 ```bash
-python scripts/install_buddy.py
+python scripts/install_axle.py
 ```
 
 ## Virtual Environment (Recommended)
@@ -157,20 +181,20 @@ source venv/bin/activate
 # Activate on Windows
 venv\Scripts\activate
 
-# Install Buddy Tools
+# Install Axle
 pip install -r requirements.txt
 pip install -e .
 ```
 
 ## Troubleshooting
 
-### "Command not found: buddy"
+### "Command not found: axle"
 
 If you get this error, the installation may not have set up the command properly. Try:
 
 1. Make sure you ran `pip install -e .`
 2. Check your PATH includes the pip scripts directory
-3. Try running with python: `python -m scripts.buddy`
+3. Try running with python: `python -m scripts.axle`
 
 ### "ModuleNotFoundError"
 
@@ -198,10 +222,10 @@ If you're low on disk space:
 
 ## Uninstallation
 
-To remove Buddy Tools:
+To remove Axle:
 
 ```bash
-pip uninstall buddy-tools
+pip uninstall axle
 ```
 
 To remove the virtual environment (if you created one):
@@ -219,8 +243,8 @@ rm -rf venv
 After installation:
 
 1. Read the [Usage Guide](usage.md) to learn how to use the tools
-2. Run `buddy list` to see available tools
-3. Try `buddy run 1 "test"` to test a tool
+2. Run `axle list` to see available tools
+3. Try `axle run 1 "test"` to test a tool
 4. Check out the [Command Reference](commands.md) for all commands
 
 ## Need Help?

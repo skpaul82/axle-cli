@@ -6,16 +6,13 @@ A modular CLI platform for running Python microtools from a shared tools directo
 
 ## 🚀 Quick install
 
-```bash
-# Install dependencies
-pip install --upgrade pip
-pip install -r requirements.txt
+### Method 1: Install from GitHub (Recommended)
 
-# Install the package in editable mode
-pip install -e .
+```bash
+pip install git+https://github.com/skpaul82/axle-py.git
 ```
 
-Now you can run:
+That's it! You can now run:
 
 ```bash
 axle list
@@ -23,11 +20,29 @@ axle run 1 "your prompt"
 axle scan
 ```
 
+### Method 2: Manual Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/skpaul82/axle-py.git
+cd axle-py
+
+# Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Install the package
+pip install -e .
+```
+
+> **Note**: PyPI installation (`pip install axle-cli`) is planned for v1.0.0. For v0.1.0, please use the GitHub installation method above.
+
 ---
 
 ## 📦 Features
 
 ### 🔒 Built-in Security (MANDATORY)
+
 - **Pre-execution validation**: All tools are scanned for security issues BEFORE running
 - **Dangerous pattern detection**: Blocks eval(), exec(), shell=True, and more
 - **Hardcoded secret detection**: Finds passwords, API keys, tokens in code
@@ -36,6 +51,7 @@ axle scan
 - **Dependency vulnerability scanning**: Integrated pip-audit for package security
 
 ### Core Features
+
 - Modular platform for running ANY Python tool consistently
 - SEO-focused microtools (keyword checker, meta-tag auditor, etc.)
 - Daily-life automation helpers from the terminal
@@ -47,8 +63,8 @@ axle scan
 
 ## 🛠️ Commands
 
-| Command                     | Purpose                                      |
-| --------------------------- | -------------------------------------------- |
+| Command                    | Purpose                                      |
+| -------------------------- | -------------------------------------------- |
 | `axle list`              | List all tools in the `tools/` directory.  |
 | `axle run 1 "prompt"`    | Run tool by number and pass a prompt.        |
 | `axle run tool_name ...` | Run by filename (without `.py`).           |
