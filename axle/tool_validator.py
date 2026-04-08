@@ -18,7 +18,7 @@ SEVERITY_LOW = "LOW"
 
 # Security policies
 POLICY_STRICT = "strict"  # Block execution on any finding
-POLICY_WARN = "warn"      # Warn but allow execution
+POLICY_WARN = "warn"  # Warn but allow execution
 POLICY_PERMISSIVE = "permissive"  # Only warn on critical/high
 
 
@@ -37,7 +37,7 @@ class SecurityFinding:
             SEVERITY_CRITICAL: "🔴",
             SEVERITY_HIGH: "🟠",
             SEVERITY_MEDIUM: "🟡",
-            SEVERITY_LOW: "🟢"
+            SEVERITY_LOW: "🟢",
         }.get(self.severity, "⚪")
 
         return f"{emoji} {self.severity}{line_info} [{self.category}] {self.message}"
@@ -49,43 +49,43 @@ class ToolValidator:
     # Dangerous patterns to check for
     DANGEROUS_PATTERNS = {
         SEVERITY_CRITICAL: {
-            r'eval\s*\(': 'eval() can execute arbitrary code',
-            r'exec\s*\(': 'exec() can execute arbitrary code',
-            r'__import__\s*\(\s*["\']': 'Dynamic import can execute arbitrary code',
+            r"eval\s*\(": "eval() can execute arbitrary code",
+            r"exec\s*\(": "exec() can execute arbitrary code",
+            r'__import__\s*\(\s*["\']': "Dynamic import can execute arbitrary code",
         },
         SEVERITY_HIGH: {
-            r'os\.system\s*\(': 'os.system() can execute arbitrary shell commands',
-            r'subprocess\.(call|run|Popen)\s*\([^)]*shell\s*=\s*True': 'subprocess with shell=True is dangerous',
-            r'pickle\.load': 'pickle can execute arbitrary code when loading untrusted data',
-            r'marshal\.load': 'marshal module can execute arbitrary code',
+            r"os\.system\s*\(": "os.system() can execute arbitrary shell commands",
+            r"subprocess\.(call|run|Popen)\s*\([^)]*shell\s*=\s*True": "subprocess with shell=True is dangerous",
+            r"pickle\.load": "pickle can execute arbitrary code when loading untrusted data",
+            r"marshal\.load": "marshal module can execute arbitrary code",
         },
         SEVERITY_MEDIUM: {
-            r'compile\s*\(': 'compile() with strings may be unsafe',
-            r'shelve\.open': 'shelve can be unsafe with untrusted data',
-            r'input\s*\(\s*["\']password': 'Password input may be logged',
+            r"compile\s*\(": "compile() with strings may be unsafe",
+            r"shelve\.open": "shelve can be unsafe with untrusted data",
+            r'input\s*\(\s*["\']password': "Password input may be logged",
         },
         SEVERITY_LOW: {
-            r'print\s*\(': 'Debug print statements found',
-            r'pprint': 'Pretty print statements found',
-        }
+            r"print\s*\(": "Debug print statements found",
+            r"pprint": "Pretty print statements found",
+        },
     }
 
     # Secret patterns
     SECRET_PATTERNS = {
         SEVERITY_CRITICAL: {
-            r'password\s*=\s*["\'][^"\']{8,}["\']': 'Hardcoded password detected',
-            r'api[_-]?key\s*=\s*["\'][^"\']{20,}["\']': 'Hardcoded API key detected',
-            r'secret[_-]?key\s*=\s*["\'][^"\']{20,}["\']': 'Hardcoded secret key detected',
-            r'token\s*=\s*["\'][^"\']{20,}["\']': 'Hardcoded token detected',
-            r'private[_-]?key\s*=\s*["\']': 'Hardcoded private key detected',
+            r'password\s*=\s*["\'][^"\']{8,}["\']': "Hardcoded password detected",
+            r'api[_-]?key\s*=\s*["\'][^"\']{20,}["\']': "Hardcoded API key detected",
+            r'secret[_-]?key\s*=\s*["\'][^"\']{20,}["\']': "Hardcoded secret key detected",
+            r'token\s*=\s*["\'][^"\']{20,}["\']': "Hardcoded token detected",
+            r'private[_-]?key\s*=\s*["\']': "Hardcoded private key detected",
         }
     }
 
     # Unsafe imports
     UNSAFE_IMPORTS = {
         SEVERITY_HIGH: {
-            'pickle': 'pickle module is unsafe with untrusted data',
-            'marshal': 'marshal module is unsafe',
+            "pickle": "pickle module is unsafe with untrusted data",
+            "marshal": "marshal module is unsafe",
         }
     }
 
@@ -109,11 +109,11 @@ class ToolValidator:
         try:
             content = tool_path.read_text()
         except Exception as e:
-            return False, [SecurityFinding(
-                SEVERITY_HIGH,
-                "File Access",
-                f"Cannot read tool file: {e}"
-            )]
+            return False, [
+                SecurityFinding(
+                    SEVERITY_HIGH, "File Access", f"Cannot read tool file: {e}"
+                )
+            ]
 
         findings = []
 
@@ -131,11 +131,13 @@ class ToolValidator:
 
         return is_safe, findings
 
-    def _check_dangerous_patterns(self, content: str, tool_path: Path) -> List[SecurityFinding]:
+    def _check_dangerous_patterns(
+        self, content: str, tool_path: Path
+    ) -> List[SecurityFinding]:
         """Check for dangerous code patterns."""
         findings = []
 
-        lines = content.split('\n')
+        lines = content.split("\n")
 
         for severity, patterns in self.DANGEROUS_PATTERNS.items():
             # Skip low severity checks in permissive mode
@@ -146,49 +148,51 @@ class ToolValidator:
                 matches = list(re.finditer(pattern, content))
                 for match in matches:
                     # Find line number
-                    line_no = content[:match.start()].count('\n') + 1
+                    line_no = content[: match.start()].count("\n") + 1
 
                     # Skip if in comment
                     line = lines[line_no - 1] if line_no <= len(lines) else ""
-                    if '#' in line and line.index('#') < match.start() - content.rfind('\n', 0, match.start()):
+                    if "#" in line and line.index("#") < match.start() - content.rfind(
+                        "\n", 0, match.start()
+                    ):
                         continue
 
-                    findings.append(SecurityFinding(
-                        severity,
-                        "Dangerous Pattern",
-                        message,
-                        line_no
-                    ))
+                    findings.append(
+                        SecurityFinding(severity, "Dangerous Pattern", message, line_no)
+                    )
 
         return findings
 
     def _check_secrets(self, content: str, tool_path: Path) -> List[SecurityFinding]:
         """Check for hardcoded secrets."""
         findings = []
-        lines = content.split('\n')
+        lines = content.split("\n")
 
         for severity, patterns in self.SECRET_PATTERNS.items():
             for pattern, message in patterns.items():
                 matches = list(re.finditer(pattern, content, re.IGNORECASE))
                 for match in matches:
-                    line_no = content[:match.start()].count('\n') + 1
+                    line_no = content[: match.start()].count("\n") + 1
 
                     # Skip if in comment or docstring
                     line = lines[line_no - 1] if line_no <= len(lines) else ""
                     stripped = line.strip()
-                    if stripped.startswith('#') or stripped.startswith('"""') or stripped.startswith("'''"):
+                    if (
+                        stripped.startswith("#")
+                        or stripped.startswith('"""')
+                        or stripped.startswith("'''")
+                    ):
                         continue
 
-                    findings.append(SecurityFinding(
-                        severity,
-                        "Hardcoded Secret",
-                        message,
-                        line_no
-                    ))
+                    findings.append(
+                        SecurityFinding(severity, "Hardcoded Secret", message, line_no)
+                    )
 
         return findings
 
-    def _check_unsafe_imports(self, content: str, tool_path: Path) -> List[SecurityFinding]:
+    def _check_unsafe_imports(
+        self, content: str, tool_path: Path
+    ) -> List[SecurityFinding]:
         """Check for unsafe module imports."""
         findings = []
 
@@ -201,14 +205,11 @@ class ToolValidator:
                 # Check for "import module" or "from module import"
                 if f"import {module}" in content or f"from {module}" in content:
                     # Find line number
-                    line_no = content.index(f"import {module}").count('\n') + 1
+                    line_no = content.index(f"import {module}").count("\n") + 1
 
-                    findings.append(SecurityFinding(
-                        severity,
-                        "Unsafe Import",
-                        message,
-                        line_no
-                    ))
+                    findings.append(
+                        SecurityFinding(severity, "Unsafe Import", message, line_no)
+                    )
 
         return findings
 
@@ -228,7 +229,9 @@ class ToolValidator:
 
         elif self.policy == POLICY_PERMISSIVE:
             # Only block on critical/high findings
-            blocking_findings = [f for f in findings if f.severity in [SEVERITY_CRITICAL, SEVERITY_HIGH]]
+            blocking_findings = [
+                f for f in findings if f.severity in [SEVERITY_CRITICAL, SEVERITY_HIGH]
+            ]
             return len(blocking_findings) == 0
 
         return True
@@ -244,14 +247,19 @@ class ToolValidator:
             SEVERITY_CRITICAL: [],
             SEVERITY_HIGH: [],
             SEVERITY_MEDIUM: [],
-            SEVERITY_LOW: []
+            SEVERITY_LOW: [],
         }
 
         for finding in findings:
             by_severity[finding.severity].append(finding)
 
         # Display by severity
-        for severity in [SEVERITY_CRITICAL, SEVERITY_HIGH, SEVERITY_MEDIUM, SEVERITY_LOW]:
+        for severity in [
+            SEVERITY_CRITICAL,
+            SEVERITY_HIGH,
+            SEVERITY_MEDIUM,
+            SEVERITY_LOW,
+        ]:
             if by_severity[severity]:
                 print(f"\n{severity} Severity:")
                 for finding in by_severity[severity]:
@@ -261,6 +269,7 @@ class ToolValidator:
 def get_security_policy() -> str:
     """Get security policy from environment or config."""
     import os
+
     policy = os.getenv("AXLE_SECURITY_POLICY", "warn").lower()
 
     if policy not in [POLICY_STRICT, POLICY_WARN, POLICY_PERMISSIVE]:

@@ -31,7 +31,7 @@ def scan_dependencies():
         result = subprocess.run(
             [sys.executable, "-m", "pip_audit", "--format", "json"],
             capture_output=True,
-            text=True
+            text=True,
         )
 
         if result.returncode == 0:
@@ -65,36 +65,38 @@ def parse_vulnerabilities(vulns):
     parsed = []
 
     for vuln in vulns:
-        name = vuln.get('name', 'Unknown')
-        severity_counts = {'critical': 0, 'high': 0, 'medium': 0, 'low': 0}
+        name = vuln.get("name", "Unknown")
+        severity_counts = {"critical": 0, "high": 0, "medium": 0, "low": 0}
 
-        for vuln_info in vuln.get('vulnerabilities', []):
-            severity = vuln_info.get('severity', 'unknown').lower()
+        for vuln_info in vuln.get("vulnerabilities", []):
+            severity = vuln_info.get("severity", "unknown").lower()
             if severity in severity_counts:
                 severity_counts[severity] += 1
 
         # Determine overall severity
-        if severity_counts['critical'] > 0:
-            overall = 'CRITICAL'
-        elif severity_counts['high'] > 0:
-            overall = 'HIGH'
-        elif severity_counts['medium'] > 0:
-            overall = 'MEDIUM'
-        elif severity_counts['low'] > 0:
-            overall = 'LOW'
+        if severity_counts["critical"] > 0:
+            overall = "CRITICAL"
+        elif severity_counts["high"] > 0:
+            overall = "HIGH"
+        elif severity_counts["medium"] > 0:
+            overall = "MEDIUM"
+        elif severity_counts["low"] > 0:
+            overall = "LOW"
         else:
-            overall = 'UNKNOWN'
+            overall = "UNKNOWN"
 
         # Get affected version and fix version if available
-        vuln_ids = [v.get('id', '') for v in vuln.get('vulnerabilities', [])]
+        vuln_ids = [v.get("id", "") for v in vuln.get("vulnerabilities", [])]
         vuln_ids = [vid for vid in vuln_ids if vid]
 
-        parsed.append({
-            'name': name,
-            'severity': overall,
-            'counts': severity_counts,
-            'vuln_ids': vuln_ids
-        })
+        parsed.append(
+            {
+                "name": name,
+                "severity": overall,
+                "counts": severity_counts,
+                "vuln_ids": vuln_ids,
+            }
+        )
 
     return parsed
 
@@ -107,22 +109,22 @@ def display_vulnerabilities(parsed_vulns):
     print("⚠️ Vulnerabilities Found:\n")
 
     # Group by severity
-    by_severity = {'CRITICAL': [], 'HIGH': [], 'MEDIUM': [], 'LOW': [], 'UNKNOWN': []}
+    by_severity = {"CRITICAL": [], "HIGH": [], "MEDIUM": [], "LOW": [], "UNKNOWN": []}
 
     for vuln in parsed_vulns:
-        severity = vuln['severity']
+        severity = vuln["severity"]
         by_severity[severity].append(vuln)
 
     # Display by severity level
-    for severity in ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNKNOWN']:
+    for severity in ["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"]:
         if by_severity[severity]:
             emoji = {
-                'CRITICAL': '🔴',
-                'HIGH': '🟠',
-                'MEDIUM': '🟡',
-                'LOW': '🟢',
-                'UNKNOWN': '⚪'
-            }.get(severity, '⚪')
+                "CRITICAL": "🔴",
+                "HIGH": "🟠",
+                "MEDIUM": "🟡",
+                "LOW": "🟢",
+                "UNKNOWN": "⚪",
+            }.get(severity, "⚪")
 
             print(f"{emoji} {severity}:")
 
@@ -130,13 +132,17 @@ def display_vulnerabilities(parsed_vulns):
                 print(f"   • {vuln['name']}")
 
                 # Show counts
-                counts = vuln['counts']
-                count_strs = [f"{s}: {counts[s]}" for s in ['critical', 'high', 'medium', 'low'] if counts[s] > 0]
+                counts = vuln["counts"]
+                count_strs = [
+                    f"{s}: {counts[s]}"
+                    for s in ["critical", "high", "medium", "low"]
+                    if counts[s] > 0
+                ]
                 if count_strs:
                     print(f"     {', '.join(count_strs)}")
 
                 # Show CVE IDs
-                if vuln['vuln_ids']:
+                if vuln["vuln_ids"]:
                     print(f"     IDs: {', '.join(vuln['vuln_ids'][:3])}")
 
             print()
@@ -164,29 +170,29 @@ def scan_scripts():
 
             # Check for dangerous functions
             dangerous_patterns = {
-                'eval(': 'Use of eval() can execute arbitrary code',
-                'exec(': 'Use of exec() can execute arbitrary code',
-                'compile(': 'Use of compile() with strings may be unsafe',
-                '__import__(': 'Dynamic imports may be unsafe',
-                'os.system': 'os.system() can execute arbitrary commands',
-                'subprocess.call': 'subprocess.call() with shell=True may be unsafe',
-                'subprocess.run': 'subprocess.run() with shell=True may be unsafe',
+                "eval(": "Use of eval() can execute arbitrary code",
+                "exec(": "Use of exec() can execute arbitrary code",
+                "compile(": "Use of compile() with strings may be unsafe",
+                "__import__(": "Dynamic imports may be unsafe",
+                "os.system": "os.system() can execute arbitrary commands",
+                "subprocess.call": "subprocess.call() with shell=True may be unsafe",
+                "subprocess.run": "subprocess.run() with shell=True may be unsafe",
             }
 
             for pattern, message in dangerous_patterns.items():
                 if pattern in content:
                     # Check if shell=True is used for subprocess
-                    if 'subprocess' in pattern and 'shell=True' in content:
+                    if "subprocess" in pattern and "shell=True" in content:
                         file_issues.append(f"⚠️ {pattern} with shell=True")
 
                     file_issues.append(f"⚠️ {message}")
 
             # Check for potential hardcoded secrets
             secret_patterns = {
-                r'password\s*=\s*["\'][^"\']+["\']': 'Possible hardcoded password',
-                r'api[_-]?key\s*=\s*["\'][^"\']+["\']': 'Possible hardcoded API key',
-                r'secret\s*=\s*["\'][^"\']+["\']': 'Possible hardcoded secret',
-                r'token\s*=\s*["\'][^"\']+["\']': 'Possible hardcoded token',
+                r'password\s*=\s*["\'][^"\']+["\']': "Possible hardcoded password",
+                r'api[_-]?key\s*=\s*["\'][^"\']+["\']': "Possible hardcoded API key",
+                r'secret\s*=\s*["\'][^"\']+["\']': "Possible hardcoded secret",
+                r'token\s*=\s*["\'][^"\']+["\']': "Possible hardcoded token",
             }
 
             for pattern, message in secret_patterns.items():
@@ -195,9 +201,9 @@ def scan_scripts():
 
             # Check for imports that may be unsafe
             unsafe_imports = {
-                'pickle': 'pickle module can be unsafe with untrusted data',
-                'shelve': 'shelve module can be unsafe with untrusted data',
-                'marshal': 'marshal module can be unsafe',
+                "pickle": "pickle module can be unsafe with untrusted data",
+                "shelve": "shelve module can be unsafe with untrusted data",
+                "marshal": "marshal module can be unsafe",
             }
 
             for imp, message in unsafe_imports.items():
@@ -205,16 +211,12 @@ def scan_scripts():
                     file_issues.append(f"⚠️ {message}")
 
             if file_issues:
-                issues.append({
-                    'file': py_file.name,
-                    'issues': file_issues
-                })
+                issues.append({"file": py_file.name, "issues": file_issues})
 
         except Exception as e:
-            issues.append({
-                'file': py_file.name,
-                'issues': [f"⚠️ Could not scan file: {e}"]
-            })
+            issues.append(
+                {"file": py_file.name, "issues": [f"⚠️ Could not scan file: {e}"]}
+            )
 
     if not issues:
         print("✅ No obvious security issues found in scripts!\n")
@@ -223,7 +225,7 @@ def scan_scripts():
 
         for item in issues:
             print(f"📄 {item['file']}:")
-            for issue in item['issues']:
+            for issue in item["issues"]:
                 print(f"   {issue}")
             print()
 
@@ -239,61 +241,77 @@ def generate_recommendations(vulns, script_issues):
 
     # Dependency recommendations
     if vulns:
-        recommendations.append({
-            'priority': 'HIGH',
-            'category': 'Dependencies',
-            'action': 'Update vulnerable packages'
-        })
-        recommendations.append({
-            'priority': 'HIGH',
-            'category': 'Dependencies',
-            'action': 'Run: pip install --upgrade <package_name>'
-        })
-        recommendations.append({
-            'priority': 'MEDIUM',
-            'category': 'Dependencies',
-            'action': 'Pin dependency versions in requirements.txt'
-        })
+        recommendations.append(
+            {
+                "priority": "HIGH",
+                "category": "Dependencies",
+                "action": "Update vulnerable packages",
+            }
+        )
+        recommendations.append(
+            {
+                "priority": "HIGH",
+                "category": "Dependencies",
+                "action": "Run: pip install --upgrade <package_name>",
+            }
+        )
+        recommendations.append(
+            {
+                "priority": "MEDIUM",
+                "category": "Dependencies",
+                "action": "Pin dependency versions in requirements.txt",
+            }
+        )
 
     # Script recommendations
     if script_issues:
-        recommendations.append({
-            'priority': 'HIGH',
-            'category': 'Code Security',
-            'action': 'Review and remove hardcoded credentials'
-        })
-        recommendations.append({
-            'priority': 'MEDIUM',
-            'category': 'Code Security',
-            'action': 'Avoid eval(), exec(), and shell=True in subprocess calls'
-        })
-        recommendations.append({
-            'priority': 'LOW',
-            'category': 'Code Security',
-            'action': 'Use environment variables for secrets'
-        })
+        recommendations.append(
+            {
+                "priority": "HIGH",
+                "category": "Code Security",
+                "action": "Review and remove hardcoded credentials",
+            }
+        )
+        recommendations.append(
+            {
+                "priority": "MEDIUM",
+                "category": "Code Security",
+                "action": "Avoid eval(), exec(), and shell=True in subprocess calls",
+            }
+        )
+        recommendations.append(
+            {
+                "priority": "LOW",
+                "category": "Code Security",
+                "action": "Use environment variables for secrets",
+            }
+        )
 
     # General recommendations
-    recommendations.append({
-        'priority': 'LOW',
-        'category': 'General',
-        'action': 'Run security scan regularly: axle scan'
-    })
-    recommendations.append({
-        'priority': 'LOW',
-        'category': 'General',
-        'action': 'Keep dependencies updated regularly'
-    })
+    recommendations.append(
+        {
+            "priority": "LOW",
+            "category": "General",
+            "action": "Run security scan regularly: axle scan",
+        }
+    )
+    recommendations.append(
+        {
+            "priority": "LOW",
+            "category": "General",
+            "action": "Keep dependencies updated regularly",
+        }
+    )
 
     # Sort by priority
-    priority_order = {'HIGH': 0, 'MEDIUM': 1, 'LOW': 2}
-    recommendations.sort(key=lambda x: priority_order.get(x['priority'], 3))
+    priority_order = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
+    recommendations.sort(key=lambda x: priority_order.get(x["priority"], 3))
 
     # Display recommendations
     current_priority = None
     for rec in recommendations:
-        if rec['priority'] != current_priority:
-            current_priority = rec['priority']
+        if rec["priority"] != current_priority:
+            current_priority = rec["priority"]
             print(f"\n{current_priority} Priority:")
 
         print(f"   • [{rec['category']}] {rec['action']}")

@@ -34,17 +34,22 @@ def print_community_footer():
 
 def list_tools():
     """List all available tools in the tools directory."""
-    print("Hey there, let me know how I can help you. Choose a tool from the list or enter a number.\n")
+    print(
+        "Hey there, let me know how I can help you. Choose a tool from the list or enter a number.\n"
+    )
 
     tools_path = Path(TOOLS_DIR)
     if not tools_path.exists():
         print(f"❌ Tools directory '{TOOLS_DIR}' not found.")
         return 1
 
-    files = sorted([
-        f for f in tools_path.iterdir()
-        if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"
-    ])
+    files = sorted(
+        [
+            f
+            for f in tools_path.iterdir()
+            if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"
+        ]
+    )
 
     if not files:
         print("No tools found in the tools directory.")
@@ -66,7 +71,7 @@ def _get_tool_description(tool_file):
         if spec and spec.loader:
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
-            if hasattr(module, 'get_description'):
+            if hasattr(module, "get_description"):
                 return module.get_description()
         return "No description available"
     except Exception:
@@ -80,10 +85,13 @@ def run_tool(tool_identifier, prompt=""):
         print(f"❌ Tools directory '{TOOLS_DIR}' not found.")
         return 1
 
-    files = sorted([
-        f for f in tools_path.iterdir()
-        if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"
-    ])
+    files = sorted(
+        [
+            f
+            for f in tools_path.iterdir()
+            if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"
+        ]
+    )
 
     # Determine which tool to run
     tool_file = None
@@ -96,7 +104,11 @@ def run_tool(tool_identifier, prompt=""):
         tool_file = files[tool_num - 1]
     except ValueError:
         # Try as name
-        tool_name = tool_identifier if tool_identifier.endswith('.py') else f"{tool_identifier}.py"
+        tool_name = (
+            tool_identifier
+            if tool_identifier.endswith(".py")
+            else f"{tool_identifier}.py"
+        )
         for f in files:
             if f.name == tool_name:
                 tool_file = f
@@ -113,7 +125,9 @@ def run_tool(tool_identifier, prompt=""):
 
     if not validate_tool_before_execution(tool_file, policy=policy):
         print(f"\n❌ Tool execution blocked by security policy.")
-        print(f"   To override: AXLE_SECURITY_POLICY=permissive axle run {tool_identifier}")
+        print(
+            f"   To override: AXLE_SECURITY_POLICY=permissive axle run {tool_identifier}"
+        )
         return 1
 
     print(f"   ✅ Security validation passed")
@@ -125,7 +139,7 @@ def run_tool(tool_identifier, prompt=""):
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
-            if hasattr(module, 'main'):
+            if hasattr(module, "main"):
                 print(f"\n🔧 Running {tool_file.stem}...\n")
                 module.main(prompt)
                 print_community_footer()
@@ -146,7 +160,7 @@ def show_tool_info(tool_name):
         return 1
 
     # Try exact match first
-    tool_file = tool_name if tool_name.endswith('.py') else f"{tool_name}.py"
+    tool_file = tool_name if tool_name.endswith(".py") else f"{tool_name}.py"
     tool_path = tools_path / tool_file
 
     # If not found, try matching the name part (after numeric prefix)
@@ -155,7 +169,11 @@ def show_tool_info(tool_name):
             if f.name == "__init__.py":
                 continue
             # Match by name part (with or without numeric prefix)
-            if f.stem == tool_name or f.stem.endswith(f"_{tool_name}") or f.stem == f"_{tool_name}".replace("_", "", 1):
+            if (
+                f.stem == tool_name
+                or f.stem.endswith(f"_{tool_name}")
+                or f.stem == f"_{tool_name}".replace("_", "", 1)
+            ):
                 tool_path = f
                 break
             # Check if the name contains the search term
@@ -177,10 +195,10 @@ def show_tool_info(tool_name):
             print(f"\n📋 Tool: {tool_name}")
             print(f"📍 Location: {tool_path.absolute()}")
 
-            if hasattr(module, 'get_description'):
+            if hasattr(module, "get_description"):
                 print(f"📝 Description: {module.get_description()}")
 
-            if hasattr(module, '__doc__') and module.__doc__:
+            if hasattr(module, "__doc__") and module.__doc__:
                 print(f"\n📄 Documentation:\n{module.__doc__.strip()}")
 
             print_community_footer()
@@ -200,7 +218,7 @@ def scan_dependencies():
         result = subprocess.run(
             [sys.executable, "-m", "pip_audit", "--format", "json"],
             capture_output=True,
-            text=True
+            text=True,
         )
         if result.returncode == 0:
             print("✓ No critical vulnerabilities found in dependencies.\n")
@@ -226,16 +244,18 @@ def scan_dependencies():
             content = py_file.read_text()
 
             # Check for dangerous imports
-            dangerous = ['eval(', 'exec(', 'compile(', '__import__(']
+            dangerous = ["eval(", "exec(", "compile(", "__import__("]
             for danger in dangerous:
                 if danger in content:
                     issues.append(f"⚠ {py_file.name}: Uses {danger}")
 
             # Check for potential secrets (basic patterns)
-            secret_patterns = ['api_key', 'apikey', 'secret', 'password', 'token']
+            secret_patterns = ["api_key", "apikey", "secret", "password", "token"]
             for pattern in secret_patterns:
                 if f'"{pattern}": "' in content or f"'{pattern}': '" in content:
-                    issues.append(f"⚠ {py_file.name}: May contain hardcoded '{pattern}'")
+                    issues.append(
+                        f"⚠ {py_file.name}: May contain hardcoded '{pattern}'"
+                    )
 
         if issues:
             for issue in issues:
@@ -254,7 +274,9 @@ def run_diagnostics():
 
     # Python version
     py_version = sys.version_info
-    print(f"\n🐍 Python Version: {py_version.major}.{py_version.minor}.{py_version.micro}")
+    print(
+        f"\n🐍 Python Version: {py_version.major}.{py_version.minor}.{py_version.micro}"
+    )
     if py_version < (3, 10):
         print("   ⚠ Warning: Python 3.10+ recommended")
     else:
@@ -276,6 +298,7 @@ def run_diagnostics():
     # RAM (basic check)
     try:
         import psutil
+
         ram_gb = psutil.virtual_memory().total / (1024**3)
         print(f"\n🧠 RAM: {ram_gb:.1f} GB")
         if ram_gb < 8:
@@ -288,8 +311,14 @@ def run_diagnostics():
     # Check key dependencies
     print(f"\n📦 Key Dependencies:")
     dependencies = [
-        'pandas', 'numpy', 'requests', 'bs4', 'nltk', 'sklearn',
-        'spacy', 'sentence_transformers'
+        "pandas",
+        "numpy",
+        "requests",
+        "bs4",
+        "nltk",
+        "sklearn",
+        "spacy",
+        "sentence_transformers",
     ]
 
     for dep in dependencies:
@@ -303,7 +332,9 @@ def run_diagnostics():
     tools_path = Path(TOOLS_DIR)
     print(f"\n🔧 Tools Directory:")
     if tools_path.exists():
-        tools_count = len([f for f in tools_path.glob("*.py") if f.name != "__init__.py"])
+        tools_count = len(
+            [f for f in tools_path.glob("*.py") if f.name != "__init__.py"]
+        )
         print(f"   ✓ Found at: {tools_path.absolute()}")
         print(f"   ✓ Contains {tools_count} tools")
     else:
@@ -312,11 +343,7 @@ def run_diagnostics():
     # Check if CLI is installed
     print(f"\n⚙️ CLI Installation:")
     try:
-        result = subprocess.run(
-            ["axle", "--help"],
-            capture_output=True,
-            timeout=5
-        )
+        result = subprocess.run(["axle", "--help"], capture_output=True, timeout=5)
         if result.returncode == 0:
             print("   ✓ CLI command 'axle' is working")
         else:
@@ -363,20 +390,20 @@ def show_security_config(policy=None):
 
         policies = {
             POLICY_STRICT: {
-                'description': 'Block execution on ANY security finding',
-                'blocks': ['All severity levels (Critical, High, Medium, Low)'],
-                'use_case': 'Production environments, untrusted tools'
+                "description": "Block execution on ANY security finding",
+                "blocks": ["All severity levels (Critical, High, Medium, Low)"],
+                "use_case": "Production environments, untrusted tools",
             },
             POLICY_WARN: {
-                'description': 'Block only on CRITICAL findings, warn on others',
-                'blocks': ['Critical severity'],
-                'use_case': 'Development environments (default)'
+                "description": "Block only on CRITICAL findings, warn on others",
+                "blocks": ["Critical severity"],
+                "use_case": "Development environments (default)",
             },
             POLICY_PERMISSIVE: {
-                'description': 'Block only on CRITICAL/HIGH findings',
-                'blocks': ['Critical, High severity'],
-                'use_case': 'Trusted tools, local development'
-            }
+                "description": "Block only on CRITICAL/HIGH findings",
+                "blocks": ["Critical, High severity"],
+                "use_case": "Trusted tools, local development",
+            },
         }
 
         print("\nPolicy Details:")
@@ -447,7 +474,7 @@ def main():
     """Main entry point for the Axle CLI."""
     parser = argparse.ArgumentParser(
         prog="axle",
-        description="Axle: A modular CLI platform for running Python microtools."
+        description="Axle: A modular CLI platform for running Python microtools.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -457,7 +484,9 @@ def main():
     # axle run
     run_parser = subparsers.add_parser("run", help="Run a tool by number or name")
     run_parser.add_argument("tool", help="Tool number or name (without .py)")
-    run_parser.add_argument("prompt", nargs="?", default="", help="Optional prompt text")
+    run_parser.add_argument(
+        "prompt", nargs="?", default="", help="Optional prompt text"
+    )
 
     # axle info
     info_parser = subparsers.add_parser("info", help="Show tool information")
@@ -476,16 +505,28 @@ def main():
     subparsers.add_parser("help", help="Show this help message")
 
     # axle security
-    security_parser = subparsers.add_parser("security", help="Show or configure security policy")
-    security_parser.add_argument("--policy", choices=["strict", "warn", "permissive"],
-                               help="Set security policy (or use AXLE_SECURITY_POLICY env var)")
+    security_parser = subparsers.add_parser(
+        "security", help="Show or configure security policy"
+    )
+    security_parser.add_argument(
+        "--policy",
+        choices=["strict", "warn", "permissive"],
+        help="Set security policy (or use AXLE_SECURITY_POLICY env var)",
+    )
 
     # axle uninstall
-    uninstall_parser = subparsers.add_parser("uninstall", help="Uninstall Axle CLI (preserves tools directory)")
-    uninstall_parser.add_argument("--keep-tools", action="store_true", default=True,
-                                  help="Preserve tools directory (default: True)")
-    uninstall_parser.add_argument("--remove-tools", action="store_true",
-                                  help="Also remove tools directory")
+    uninstall_parser = subparsers.add_parser(
+        "uninstall", help="Uninstall Axle CLI (preserves tools directory)"
+    )
+    uninstall_parser.add_argument(
+        "--keep-tools",
+        action="store_true",
+        default=True,
+        help="Preserve tools directory (default: True)",
+    )
+    uninstall_parser.add_argument(
+        "--remove-tools", action="store_true", help="Also remove tools directory"
+    )
 
     args = parser.parse_args()
 
@@ -503,10 +544,12 @@ def main():
     elif args.command == "path":
         return show_tools_path()
     elif args.command == "security":
-        return show_security_config(getattr(args, 'policy', None))
+        return show_security_config(getattr(args, "policy", None))
     elif args.command == "uninstall":
-        return uninstall_axle(keep_tools=not getattr(args, 'remove_tools', False),
-                             remove_tools=getattr(args, 'remove_tools', False))
+        return uninstall_axle(
+            keep_tools=not getattr(args, "remove_tools", False),
+            remove_tools=getattr(args, "remove_tools", False),
+        )
     elif args.command == "help":
         parser.print_help()
         return 0

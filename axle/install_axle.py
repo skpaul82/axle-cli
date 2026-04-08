@@ -65,7 +65,7 @@ def check_environment():
             [sys.executable, "-m", "pip", "--version"],
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
         )
         if result.returncode == 0:
             pip_version = result.stdout.strip()
@@ -86,7 +86,7 @@ def check_environment():
                 [sys.executable, "-m", "pip", "install", "--upgrade", "pip"],
                 capture_output=True,
                 text=True,
-                timeout=60
+                timeout=60,
             )
             if result.returncode == 0:
                 print("   ✅ Can install packages")
@@ -116,8 +116,10 @@ def check_environment():
         print("   • pip issues: Try 'python -m ensurepip --upgrade'")
         print("   • Permission issues: Try using 'pip install --user'")
 
-        continue_install = input("\nContinue with installation anyway? [y/N]: ").strip().lower()
-        if continue_install not in ['y', 'yes']:
+        continue_install = (
+            input("\nContinue with installation anyway? [y/N]: ").strip().lower()
+        )
+        if continue_install not in ["y", "yes"]:
             print("\n❌ Installation cancelled. Please resolve the issues above.")
             print(f"See FAQ for help: {FAQ_URL}")
             sys.exit(1)
@@ -172,6 +174,7 @@ def check_ram():
 
     try:
         import psutil
+
         ram_gb = psutil.virtual_memory().total / (1024**3)
 
         print(f"   Available: {ram_gb:.1f} GB")
@@ -194,7 +197,9 @@ def get_tools_directory():
     print("📁 Tools Directory Configuration")
     print(f"   Default: {TOOLS_DIR}")
 
-    tools_dir_input = input("\nEnter tools directory path (press Enter for default): ").strip()
+    tools_dir_input = input(
+        "\nEnter tools directory path (press Enter for default): "
+    ).strip()
 
     if not tools_dir_input:
         tools_dir = Path(TOOLS_DIR)
@@ -203,8 +208,12 @@ def get_tools_directory():
 
     # Create directory if it doesn't exist
     if not tools_dir.exists():
-        create = input(f"\nDirectory '{tools_dir}' does not exist. Create it? [Y/n]: ").strip().lower()
-        if create in ['', 'y', 'yes']:
+        create = (
+            input(f"\nDirectory '{tools_dir}' does not exist. Create it? [Y/n]: ")
+            .strip()
+            .lower()
+        )
+        if create in ["", "y", "yes"]:
             try:
                 tools_dir.mkdir(parents=True, exist_ok=True)
                 print(f"   ✅ Created directory: {tools_dir}")
@@ -237,7 +246,7 @@ def confirm_installation():
     print("\n" + "-" * 60)
     confirm = input("Proceed with installation? [Y/n]: ").strip().lower()
 
-    if confirm in ['n', 'no']:
+    if confirm in ["n", "no"]:
         print("\n❌ Installation cancelled.")
         sys.exit(0)
 
@@ -247,12 +256,7 @@ def run_command(cmd, description):
     print(f"\n🔄 {description}...")
 
     try:
-        result = subprocess.run(
-            cmd,
-            check=True,
-            capture_output=True,
-            text=True
-        )
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
         print(f"   ✅ {description} complete")
         return True
     except subprocess.CalledProcessError as e:
@@ -264,8 +268,7 @@ def run_command(cmd, description):
 def upgrade_pip():
     """Upgrade pip to latest version."""
     return run_command(
-        [sys.executable, "-m", "pip", "install", "--upgrade", "pip"],
-        "Upgrading pip"
+        [sys.executable, "-m", "pip", "install", "--upgrade", "pip"], "Upgrading pip"
     )
 
 
@@ -278,15 +281,14 @@ def install_dependencies():
 
     return run_command(
         [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"],
-        "Installing dependencies"
+        "Installing dependencies",
     )
 
 
 def install_package():
     """Install axle package in editable mode."""
     return run_command(
-        [sys.executable, "-m", "pip", "install", "-e", "."],
-        "Installing axle package"
+        [sys.executable, "-m", "pip", "install", "-e", "."], "Installing axle package"
     )
 
 
@@ -298,13 +300,15 @@ def download_spacy_model():
         subprocess.run(
             [sys.executable, "-m", "spacy", "download", "en_core_web_sm"],
             check=True,
-            capture_output=True
+            capture_output=True,
         )
         print("   ✅ spaCy model downloaded")
         return True
     except subprocess.CalledProcessError:
         print("   ⚠️ Could not download spaCy model")
-        print("      You can download it later: python -m spacy download en_core_web_sm")
+        print(
+            "      You can download it later: python -m spacy download en_core_web_sm"
+        )
         return False
 
 
@@ -315,11 +319,7 @@ def verify_installation():
 
     # Test axle command
     try:
-        result = subprocess.run(
-            ["axle", "list"],
-            capture_output=True,
-            timeout=10
-        )
+        result = subprocess.run(["axle", "list"], capture_output=True, timeout=10)
         if result.returncode == 0:
             print("   ✅ axle command works!")
         else:
@@ -340,7 +340,7 @@ def display_success_message():
 
     print("\n🚀 Quick Start:")
     print("   axle list              # See all available tools")
-    print("   axle run 1 \"your text\"  # Run SEO keyword checker")
+    print('   axle run 1 "your text"  # Run SEO keyword checker')
     print("   axle doctor            # Check your setup")
     print("   axle help              # See all commands")
 
@@ -370,7 +370,7 @@ def main():
         if not checks_passed:
             print("\n⚠️ Some system checks failed. Continue anyway? [Y/n]: ")
             response = input().strip().lower()
-            if response in ['n', 'no']:
+            if response in ["n", "no"]:
                 print("\n❌ Installation cancelled.")
                 sys.exit(1)
 
@@ -396,7 +396,9 @@ def main():
             verify_installation()
             display_success_message()
         else:
-            print("\n❌ Installation encountered errors. Please check the output above.")
+            print(
+                "\n❌ Installation encountered errors. Please check the output above."
+            )
             sys.exit(1)
 
     except KeyboardInterrupt:
