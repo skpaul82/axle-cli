@@ -1,18 +1,18 @@
 # Troubleshooting Guide
 
-Solutions to common problems when using Buddy Tools.
+Solutions to common problems when using Axle CLI.
 
 ## Installation Issues
 
-### "Command not found: buddy"
+### "Command not found: axle"
 
-**Problem:** After installation, the `buddy` command is not recognized.
+**Problem:** After installation, the `axle` command is not recognized.
 
 **Solutions:**
 
 1. **Verify Installation:**
    ```bash
-   pip show buddy-tools
+   pip show axle-cli
    ```
    If not installed, run:
    ```bash
@@ -28,13 +28,57 @@ Solutions to common problems when using Buddy Tools.
 
 3. **Try Python Module Invocation:**
    ```bash
-   python -m scripts.buddy list
+   python -m axle.axle list
    ```
 
 4. **Edit Mode Verification:**
    Make sure you installed with `-e` flag:
    ```bash
    pip install -e .
+   ```
+
+### "Python version too old"
+
+**Problem:** Axle requires Python 3.10+, but you have an older version.
+
+**Solutions:**
+
+1. **Install Python 3.10+:**
+   - macOS: `brew install python@3.11`
+   - Ubuntu: `sudo apt install python3.11`
+   - Windows: Download from https://www.python.org/downloads/
+
+2. **Use python3.11 explicitly:**
+   ```bash
+   python3.11 -m pip install -e .
+   python3.11 -m axle.axle list
+   ```
+
+### "pip not available" or "pip install failed"
+
+**Problem:** pip is not available or cannot install packages.
+
+**Solutions:**
+
+1. **Ensure pip is installed:**
+   ```bash
+   python -m ensurepip --upgrade
+   ```
+
+2. **Try using python -m pip:**
+   ```bash
+   python -m pip install -e .
+   ```
+
+3. **Use user installation:**
+   ```bash
+   python -m pip install --user -e .
+   ```
+
+4. **Check for permissions issues:**
+   ```bash
+   # Don't use sudo with pip, try:
+   python -m pip install --user -e .
    ```
 
 ### "ModuleNotFoundError: No module named 'X'"

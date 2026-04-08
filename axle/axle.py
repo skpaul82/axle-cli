@@ -404,6 +404,45 @@ def show_security_config(policy=None):
     return 0
 
 
+def uninstall_axle(keep_tools=True, remove_tools=False):
+    """Uninstall Axle CLI while preserving tools directory."""
+    print("\n🗑️  Axle Uninstaller")
+    print("=" * 60)
+
+    if remove_tools:
+        keep_tools = False
+
+    # Check what will be removed
+    tools_path = Path(TOOLS_DIR)
+    has_custom_tools = False
+
+    if keep_tools and tools_path.exists():
+        tool_files = [f for f in tools_path.glob("*.py") if f.name != "__init__.py"]
+        # Check if user has custom tools (beyond the 3 default ones)
+        if len(tool_files) > 3:
+            has_custom_tools = True
+
+    print("\nThis will uninstall the Axle CLI.")
+    if keep_tools and has_custom_tools:
+        print(f"✅ Your tools directory will be preserved with {len(tool_files)} tools")
+    elif keep_tools and tools_path.exists():
+        print("✅ Your tools directory will be preserved")
+    elif not keep_tools and tools_path.exists():
+        print("⚠️  Your tools directory will also be removed")
+
+    print("\nTo uninstall, run:")
+    print("  pip uninstall axle-cli")
+
+    if keep_tools:
+        print(f"\nYour tools will remain at: {tools_path.absolute()}")
+        print("To reinstall Axle later:")
+        print("  pip install -e .")
+        print("  (from the directory containing tools/)")
+
+    print_community_footer()
+    return 0
+
+
 def main():
     """Main entry point for the Axle CLI."""
     parser = argparse.ArgumentParser(
@@ -441,6 +480,13 @@ def main():
     security_parser.add_argument("--policy", choices=["strict", "warn", "permissive"],
                                help="Set security policy (or use AXLE_SECURITY_POLICY env var)")
 
+    # axle uninstall
+    uninstall_parser = subparsers.add_parser("uninstall", help="Uninstall Axle CLI (preserves tools directory)")
+    uninstall_parser.add_argument("--keep-tools", action="store_true", default=True,
+                                  help="Preserve tools directory (default: True)")
+    uninstall_parser.add_argument("--remove-tools", action="store_true",
+                                  help="Also remove tools directory")
+
     args = parser.parse_args()
 
     # Route to appropriate command
@@ -458,6 +504,9 @@ def main():
         return show_tools_path()
     elif args.command == "security":
         return show_security_config(getattr(args, 'policy', None))
+    elif args.command == "uninstall":
+        return uninstall_axle(keep_tools=not getattr(args, 'remove_tools', False),
+                             remove_tools=getattr(args, 'remove_tools', False))
     elif args.command == "help":
         parser.print_help()
         return 0

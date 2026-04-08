@@ -9,6 +9,9 @@ from pathlib import Path
 
 TOOLS_DIR = "tools"
 
+FAQ_URL = "https://github.com/skpaul82/axle-cli/blob/main/docs/troubleshooting.md"
+DOCS_URL = "https://github.com/skpaul82/axle-cli/blob/main/docs"
+
 COMMUNITY_FOOTER = """
 ---
 🌐 Community & Support
@@ -33,6 +36,93 @@ def welcome_message():
     print("  3. Set up the axle command")
     print("  4. Download required ML models")
     print("  5. Verify installation")
+
+
+def check_environment():
+    """Run comprehensive environment check first."""
+    print("\n" + "=" * 60)
+    print("🔍 Environment Check")
+    print("=" * 60)
+
+    issues = []
+
+    # Check Python version
+    version = sys.version_info
+    version_str = f"{version.major}.{version.minor}.{version.micro}"
+    print(f"\n🐍 Python Version: {version_str}")
+
+    if version < (3, 10):
+        print(f"   ❌ Python 3.10+ required. You have {version_str}")
+        issues.append("Python version")
+    else:
+        print(f"   ✅ Python version OK")
+
+    # Check pip availability
+    print("\n📦 Checking pip availability...")
+    pip_available = False
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "--version"],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        if result.returncode == 0:
+            pip_version = result.stdout.strip()
+            print(f"   ✅ pip available: {pip_version}")
+            pip_available = True
+        else:
+            print("   ❌ pip not available")
+            issues.append("pip not available")
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        print(f"   ❌ pip check failed: {e}")
+        issues.append("pip not available")
+
+    # Check if we can install packages
+    if pip_available:
+        print("\n🔧 Testing package installation...")
+        try:
+            result = subprocess.run(
+                [sys.executable, "-m", "pip", "install", "--upgrade", "pip"],
+                capture_output=True,
+                text=True,
+                timeout=60
+            )
+            if result.returncode == 0:
+                print("   ✅ Can install packages")
+            else:
+                print("   ⚠️  Cannot install packages")
+                issues.append("Cannot install packages")
+        except Exception as e:
+            print(f"   ⚠️  Package install test failed: {e}")
+            issues.append("Package installation failed")
+
+    # If issues found, show FAQ
+    if issues:
+        print("\n" + "=" * 60)
+        print("⚠️  Environment Issues Detected")
+        print("=" * 60)
+        print("\nThe following issues were found:")
+        for i, issue in enumerate(issues, 1):
+            print(f"   {i}. {issue}")
+
+        print("\n📚 Troubleshooting Options:")
+        print(f"   1. Read the FAQ: {FAQ_URL}")
+        print(f"   2. Documentation: {DOCS_URL}")
+        print("   3. Try manual installation (see README.md)")
+
+        print("\nCommon solutions:")
+        print("   • Python version: Upgrade to 3.10+ from python.org")
+        print("   • pip issues: Try 'python -m ensurepip --upgrade'")
+        print("   • Permission issues: Try using 'pip install --user'")
+
+        continue_install = input("\nContinue with installation anyway? [y/N]: ").strip().lower()
+        if continue_install not in ['y', 'yes']:
+            print("\n❌ Installation cancelled. Please resolve the issues above.")
+            print(f"See FAQ for help: {FAQ_URL}")
+            sys.exit(1)
+
+    print("\n✅ Environment check passed")
 
 
 def check_python_version():
@@ -267,6 +357,9 @@ def main():
     try:
         # Welcome
         welcome_message()
+
+        # Environment check (runs first, may exit)
+        check_environment()
 
         # System checks
         checks_passed = True
