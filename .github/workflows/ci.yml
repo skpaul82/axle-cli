@@ -29,17 +29,17 @@ jobs:
     - name: Run flake8
       run: |
         # Stop the build if there are Python syntax errors or undefined names
-        flake8 scripts/ tools/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 axle/ tools/ --count --select=E9,F63,F7,F82 --show-source --statistics
         # Exit-zero treats all errors as warnings
-        flake8 scripts/ tools/ --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
+        flake8 axle/ tools/ --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
 
     - name: Run black --check
       run: |
-        black --check scripts/ tools/
+        black --check axle/ tools/
 
     - name: Run isort --check
       run: |
-        isort --check-only scripts/ tools/
+        isort --check-only axle/ tools/
 
   test-install:
     name: Test Installation
@@ -105,7 +105,7 @@ jobs:
     - name: Check for secrets
       run: |
         # Basic check for common secret patterns
-        if grep -r "api_key\|apikey\|secret.*=\|password.*=" scripts/ tools/ --include="*.py" | grep -v "def\|#\|\""; then
+        if grep -r "api_key\|apikey\|secret.*=\|password.*=" axle/ tools/ --include="*.py" | grep -v "def\|#\|\""; then
           echo "Warning: Possible secrets found in code"
           exit 1
         fi

@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 # Import tool security validator
-from scripts.tool_validator import validate_tool_before_execution, get_security_policy
+from axle.tool_validator import validate_tool_before_execution, get_security_policy
 
 TOOLS_DIR = "tools"
 
@@ -350,7 +350,7 @@ def show_tools_path():
 
 def show_security_config(policy=None):
     """Show or configure security policy."""
-    from scripts.tool_validator import POLICY_STRICT, POLICY_WARN, POLICY_PERMISSIVE
+    from axle.tool_validator import POLICY_STRICT, POLICY_WARN, POLICY_PERMISSIVE
 
     if policy is None:
         # Show current policy

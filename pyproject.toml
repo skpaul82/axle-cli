@@ -38,7 +38,7 @@ dependencies = [
 ]
 
 [project.scripts]
-axle = "scripts.axle:main"
+axle = "axle.axle:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
