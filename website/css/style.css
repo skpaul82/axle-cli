@@ -140,6 +140,24 @@ body {
     flex-wrap: wrap;
 }
 
+.copy-button-install {
+    position: absolute;
+    right: 0px;
+    top: 80%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-right: none;
+    border-bottom: none;
+    padding: 3px 6px;
+    border-radius: 0;
+    border-bottom-right-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -152,7 +170,7 @@ body {
     border: 2px solid transparent;
     cursor: pointer;
     font-size: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary {
@@ -163,7 +181,7 @@ body {
 .btn-primary:hover {
     background-color: #f8fafc;
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     border-color: #1d4ed8;
 }
 
@@ -177,7 +195,7 @@ body {
     background-color: #059669;
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .hero-install {
@@ -424,7 +442,7 @@ body {
     margin-bottom: 1rem;
 }
 
-.newsletter > p {
+.newsletter>p {
     font-size: 1.125rem;
     margin-bottom: 2rem;
     opacity: 0.9;
@@ -628,7 +646,7 @@ button:focus {
 
 .copy-button-command:hover,
 .copy-button-install:hover {
-    background: rgba(255,255,255,0.3) !important;
+    background: rgba(255, 255, 255, 0.3) !important;
     transform: translateY(-50%) scale(1.05);
 }
 

@@ -36,10 +36,6 @@
             <div class="hero-content">
                 <h1>
                     Axle CLI
-                    <a href="https://www.axle.sanjoypaul.com" target="_blank" style="font-size: 0.6em; margin-left: 10px; text-decoration: none;">
-                        <i class="fas fa-volume-up" style="color: white;"></i>
-                        <span style="opacity: 0.9;">/ˈæksəl klaɪ/</span>
-                    </a>
                 </h1>
                 <p class="hero-subtitle">A Modular Platform for Python Microtools</p>
                 <p class="hero-description">
@@ -58,10 +54,11 @@
                     <div style="position: relative; display: inline-block;">
                         <code class="install-command" id="installCommand">
                             <span class="prompt">$</span> pip install git+https://github.com/skpaul82/axle-cli.git
+                        
+                            <button onclick="copyInstallCommand()" class="copy-button-install" aria-label="Copy installation command" title="Copy installation command" data-clipboard-text="$ pip install git+https://github.com/skpaul82/axle-cli.git">
+                                <i class="fas fa-copy"></i>
+                            </button>
                         </code>
-                        <button onclick="copyInstallCommand()" class="copy-button-install" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: all 0.3s;">
-                            <i class="fas fa-copy"></i>
-                        </button>
                     </div>
                 </div>
             </div>
