@@ -1,0 +1,6 @@
+# Cloudflare Pages Redirects
+# Redirect root to index.html
+/ /index.html 200
+
+# Add www redirect if needed
+# https://axle.sanjoypaul.com/* https://www.axle.sanjoypaul.com/:splat 301

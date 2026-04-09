@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Axle CLI</title>
+    <meta name="description" content="Frequently asked questions about Axle CLI. Find answers about installation, usage, security, and more.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .faq-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .faq-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .faq-hero p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 20px;
+        }
+
+        .faq-search {
+            margin-bottom: 3rem;
+        }
+
+        .faq-search input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        .faq-search input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .faq-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            justify-content: center;
+        }
+
+        .faq-category-btn {
+            padding: 0.5rem 1.25rem;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .faq-category-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .faq-category-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .faq-item {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+
+        .faq-item:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+            user-select: none;
+        }
+
+        .faq-question:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+
+        .faq-icon.active {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: var(--bg-secondary);
+        }
+
+        .faq-answer.active {
+            max-height: 2000px;
+        }
+
+        .faq-answer-content {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .faq-answer-content code {
+            background-color: var(--bg-color);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+
+        .faq-answer-content pre {
+            background-color: var(--bg-color);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .faq-answer-content pre code {
+            background-color: transparent;
+            color: var(--text-color);
+        }
+
+        .faq-answer-content ul,
+        .faq-answer-content ol {
+            margin-left: 2rem;
+            margin-top: 1rem;
+        }
+
+        .faq-answer-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            display: none;
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .faq-hero h1 {
+                font-size: 2rem;
+            }
+
+            .faq-question {
+                font-size: 1rem;
+                padding: 1rem;
+            }
+
+            .faq-answer-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html">⚙️ Axle CLI</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="docs.html">Documentation</a></li>
+                <li><a href="faq.html" class="active">FAQ</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="https://github.com/skpaul82/axle-cli" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- FAQ Hero -->
+    <section class="faq-hero">
+        <div class="container">
+            <h1>Frequently Asked Questions</h1>
+            <p>Find answers to common questions about Axle CLI</p>
+        </div>
+    </section>
+
+    <!-- FAQ Content -->
+    <div class="faq-container">
+        <!-- Search -->
+        <div class="faq-search">
+            <input
+                type="text"
+                id="faqSearchInput"
+                placeholder="🔍 Search questions..."
+                aria-label="Search FAQ"
+            >
+        </div>
+
+        <!-- Category Filters -->
+        <div class="faq-categories">
+            <button class="faq-category-btn active" data-category="all">All</button>
+            <button class="faq-category-btn" data-category="getting-started">Getting Started</button>
+            <button class="faq-category-btn" data-category="usage">Usage</button>
+            <button class="faq-category-btn" data-category="security">Security</button>
+            <button class="faq-category-btn" data-category="tools">Tools</button>
+            <button class="faq-category-btn" data-category="troubleshooting">Troubleshooting</button>
+            <button class="faq-category-btn" data-category="contributing">Contributing</button>
+        </div>
+
+        <!-- FAQ Items -->
+        <div class="faq-list" id="faqList">
+
+            <!-- Getting Started -->
+            <div class="faq-item" data-category="getting-started">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What is Axle CLI?
+                        <span class="category-badge">Getting Started</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Axle is a modular CLI platform for running Python microtools from a shared tools directory. It provides:</p>
+                        <ul>
+                            <li>Built-in security validation before executing any tool</li>
+                            <li>Automatic tool discovery - just drop Python files in your tools directory</li>
+                            <li>Simple numbered command system for easy tool execution</li>
+                            <li>Dependency vulnerability scanning</li>
+                            <li>Built-in SEO and productivity tools</li>
+                        </ul>
+                        <p>Think of it as a platform where anyone can add tools without modifying core code.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="getting-started">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I install Axle?
+                        <span class="category-badge">Getting Started</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>The easiest way is to install directly from GitHub:</p>
+                        <pre><code>pip install git+https://github.com/skpaul82/axle-cli.git</code></pre>
+                        <p>For manual installation, see the <a href="docs.html#installation">documentation</a>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="getting-started">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What are the system requirements?
+                        <span class="category-badge">Getting Started</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <ul>
+                            <li><strong>Python:</strong> 3.10 or higher</li>
+                            <li><strong>RAM:</strong> 8GB minimum (16GB recommended)</li>
+                            <li><strong>Disk Space:</strong> 5-8GB free for ML models and dependencies</li>
+                            <li><strong>Operating System:</strong> macOS, Linux, or Windows</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage -->
+            <div class="faq-item" data-category="usage">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I run a tool?
+                        <span class="category-badge">Usage</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>You can run tools by number or by name:</p>
+                        <pre><code># Run by number
+axle run 1 "your prompt"
+
+# Run by name
+axle run seo_keyword_checker "your prompt"</code></pre>
+                        <p>Use <code>axle list</code> to see all available tools with their numbers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="usage">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What tools are included?
+                        <span class="category-badge">Usage</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Axle comes with built-in tools:</p>
+                        <ul>
+                            <li><strong>SEO Keyword Checker:</strong> Analyze text for keyword density and optimization</li>
+                            <li><strong>Meta Tag Auditor:</strong> Analyze HTML/webpages for meta tag completeness</li>
+                            <li><strong>Daily Life Hack Generator:</strong> Generate personalized productivity tips</li>
+                        </ul>
+                        <p>Plus, you can easily add your own tools!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="faq-item" data-category="security">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How does security validation work?
+                        <span class="category-badge">Security</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Before ANY tool executes, Axle scans it for:</p>
+                        <ul>
+                            <li>Dangerous patterns (eval, exec, compile, __import__)</li>
+                            <li>Hardcoded secrets (API keys, passwords, tokens)</li>
+                            <li>Unsafe imports (pickle, marshal)</li>
+                            <li>Subprocess calls with shell=True</li>
+                        </ul>
+                        <p>If issues are found, execution is blocked based on your security policy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="security">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What are the security policies?
+                        <span class="category-badge">Security</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>There are three security policies:</p>
+                        <ul>
+                            <li><strong>strict:</strong> Blocks ALL security findings (best for production)</li>
+                            <li><strong>warn</strong> (default): Blocks only CRITICAL findings, warns on others</li>
+                            <li><strong>permissive:</strong> Blocks only CRITICAL/HIGH findings (best for trusted tools)</li>
+                        </ul>
+                        <p>Set the policy with:</p>
+                        <pre><code>export AXLE_SECURITY_POLICY=strict</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools -->
+            <div class="faq-item" data-category="tools">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I add my own tools?
+                        <span class="category-badge">Tools</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Adding tools is easy!</p>
+                        <ol>
+                            <li>Find your tools directory: <code>axle path</code></li>
+                            <li>Create a Python file (e.g., <code>04_my_tool.py</code>)</li>
+                            <li>Implement two functions:
+                                <pre><code>def get_description() -> str:
+    return "Brief description"
+
+def main(prompt: str) -> None:
+    # Your logic here
+    pass</code></pre>
+                            </li>
+                            <li>Run it: <code>axle run my_tool "prompt"</code></li>
+                        </ol>
+                        <p>That's it! No changes to core code required.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="tools">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Can I share my tools with others?
+                        <span class="category-badge">Tools</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Absolutely! Simply share your Python file and others can drop it into their tools directory. We also welcome contributions to the main repository. Check out our <a href="community.html">community page</a> for details on contributing.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="faq-item" data-category="troubleshooting">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Why does the axle command not work?
+                        <span class="category-badge">Troubleshooting</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Try these solutions:</p>
+                        <ol>
+                            <li>Verify installation: <code>pip show axle-cli</code></li>
+                            <li>Try with Python: <code>python -m axle.axle list</code></li>
+                            <li>Reinstall: <code>pip install -e .</code></li>
+                            <li>Check your PATH includes pip scripts directory</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="troubleshooting">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Why was my tool execution blocked?
+                        <span class="category-badge">Troubleshooting</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Your tool was blocked by the security policy. You'll see a message explaining why. Options:</p>
+                        <ul>
+                            <li>Fix the security issue in your tool</li>
+                            <li>Use a more permissive policy: <code>export AXLE_SECURITY_POLICY=permissive</code></li>
+                            <li>Override for one command: <code>AXLE_SECURITY_POLICY=permissive axle run tool</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contributing -->
+            <div class="faq-item" data-category="contributing">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How can I contribute?
+                        <span class="category-badge">Contributing</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>We welcome contributions! Here's how:</p>
+                        <ul>
+                            <li><strong>Report bugs:</strong> Open an issue on GitHub</li>
+                            <li><strong>Suggest features:</strong> Start a discussion or issue</li>
+                            <li><strong>Add tools:</strong> Create a pull request with your tool</li>
+                            <li><strong>Improve docs:</strong> Submit documentation updates</li>
+                            <li><strong>Fix bugs:</strong> Submit a pull request</li>
+                        </ul>
+                        <p>See the <a href="https://github.com/skpaul82/axle-cli/blob/main/docs/contributing.md">contributing guide</a> for details.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="contributing">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What skills do I need to contribute?
+                        <span class="category-badge">Contributing</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Depending on how you want to contribute:</p>
+                        <ul>
+                            <li><strong>Adding tools:</strong> Basic Python knowledge</li>
+                            <li><strong>Fixing bugs:</strong> Python development skills</li>
+                            <li><strong>Documentation:</strong> Good writing skills</li>
+                            <li><strong>Testing:</strong> Attention to detail</li>
+                        </ul>
+                        <p>Everyone can contribute! Even reporting bugs helps immensely.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" id="noResults">
+            <h3>No questions found</h3>
+            <p>Try different search terms or select a different category.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Axle CLI</h4>
+                    <p>A modular platform for running Python microtools from a shared tools directory.</p>
+                    <p class="version">Version 1.1.1</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="docs.html">Documentation</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="community.html">Community</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/skpaul82/axle-cli">GitHub Repository</a></li>
+                        <li><a href="https://github.com/skpaul82/axle-cli/issues">Report Issues</a></li>
+                        <li><a href="https://github.com/skpaul82/axle-cli/blob/main/docs/contributing.md">Contributing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Still Need Help?</h4>
+                    <ul>
+                        <li><a href="https://github.com/skpaul82/axle-cli/issues">Ask on GitHub</a></li>
+                        <li><a href="https://x.com/_skpaul82">Contact on X</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Axle CLI. Built with ❤️ for the community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // FAQ Search Functionality
+        const searchInput = document.getElementById('faqSearchInput');
+        const faqItems = document.querySelectorAll('.faq-item');
+        const noResults = document.getElementById('noResults');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            let visibleCount = 0;
+
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                const category = item.dataset.category.toLowerCase();
+
+                const matches = question.includes(query) ||
+                               answer.includes(query) ||
+                               category.includes(query);
+
+                if (matches || query === '') {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            noResults.classList.toggle('show', visibleCount === 0 && query !== '');
+        });
+
+        // Category Filter
+        const categoryBtns = document.querySelectorAll('.faq-category-btn');
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const category = this.dataset.category;
+                let visibleCount = 0;
+
+                // Update active state
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Filter items
+                faqItems.forEach(item => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.style.display = '';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                noResults.classList.toggle('show', visibleCount === 0);
+
+                // Clear search when filtering by category
+                searchInput.value = '';
+            });
+        });
+    </script>
+</body>
+</html>

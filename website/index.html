@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axle CLI - A Modular Platform for Python Microtools</title>
+    <meta name="description" content="Axle is a modular CLI platform for running Python microtools from a shared tools directory. Built-in security, automatic tool discovery, and simple command structure.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="index.html">⚙️ Axle CLI</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="pages/docs.html">Documentation</a></li>
+                <li><a href="pages/faq.html">FAQ</a></li>
+                <li><a href="pages/community.html">Community</a></li>
+                <li><a href="https://github.com/skpaul82/axle-cli" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Axle CLI</h1>
+                <p class="hero-subtitle">A Modular Platform for Python Microtools</p>
+                <p class="hero-description">
+                    Run ANY Python tool consistently without remembering individual script locations or interfaces.
+                    Built-in security validation, automatic tool discovery, and a simple command structure.
+                </p>
+                <div class="hero-buttons">
+                    <a href="pages/docs.html" class="btn btn-primary">
+                        <i class="fas fa-book"></i> Get Started
+                    </a>
+                    <a href="https://github.com/skpaul82/axle-cli" target="_blank" class="btn btn-secondary">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                </div>
+                <div class="hero-install">
+                    <code class="install-command">
+                        <span class="prompt">$</span> pip install git+https://github.com/skpaul82/axle-cli.git
+                    </code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>Why Choose Axle?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Built-in Security</h3>
+                    <p>Pre-execution validation scans all tools for security issues. Blocks dangerous patterns, hardcoded secrets, and unsafe imports automatically.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Modular Platform</h3>
+                    <p>Drop any Python script into your tools directory and run it instantly. No modifications to core code required. Zero friction.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Simple Commands</h3>
+                    <p>Consistent interface with numbered tools. Run by number or name. No need to remember individual script locations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Dependency Scanning</h3>
+                    <p>Integrated pip-audit for package security. Know when your dependencies have vulnerabilities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>SEO Tools</h3>
+                    <p>Built-in keyword checker, meta tag auditor, and content optimization tools for SEO professionals.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Productivity Hacks</h3>
+                    <p>Daily-life automation helpers that generate personalized tips for productivity and optimization.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="quick-start">
+        <div class="container">
+            <h2>Quick Start</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Install Axle</h3>
+                        <code>pip install git+https://github.com/skpaul82/axle-cli.git</code>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>List Available Tools</h3>
+                        <code>axle list</code>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Run a Tool</h3>
+                        <code>axle run 1 "your prompt"</code>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Add Your Own Tools</h3>
+                        <p>Drop Python files in your tools directory. That's it!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Developers Section -->
+    <section class="audience-section">
+        <div class="container">
+            <div class="audience-grid">
+                <div class="audience-card b2c">
+                    <div class="audience-icon">👨‍💻</div>
+                    <h3>For Developers & Power Users</h3>
+                    <p>Create and run your own Python microtools without building a full CLI framework. Perfect for:</p>
+                    <ul>
+                        <li>Automating daily tasks</li>
+                        <li>Data processing scripts</li>
+                        <li>System administration tools</li>
+                        <li>Personal productivity helpers</li>
+                    </ul>
+                    <div class="audience-cta">
+                        <p><strong>Get started in minutes:</strong> Add your Python script to the tools directory and run it immediately.</p>
+                    </div>
+                </div>
+                <div class="audience-card b2b">
+                    <div class="audience-icon">🏢</div>
+                    <h3>For Teams & Organizations</h3>
+                    <p>Standardize tool execution across your team with built-in security validation. Ideal for:</p>
+                    <ul>
+                        <li>DevOps automation</li>
+                        <li>Content operations teams</li>
+                        <li>Quality assurance workflows</li>
+                        <li>Internal tool standardization</li>
+                    </ul>
+                    <div class="audience-cta">
+                        <p><strong>Enterprise-ready:</strong> Security-first design with customizable policies and compliance-friendly architecture.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Stay Updated</h2>
+                <p>Get the latest updates, new tools, and tips delivered to your inbox.</p>
+                <div class="newsletter-form">
+                    <script type="text/javascript" src="https://zoho-embedded.maillist-manage.com/js/optin.min.js" onload="setupZF_Optin()" async></script>
+                    <div id="zf_optin_wrapper" style="background-color: #ffffff; width: 100%; margin: 0 auto; padding: 20px; border-radius: 8px;">
+                        <div id="zf_optin_feedback"></div>
+                        <div id="zf_optin_msg" style="color: #333; font-size: 14px; margin-bottom: 15px;"></div>
+                        <form method="POST" action="https://maillist-manage.com/weboptin.zc" target="_zf_optin_confirmation" onsubmit="return zf_ValidateAndSubmit();" id="zf_optin_form">
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                                <input type="email" placeholder="Enter your email" name="CONTACT_EMAIL" id="CONTACT_EMAIL" style="flex: 1; min-width: 250px; padding: 12px 16px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;" required/>
+                                <button type="submit" class="btn btn-primary" style="padding: 12px 24px;">Subscribe</button>
+                            </div>
+                            <input type="hidden" name="zp_optin_check" value="true"/>
+                            <input type="hidden" name="zp_optin_format" value="embedded"/>
+                        </form>
+                    </div>
+                </div>
+                <p class="newsletter-note">No spam, ever. Unsubscribe anytime.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="community">
+        <div class="container">
+            <h2>Join the Community</h2>
+            <div class="community-links">
+                <a href="https://github.com/skpaul82/axle-cli" target="_blank" class="community-link">
+                    <i class="fab fa-github"></i>
+                    <div>
+                        <h4>GitHub</h4>
+                        <p>Star the repo, report issues, contribute</p>
+                    </div>
+                </a>
+                <a href="https://x.com/_skpaul82" target="_blank" class="community-link">
+                    <i class="fab fa-x-twitter"></i>
+                    <div>
+                        <h4>X/Twitter</h4>
+                        <p>Follow for updates and tips</p>
+                    </div>
+                </a>
+                <a href="https://www.axle.sanjoypaul.com" target="_blank" class="community-link">
+                    <i class="fas fa-globe"></i>
+                    <div>
+                        <h4>Website</h4>
+                        <p>Documentation and guides</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Axle CLI</h4>
+                    <p>A modular platform for running Python microtools from a shared tools directory.</p>
+                    <p class="version">Version 1.1.1</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="pages/docs.html">Documentation</a></li>
+                        <li><a href="pages/faq.html">FAQ</a></li>
+                        <li><a href="pages/community.html">Community</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/skpaul82/axle-cli">GitHub Repository</a></li>
+                        <li><a href="https://github.com/skpaul82/axle-cli/issues">Report Issues</a></li>
+                        <li><a href="https://github.com/skpaul82/axle-cli/blob/main/docs/contributing.md">Contributing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>License</h4>
+                    <p>MIT License - Free for personal and commercial use.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Axle CLI. Built with ❤️ for the community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - Axle CLI</title>
+    <meta name="description" content="Join the Axle CLI community. Contribute, get support, and connect with other users.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .community-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .community-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .community-hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .community-section {
+            padding: 4rem 0;
+        }
+
+        .community-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--text-color);
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .community-card {
+            background-color: var(--bg-color);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid var(--border-color);
+        }
+
+        .community-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .community-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .community-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .community-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .community-card .btn {
+            display: inline-block;
+            width: 100%;
+        }
+
+        .contribute-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .contribute-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contribute-card {
+            background-color: var(--bg-color);
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .contribute-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contribute-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .contribute-card li {
+            padding: 0.5rem 0;
+            color: var(--text-light);
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .contribute-card li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+
+        .stats-section {
+            background-color: var(--bg-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .stat-card {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 1.125rem;
+        }
+
+        .guidelines-section {
+            background-color: var(--bg-secondary);
+        }
+
+        .guidelines-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .guidelines-content h3 {
+            color: var(--text-color);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .guidelines-content p,
+        .guidelines-content ul {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .guidelines-content ul {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .guidelines-content li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="../index.html">⚙️ Axle CLI</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="docs.html">Documentation</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+                <li><a href="community.html" class="active">Community</a></li>
+                <li><a href="https://github.com/skpaul82/axle-cli" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Community Hero -->
+    <section class="community-hero">
+        <div class="container">
+            <h1>Join the Community</h1>
+            <p>Connect, contribute, and get support from the Axle CLI community</p>
+        </div>
+    </section>
+
+    <!-- Get Connected -->
+    <section class="community-section">
+        <div class="container">
+            <h2>Get Connected</h2>
+            <div class="community-grid">
+                <div class="community-card">
+                    <div class="community-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3>GitHub</h3>
+                    <p>Star the repository, report issues, and contribute code. The best place for technical discussions and development.</p>
+                    <a href="https://github.com/skpaul82/axle-cli" target="_blank" class="btn btn-primary">
+                        <i class="fab fa-github"></i> View Repository
+                    </a>
+                </div>
+                <div class="community-card">
+                    <div class="community-icon">
+                        <i class="fab fa-x-twitter"></i>
+                    </div>
+                    <h3>X/Twitter</h3>
+                    <p>Follow for updates, tips, and announcements. Get quick answers to simple questions.</p>
+                    <a href="https://x.com/_skpaul82" target="_blank" class="btn btn-secondary">
+                        <i class="fab fa-x-twitter"></i> Follow Us
+                    </a>
+                </div>
+                <div class="community-card">
+                    <div class="community-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Website</h3>
+                    <p>Documentation, guides, and resources. Your first stop for learning Axle CLI.</p>
+                    <a href="https://www.axle.sanjoypaul.com" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-globe"></i> Visit Website
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contribute -->
+    <section class="community-section contribute-section">
+        <div class="container">
+            <h2>Ways to Contribute</h2>
+            <div class="contribute-options">
+                <div class="contribute-card">
+                    <h3><i class="fas fa-bug"></i> Report Bugs</h3>
+                    <ul>
+                        <li>Search existing issues first</li>
+                        <li>Provide clear description</li>
+                        <li>Include steps to reproduce</li>
+                        <li>Add error messages and logs</li>
+                        <li>Run <code>axle doctor</code> and include output</li>
+                    </ul>
+                </div>
+                <div class="contribute-card">
+                    <h3><i class="fas fa-lightbulb"></i> Suggest Features</h3>
+                    <ul>
+                        <li>Check if feature already exists</li>
+                        <li>Describe the use case clearly</li>
+                        <li>Explain why it's important</li>
+                        <li>Suggest possible implementation</li>
+                        <li>Consider if it fits the project scope</li>
+                    </ul>
+                </div>
+                <div class="contribute-card">
+                    <h3><i class="fas fa-code"></i> Add Tools</h3>
+                    <ul>
+                        <li>Follow tool contract (get_description, main)</li>
+                        <li>Include error handling</li>
+                        <li>Add docstrings</li>
+                        <li>Test thoroughly</li>
+                        <li>Submit pull request</li>
+                    </ul>
+                </div>
+                <div class="contribute-card">
+                    <h3><i class="fas fa-file-alt"></i> Improve Docs</h3>
+                    <ul>
+                        <li>Fix typos and grammar</li>
+                        <li>Add examples</li>
+                        <li>Clarify confusing sections</li>
+                        <li>Update for new features</li>
+                        <li>Translate to other languages</li>
+                    </ul>
+                </div>
+                <div class="contribute-card">
+                    <h3><i class="fas fa-vial"></i> Test Features</h3>
+                    <ul>
+                        <li>Test on your platform</li>
+                        <li>Report edge cases</li>
+                        <li>Verify fixes work</li>
+                        <li>Check documentation accuracy</li>
+                        <li>Provide feedback on UX</li>
+                    </ul>
+                </div>
+                <div class="contribute-card">
+                    <h3><i class="fas fa-users"></i> Help Others</h3>
+                    <ul>
+                        <li>Answer questions on GitHub</li>
+                        <li>Share your tools</li>
+                        <li>Write tutorials</li>
+                        <li>Mentor new contributors</li>
+                        <li>Spread the word</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="community-section stats-section">
+        <div class="container">
+            <h2>Project Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">v1.1.1</div>
+                    <div class="stat-label">Current Version</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3+</div>
+                    <div class="stat-label">Built-in Tools</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Custom Tools Possible</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">MIT</div>
+                    <div class="stat-label">Open Source License</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guidelines -->
+    <section class="community-section guidelines-section">
+        <div class="container">
+            <div class="guidelines-content">
+                <h2>Community Guidelines</h2>
+                <p>We want to ensure a welcoming and productive community for everyone. Please follow these guidelines:</p>
+
+                <h3>Be Respectful</h3>
+                <ul>
+                    <li>Treat everyone with respect and professionalism</li>
+                    <li>Welcome newcomers and help them learn</li>
+                    <li>Assume good intentions from others</li>
+                    <li>Be constructive in your feedback</li>
+                </ul>
+
+                <h3>Be Collaborative</h3>
+                <ul>
+                    <li>Work together to solve problems</li>
+                    <li>Share knowledge and experience</li>
+                    <li>Ask for help when you need it</li>
+                    <li>Offer help when you can provide it</li>
+                </ul>
+
+                <h3>Be Inclusive</h3>
+                <ul>
+                    <li>Respect different viewpoints and experiences</li>
+                    <li>Use inclusive language</li>
+                    <li>Accept that not everyone will agree with you</li>
+                    <li>Focus on what is best for the community</li>
+                </ul>
+
+                <h3>Getting Started</h3>
+                <ul>
+                    <li>Check existing documentation before asking</li>
+                    <li>Search GitHub issues before creating new ones</li>
+                    <li>Start with good practices: clear titles, detailed descriptions</li>
+                    <li>Be patient - maintainers have limited time</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="community-section">
+        <div class="container" style="text-align: center; max-width: 700px;">
+            <h2>Ready to Contribute?</h2>
+            <p style="font-size: 1.125rem; color: var(--text-light); margin-bottom: 2rem;">
+                Whether you're a seasoned developer or just getting started, there's a place for you in the Axle CLI community. Every contribution helps!
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="https://github.com/skpaul82/axle-cli/issues" target="_blank" class="btn btn-primary">
+                    <i class="fas fa-bug"></i> Report an Issue
+                </a>
+                <a href="docs.html#adding-tools" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i> Add a Tool
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Axle CLI</h4>
+                    <p>A modular platform for running Python microtools from a shared tools directory.</p>
+                    <p class="version">Version 1.1.1</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="docs.html">Documentation</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="community.html">Community</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/skpaul82/axle-cli">GitHub Repository</a></li>
+                        <li><a href="https://github.com/skpaul82/axle-cli/issues">Report Issues</a></li>
+                        <li><a href="https://github.com/skpaul82/axle-cli/blob/main/docs/contributing.md">Contributing Guide</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="https://github.com/skpaul82/axle-cli">GitHub</a></li>
+                        <li><a href="https://x.com/_skpaul82">X/Twitter</a></li>
+                        <li><a href="https://www.axle.sanjoypaul.com">Website</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Axle CLI. Built with ❤️ for the community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
