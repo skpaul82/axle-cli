@@ -1,0 +1,43 @@
+# Cloudflare Pages Configuration
+# Deploy only the website directory, not the full axle-cli tool
+
+[build]
+# No build command needed - static site
+command = ""
+
+# IMPORTANT: Output directory is 'website' folder
+publish = "website"
+
+# Optional: Base directory if you want to build from within website/
+# base = "website"
+
+# Redirects
+[[redirects]]
+from = "/#"
+to = "/website/index.html"
+status = 200
+
+# Security Headers
+[[headers]]
+for = "/*"
+[headers.values]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Cache Control
+[[headers]]
+for = "/*.html"
+[headers.values]
+Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+for = "/*.{css,js,png,jpg,jpeg,svg,gif,ico,webp}"
+[headers.values]
+Cache-Control = "public, max-age=86400"
+
+# Environment variables
+[build.environment]
+NODE_VERSION = "18"
