@@ -1,0 +1,44 @@
+# Cloudflare Pages Configuration
+# This configures Cloudflare Pages to deploy ONLY the website directory
+
+[build]
+# No build command - static HTML/CSS/JS
+command = ""
+
+# IMPORTANT: Output directory is the website folder
+publish = "website"
+
+# Optional: Set base directory if you prefer
+# base = "website"
+
+# Redirects for clean URLs
+[[redirects]]
+from = "/#"
+to = "/index.html"
+status = 200
+
+# Security headers for all pages
+[[headers]]
+for = "/*"
+[headers.values]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Cache control for HTML files
+[[headers]]
+for = "/*.html"
+[headers.values]
+Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Cache control for static assets
+[[headers]]
+for = "/*.{css,js,png,jpg,jpeg,svg,gif,ico,webp,woff,woff2}"
+[headers.values]
+Cache-Control = "public, max-age=86400"
+
+# Environment variables (not needed for static site but shown for reference)
+[build.environment]
+NODE_VERSION = "18"
