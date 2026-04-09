@@ -6,7 +6,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 TOOLS_DIR = "tools"
 
 FAQ_URL = "https://www.axle.sanjoypaul.com/docs/troubleshooting"
@@ -275,7 +274,9 @@ def install_dependencies():
     """Install dependencies from requirements.txt."""
     req_file = Path(__file__).parent.parent / "requirements.txt"
     if not req_file.exists():
-        print(f"   ❌ requirements.txt not found at {req_file}. Cannot install dependencies.")
+        print(
+            f"   ❌ requirements.txt not found at {req_file}. Cannot install dependencies."
+        )
         return False
 
     return run_command(
@@ -387,7 +388,11 @@ def main():
         checks_passed &= check_ram()
 
         if not checks_passed:
-            response = input("\n⚠️ Some system checks failed. Continue anyway? [Y/n]: ").strip().lower()
+            response = (
+                input("\n⚠️ Some system checks failed. Continue anyway? [Y/n]: ")
+                .strip()
+                .lower()
+            )
             if response in ["n", "no"]:
                 print("\n❌ Installation cancelled.")
                 sys.exit(1)

@@ -9,7 +9,6 @@ import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-
 # Security severity levels
 SEVERITY_CRITICAL = "CRITICAL"
 SEVERITY_HIGH = "HIGH"

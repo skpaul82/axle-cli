@@ -18,6 +18,7 @@ TOOLS_DIR = Path(__file__).parent.parent / "tools"
 # Version from package
 try:
     from importlib.metadata import version
+
     __version__ = version("axle-cli")
 except Exception:
     __version__ = "1.1.0"
@@ -52,7 +53,9 @@ def list_tools():
         print(f"   1. Create the tools directory:")
         print(f"      mkdir -p {tools_path.absolute()}")
         print(f"   2. Add your Python tools to this directory")
-        print(f"   3. Each tool must implement get_description() and main(prompt) functions")
+        print(
+            f"   3. Each tool must implement get_description() and main(prompt) functions"
+        )
         print(f"   4. Learn more at: https://www.axle.sanjoypaul.com")
         return 1
 
@@ -69,7 +72,9 @@ def list_tools():
         print(f"\n📁 Tools directory: {tools_path.absolute()}")
         print(f"\n💡 To add tools:")
         print(f"   1. Create Python files in: {tools_path.absolute()}")
-        print(f"   2. Each tool must implement get_description() and main(prompt) functions")
+        print(
+            f"   2. Each tool must implement get_description() and main(prompt) functions"
+        )
         print(f"   3. Example tool structure:")
         print(f"      def get_description() -> str:")
         print(f"          return 'Your tool description'")
@@ -173,6 +178,7 @@ def run_tool(tool_identifier, prompt=""):
                 return 1
     except Exception as e:
         import traceback
+
         print(f"❌ Error running tool: {e}", file=sys.stderr)
         traceback.print_exc()
         return 1

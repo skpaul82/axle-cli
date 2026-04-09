@@ -12,8 +12,6 @@ license = {text = "MIT"}
 authors = [
     {name = "Sanjoy K. Paul", email = "hello@skpaul.me"}
 ]
-[tool.black]
-target-version = ['py310']
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
@@ -38,6 +36,9 @@ dependencies = [
     "numpy>=1.23.0",
     "lxml>=4.9.0",
 ]
+
+[tool.black]
+target-version = ['py310']
 
 [project.scripts]
 axle = "axle.axle:main"

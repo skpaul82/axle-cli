@@ -7,7 +7,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 TOOLS_DIR = Path(__file__).parent.parent / "tools"
 
 COMMUNITY_FOOTER = """
