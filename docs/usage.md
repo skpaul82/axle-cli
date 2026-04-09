@@ -18,10 +18,10 @@ You can run tools by number or by name:
 
 ```bash
 # By number
-buddy run 1 "your prompt"
+axle run 1 "your prompt"
 
 # By name
-buddy run seo_keyword_checker "your prompt"
+axle run seo_keyword_checker "your prompt"
 ```
 
 ### Prompts
@@ -29,7 +29,7 @@ buddy run seo_keyword_checker "your prompt"
 Most tools accept a "prompt" - this is the input text or context for the tool:
 
 ```bash
-buddy run 1 "python is a great programming language for data science"
+axle run 1 "python is a great programming language for data science"
 ```
 
 ## Common Commands
@@ -39,12 +39,12 @@ buddy run 1 "python is a great programming language for data science"
 See what tools are available:
 
 ```bash
-buddy list
+axle list
 ```
 
 Output:
 ```
-Hey buddy, let me know how I can help you. Choose a tool from the list or enter a number.
+Hey axle, let me know how I can help you. Choose a tool from the list or enter a number.
 
   1. seo_keyword_checker - Analyze text for SEO keyword density and optimization suggestions
   2. meta_tag_auditor - Analyze HTML/webpage for meta tag completeness and SEO best practices
@@ -56,7 +56,7 @@ Hey buddy, let me know how I can help you. Choose a tool from the list or enter 
 Execute a tool with a prompt:
 
 ```bash
-buddy run 1 "your text here"
+axle run 1 "your text here"
 ```
 
 ### Get Tool Information
@@ -64,7 +64,7 @@ buddy run 1 "your text here"
 Learn more about a specific tool:
 
 ```bash
-buddy info seo_keyword_checker
+axle info seo_keyword_checker
 ```
 
 ### Check Your Setup
@@ -72,7 +72,7 @@ buddy info seo_keyword_checker
 Verify everything is working:
 
 ```bash
-buddy doctor
+axle doctor
 ```
 
 ### Security Scan
@@ -80,7 +80,7 @@ buddy doctor
 Check for vulnerabilities:
 
 ```bash
-buddy scan
+axle scan
 ```
 
 ## Tool-Specific Usage
@@ -92,7 +92,7 @@ Analyzes text for keyword density and SEO optimization.
 **Basic Usage:**
 
 ```bash
-buddy run 1 "python is a great programming language for data science and machine learning"
+axle run 1 "python is a great programming language for data science and machine learning"
 ```
 
 **What It Does:**
@@ -136,13 +136,13 @@ Analyzes HTML or webpages for meta tag completeness and SEO best practices.
 **Basic Usage with URL:**
 
 ```bash
-buddy run 2 "https://example.com"
+axle run 2 "https://example.com"
 ```
 
 **Basic Usage with HTML File:**
 
 ```bash
-buddy run 2 "./page.html"
+axle run 2 "./page.html"
 ```
 
 **What It Checks:**
@@ -197,13 +197,13 @@ Generates personalized productivity and life optimization tips.
 **Basic Usage:**
 
 ```bash
-buddy run 3 "I need better productivity"
+axle run 3 "I need better productivity"
 ```
 
 **More Specific:**
 
 ```bash
-buddy run 3 "morning routine tips"
+axle run 3 "morning routine tips"
 ```
 
 **What It Does:**
@@ -280,25 +280,25 @@ buddy run 3 "morning routine tips"
 You can pipe content into tools (on Unix-like systems):
 
 ```bash
-echo "Your content here" | xargs buddy run 1
+echo "Your content here" | xargs axle run 1
 ```
 
 ### Chaining Commands
 
-Combine buddy commands:
+Combine axle commands:
 
 ```bash
-buddy scan && buddy list && buddy run 3 "productivity"
+axle scan && axle list && axle run 3 "productivity"
 ```
 
 ### Using in Scripts
 
-Use buddy commands in shell scripts:
+Use axle commands in shell scripts:
 
 ```bash
 #!/bin/bash
 # Daily SEO check
-buddy run 1 "$(cat today's-content.txt)"
+axle run 1 "$(cat today's-content.txt)"
 ```
 
 ### Integration with Other Tools
@@ -307,7 +307,7 @@ Combine with other CLI tools:
 
 ```bash
 # Get content from URL, analyze keywords
-curl -s https://example.com | buddy run 1
+curl -s https://example.com | axle run 1
 ```
 
 ## Common Use Cases
@@ -316,30 +316,30 @@ curl -s https://example.com | buddy run 1
 
 ```bash
 # Analyze blog post for SEO
-buddy run 1 "$(cat blog-post.md)"
+axle run 1 "$(cat blog-post.md)"
 
 # Get writing productivity tips
-buddy run 3 "writing focus"
+axle run 3 "writing focus"
 ```
 
 ### Website Audit
 
 ```bash
 # Audit homepage
-buddy run 2 "https://mysite.com"
+axle run 2 "https://mysite.com"
 
 # Security check
-buddy scan
+axle scan
 ```
 
 ### Daily Routine
 
 ```bash
 # Morning productivity tips
-buddy run 3 "morning routine energy"
+axle run 3 "morning routine energy"
 
 # Health optimization
-buddy run 3 "daily health habits"
+axle run 3 "daily health habits"
 ```
 
 ## Troubleshooting
@@ -348,8 +348,8 @@ buddy run 3 "daily health habits"
 
 If you get "tool not found":
 
-1. Check the tool name with `buddy list`
-2. Use the number instead: `buddy run 1 "prompt"`
+1. Check the tool name with `axle list`
+2. Use the number instead: `axle run 1 "prompt"`
 3. Verify the tool file exists in `tools/`
 
 ### Empty Results
@@ -370,7 +370,7 @@ Some tools may be slow due to:
 
 ## Best Practices Summary
 
-1. **Start with `buddy list`** - See what's available
+1. **Start with `axle list`** - See what's available
 2. **Use meaningful prompts** - Better input = better output
 3. **Read the recommendations** - Tools provide actionable advice
 4. **Iterate and improve** - Make changes based on suggestions

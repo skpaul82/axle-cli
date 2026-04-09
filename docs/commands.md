@@ -6,6 +6,7 @@ Complete reference for all Axle CLI commands.
 
 | Command | Description |
 |---------|-------------|
+| `axle -V, --version` | Show Axle version |
 | `axle list` | List all available tools |
 | `axle run` | Execute a tool by number or name |
 | `axle info` | Show detailed tool information |
@@ -25,7 +26,7 @@ List all available tools in the tools directory.
 ### Syntax
 
 ```bash
-buddy list
+axle list
 ```
 
 ### Description
@@ -35,9 +36,9 @@ Displays all available tools with their numbers, names, and descriptions. Tools 
 ### Examples
 
 ```bash
-$ buddy list
+$ axle list
 
-Hey buddy, let me know how I can help you. Choose a tool from the list or enter a number.
+Hey axle, let me know how I can help you. Choose a tool from the list or enter a number.
 
   1. daily_life_hack_generator - Generate personalized productivity and life optimization tips
   2. meta_tag_auditor - Analyze HTML/webpage for meta tag completeness and SEO best practices
@@ -64,12 +65,12 @@ Execute a tool by number or name.
 ### Syntax
 
 ```bash
-buddy run <tool_identifier> [prompt]
+axle run <tool_identifier> [prompt]
 ```
 
 ### Arguments
 
-- `tool_identifier` (required): Tool number (from `buddy list`) or tool name (without .py)
+- `tool_identifier` (required): Tool number (from `axle list`) or tool name (without .py)
 - `prompt` (optional): Text input for the tool
 
 ### Options
@@ -81,33 +82,33 @@ None
 **By Number:**
 
 ```bash
-buddy run 1 "python is a great programming language"
+axle run 1 "python is a great programming language"
 ```
 
 **By Name:**
 
 ```bash
-buddy run seo_keyword_checker "python is a great programming language"
+axle run seo_keyword_checker "python is a great programming language"
 ```
 
 **Without Prompt:**
 
 ```bash
-buddy run 3
+axle run 3
 # Tool will prompt for input or use default behavior
 ```
 
 **Multi-word Prompt:**
 
 ```bash
-buddy run 1 "analyze this content for keyword density and SEO optimization"
+axle run 1 "analyze this content for keyword density and SEO optimization"
 ```
 
 ### Common Errors
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| Invalid tool number | Number out of range | Run `buddy list` to see valid numbers |
+| Invalid tool number | Number out of range | Run `axle list` to see valid numbers |
 | Tool not found | Tool name doesn't exist | Check spelling or use number |
 | Tool failed | Tool execution error | Check tool-specific requirements |
 
@@ -120,14 +121,14 @@ buddy run 1 "analyze this content for keyword density and SEO optimization"
 
 ---
 
-## buddy info
+## axle info
 
 Show detailed information about a specific tool.
 
 ### Syntax
 
 ```bash
-buddy info <tool_name>
+axle info <tool_name>
 ```
 
 ### Arguments
@@ -141,7 +142,7 @@ None
 ### Examples
 
 ```bash
-$ buddy info seo_keyword_checker
+$ axle info seo_keyword_checker
 
 📋 Tool: seo_keyword_checker
 📍 Location: /path/to/tools/01_seo_keyword_checker.py
@@ -164,18 +165,18 @@ $ buddy info seo_keyword_checker
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| Tool not found | Tool name doesn't exist | Run `buddy list` to see available tools |
+| Tool not found | Tool name doesn't exist | Run `axle list` to see available tools |
 
 ---
 
-## buddy scan
+## axle scan
 
 Run security vulnerability scan on dependencies and scripts.
 
 ### Syntax
 
 ```bash
-buddy scan
+axle scan
 ```
 
 ### Description
@@ -194,7 +195,7 @@ Scans for security vulnerabilities using pip-audit and basic static analysis of 
 ### Examples
 
 ```bash
-$ buddy scan
+$ axle scan
 
 🔒 Buddy Tools Security Scan
 ============================================================
@@ -210,7 +211,7 @@ $ buddy scan
 💡 Recommendations
 ------------------------------------------------------------
 LOW Priority:
-   • [General] Run security scan regularly: buddy scan
+   • [General] Run security scan regularly: axle scan
    • [General] Keep dependencies updated regularly
 ```
 
@@ -229,14 +230,14 @@ LOW Priority:
 
 ---
 
-## buddy doctor
+## axle doctor
 
 Run environment diagnostics to check system setup.
 
 ### Syntax
 
 ```bash
-buddy doctor
+axle doctor
 ```
 
 ### Description
@@ -251,12 +252,12 @@ Checks your environment to ensure Buddy Tools is properly configured and can run
 4. **RAM**: At least 8GB (requires psutil)
 5. **Dependencies**: Key Python packages
 6. **Tools Directory**: Exists and contains tools
-7. **CLI Installation**: buddy command works
+7. **CLI Installation**: axle command works
 
 ### Examples
 
 ```bash
-$ buddy doctor
+$ axle doctor
 
 🏥 Buddy Tools Environment Check
 ============================================================
@@ -288,7 +289,7 @@ $ buddy doctor
    ✓ Contains 3 tools
 
 ⚙️ CLI Installation:
-   ✓ CLI command 'buddy' is working
+   ✓ CLI command 'axle' is working
 ```
 
 ### Notes
@@ -300,14 +301,14 @@ $ buddy doctor
 
 ---
 
-## buddy path
+## axle path
 
 Show the current tools folder location.
 
 ### Syntax
 
 ```bash
-buddy path
+axle path
 ```
 
 ### Description
@@ -317,7 +318,7 @@ Displays the absolute path to the tools directory and lists its contents.
 ### Examples
 
 ```bash
-$ buddy path
+$ axle path
 
 📁 Tools folder path: /absolute/path/to/tools
 
@@ -341,14 +342,14 @@ Contains 3 file(s):
 
 ---
 
-## buddy help
+## axle help
 
 Display help message and command reference.
 
 ### Syntax
 
 ```bash
-buddy help
+axle help
 ```
 
 ### Description
@@ -358,9 +359,9 @@ Shows comprehensive help information including all available commands and their 
 ### Examples
 
 ```bash
-$ buddy help
+$ axle help
 
-usage: buddy [-h] {list,run,info,scan,doctor,path,help} ...
+usage: axle [-h] {list,run,info,scan,doctor,path,help} ...
 
 Buddy Tools: microtools for SEO and daily-life hacks.
 
@@ -395,18 +396,21 @@ These options apply to all commands:
 Show help message and exit.
 
 ```bash
-buddy -h
-buddy --help
-buddy run -h
+axle -h
+axle --help
+axle run -h
 ```
 
-### Version Information
+### `-V, --version`
 
-To check the package version:
+Show version information and exit.
 
 ```bash
-pip show buddy-tools
+axle -V
+axle --version
 ```
+
+This displays the current version of Axle installed on your system.
 
 ---
 
@@ -422,21 +426,22 @@ pip show buddy-tools
 
 ## Configuration Files
 
-Buddy Tools uses these configuration files:
+Axle uses these configuration files:
 
 - `pyproject.toml` - Package metadata and dependencies
 - `requirements.txt` - Pinned dependency versions
-- `.buddyrc` (optional) - User configuration (not yet implemented)
+- `.axlerc` (optional) - User configuration (not yet implemented)
 
 ---
 
 ## Environment Variables
 
-These environment variables affect Buddy Tools behavior:
+These environment variables affect Axle behavior:
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
-| `BUDDY_TOOLS_DIR` | Custom tools directory | `tools/` |
+| `AXLE_TOOLS_DIR` | Custom tools directory | `tools/` |
+| `AXLE_SECURITY_POLICY` | Security policy (strict/warn/permissive) | `warn` |
 | `PYTHONPATH` | Python module search path | (system default) |
 
 ---

@@ -5,6 +5,52 @@ All notable changes to Axle CLI will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-04-09
+
+### Added
+- **Version command** (`axle -V`, `axle --version`)
+  - Displays package version dynamically from importlib.metadata
+  - Works with both short and long form flags
+
+### Enhanced
+- **Tools directory auto-creation** during package installation
+  - Automatically creates tools directory if it doesn't exist
+  - Adds `__init__.py` file for proper Python package structure
+  - Provides clear user guidance when directory is missing/empty
+
+- **User guidance and documentation**
+  - Added "Adding Your Own Tools" section to README
+  - Step-by-step instructions for creating custom tools
+  - Tool contract requirements clearly documented
+  - Links to www.axle.sanjoypaul.com throughout
+
+### Updated
+- **Community links** across all documentation
+  - Removed Instagram and Newsletter links
+  - Added www.axle.sanjoypaul.com as primary website link
+  - Made all community links clickable markdown format
+
+- **Help documentation**
+  - Added version command to commands table
+  - All commands now show full parameter documentation
+  - Updated environment variable names (AXLE_TOOLS_DIR, AXLE_SECURITY_POLICY)
+
+### Fixed
+- **pyproject.toml configuration**
+  - Moved classifiers and dependencies from [tool.black] to [project]
+  - Resolved black configuration errors in CI/CD pipeline
+  - All Python files now properly formatted with black
+
+- **Tools directory path handling**
+  - Fixed TOOLS_DIR to use Path objects consistently
+  - Improved error messages when directory is missing
+  - Better guidance for adding custom tools
+
+### Technical
+- Applied black formatting to all Python files
+- Improved security scanner subprocess detection
+- Enhanced tool validator comment detection with regex
+
 ## [1.1.0] - 2026-04-08
 
 ### Added
@@ -208,7 +254,6 @@ MIT License - see [LICENSE](../LICENSE) for details.
 
 ## Links
 
-- GitHub: https://github.com/skpaul82/axle-cli
-- X/Twitter: [@_skpaul82](https://x.com/_skpaul82)
-- Instagram: [skpaul82](https://instagram.com/skpaul82)
-- Newsletter: [axle.sanjoypaul.com/agent-aio](https://axle.sanjoypaul.com/agent-aio)
+- ⭐ **GitHub:** [skpaul82/axle-cli](https://github.com/skpaul82/axle-cli)
+- 🐦 **X/Twitter:** [@_skpaul82](https://x.com/_skpaul82)
+- 🌐 **Website:** [www.axle.sanjoypaul.com](https://www.axle.sanjoypaul.com)

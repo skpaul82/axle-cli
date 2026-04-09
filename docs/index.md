@@ -68,10 +68,9 @@ axle run 1 "your text here"
 
 ## Support & Community
 
-- **GitHub**: https://github.com/skpaul82/axle-cli
-- **X/Twitter**: [@_skpaul82](https://x.com/_skpaul82)
-- **Instagram**: [skpaul82](https://instagram.com/skpaul82)
-- **Newsletter**: [axle.sanjoypaul.com/agent-aio](https://axle.sanjoypaul.com/agent-aio)
+- ⭐ **GitHub**: [skpaul82/axle-cli](https://github.com/skpaul82/axle-cli)
+- 🐦 **X/Twitter**: [@_skpaul82](https://x.com/_skpaul82)
+- 🌐 **Website**: [www.axle.sanjoypaul.com](https://www.axle.sanjoypaul.com)
 
 ## License
 

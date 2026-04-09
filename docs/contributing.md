@@ -48,8 +48,8 @@ pip install flake8 black isort pytest
 ### 4. Verify Installation
 
 ```bash
-buddy doctor
-buddy list
+axle doctor
+axle list
 ```
 
 ## Development Workflow
@@ -70,9 +70,9 @@ Edit files following the guidelines below.
 
 ```bash
 # Run basic tests
-buddy list
-buddy run 1 "test"
-buddy doctor
+axle list
+axle run 1 "test"
+axle doctor
 ```
 
 ### 4. Commit Changes
@@ -141,7 +141,7 @@ def main(prompt):
     """Main entry point."""
     if not prompt or not prompt.strip():
         print("❌ Please provide input.")
-        print("   Usage: buddy run your_tool \"your input here\"")
+        print("   Usage: axle run your_tool \"your input here\"")
         return
 
     # Process input
@@ -250,13 +250,13 @@ Test your changes manually:
 
 ```bash
 # Test CLI commands
-buddy list
-buddy info your_tool
-buddy run your_tool "test input"
+axle list
+axle info your_tool
+axle run your_tool "test input"
 
 # Test error handling
-buddy run your_tool ""
-buddy run 999 "test"
+axle run your_tool ""
+axle run 999 "test"
 ```
 
 ### Automated Testing (Future)
@@ -267,7 +267,7 @@ We're working on adding automated tests. For now, manual testing is sufficient.
 
 Before submitting a PR:
 
-- [ ] Tool appears in `buddy list`
+- [ ] Tool appears in `axle list`
 - [ ] Tool runs without errors
 - [ ] Tool produces expected output
 - [ ] Tool handles empty/invalid input gracefully
@@ -423,9 +423,9 @@ git commit -m "Description"
 git push origin feature/my-feature
 
 # Testing
-buddy list
-buddy run 1 "test"
-buddy doctor
+axle list
+axle run 1 "test"
+axle doctor
 ```
 
 ### Resources

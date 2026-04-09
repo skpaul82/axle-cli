@@ -99,7 +99,7 @@ Solutions to common problems when using Axle CLI.
 
 3. **Reinstall Package:**
    ```bash
-   pip uninstall buddy-tools
+   pip uninstall axle-tools
    pip install -e .
    ```
 
@@ -168,12 +168,12 @@ Solutions to common problems when using Axle CLI.
 
 1. **List Available Tools:**
    ```bash
-   buddy list
+   axle list
    ```
 
 2. **Use Number Instead:**
    ```bash
-   buddy run 1 "your prompt"
+   axle run 1 "your prompt"
    ```
 
 3. **Check Tool File:**
@@ -190,7 +190,7 @@ Solutions to common problems when using Axle CLI.
 
 1. **Provide a Prompt:**
    ```bash
-   buddy run 1 "your actual text here"
+   axle run 1 "your actual text here"
    ```
 
 2. **Check Tool Requirements:**
@@ -216,7 +216,7 @@ Solutions to common problems when using Axle CLI.
 
 4. **System Resources:**
    ```bash
-   buddy doctor
+   axle doctor
    ```
    Check RAM and disk space.
 
@@ -251,7 +251,7 @@ Solutions to common problems when using Axle CLI.
 
 1. **Check Memory Usage:**
    ```bash
-   buddy doctor
+   axle doctor
    ```
    Verify you have at least 8GB RAM.
 
@@ -263,7 +263,7 @@ Solutions to common problems when using Axle CLI.
 
 ### Slow Startup
 
-**Problem:** `buddy` command takes time to start.
+**Problem:** `axle` command takes time to start.
 
 **Solutions:**
 
@@ -326,7 +326,7 @@ Solutions to common problems when using Axle CLI.
 
 1. **Use python3:**
    ```bash
-   python3 scripts/install_buddy.py
+   python3 scripts/install_axle.py
    ```
 
 2. **Xcode Command Line Tools:**
@@ -347,7 +347,7 @@ Solutions to common problems when using Axle CLI.
 
 1. **Use py Launcher:**
    ```bash
-   py scripts/install_buddy.py
+   py scripts/install_axle.py
    ```
 
 2. **Path Separators:**
@@ -382,13 +382,13 @@ Solutions to common problems when using Axle CLI.
 
 1. **Check Diagnostics:**
    ```bash
-   buddy doctor
+   axle doctor
    ```
    Run this and include the output when asking for help.
 
 2. **Enable Debug Mode:**
    ```bash
-   python -m scripts.buddy --verbose
+   python -m scripts.axle --verbose
    ```
 
 3. **Check Logs:**
@@ -401,17 +401,16 @@ Solutions to common problems when using Axle CLI.
    When creating an issue, include:
    - Your operating system
    - Python version (`python --version`)
-   - Buddy Tools version (`pip show buddy-tools`)
+   - Buddy Tools version (`pip show axle-tools`)
    - Full error message
    - Steps to reproduce
-   - Output of `buddy doctor`
+   - Output of `axle doctor`
 
 ### Community Resources
 
-- **GitHub:** https://github.com/skpaul82/axle-cli
-- **X/Twitter:** [@_skpaul82](https://x.com/_skpaul82)
-- **Instagram:** [skpaul82](https://instagram.com/skpaul82)
-- **Newsletter:** [axle.sanjoypaul.com/agent-aio](https://axle.sanjoypaul.com/agent-aio)
+- ⭐ **GitHub:** [skpaul82/axle-cli](https://github.com/skpaul82/axle-cli)
+- 🐦 **X/Twitter:** [@_skpaul82](https://x.com/_skpaul82)
+- 🌐 **Website:** [www.axle.sanjoypaul.com](https://www.axle.sanjoypaul.com)
 
 ## Reporting Bugs
 
@@ -421,9 +420,9 @@ When reporting bugs, provide:
 2. **Steps:** How to reproduce the issue
 3. **Expected:** What you expected to happen
 4. **Actual:** What actually happened
-5. **Environment:** OS, Python version, Buddy Tools version
+5. **Environment:** OS, Python version, Axle version
 6. **Logs:** Full error traceback
-7. **Doctor Output:** Run `buddy doctor` and include output
+7. **Doctor Output:** Run `axle doctor` and include output
 
 ## Feature Requests
 
