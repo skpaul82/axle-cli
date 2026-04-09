@@ -9,16 +9,15 @@ from pathlib import Path
 
 TOOLS_DIR = "tools"
 
-FAQ_URL = "https://github.com/skpaul82/axle-cli/blob/main/docs/troubleshooting.md"
-DOCS_URL = "https://github.com/skpaul82/axle-cli/blob/main/docs"
+FAQ_URL = "https://www.axle.sanjoypaul.com/docs/troubleshooting"
+DOCS_URL = "https://www.axle.sanjoypaul.com/docs"
 
 COMMUNITY_FOOTER = """
 ---
 🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
+⭐ Star on GitHub: https://github.com/skpaul82/axle-cli
 🐦 Follow on X: @_skpaul82
-📸 Instagram: skpaul82
-📧 Newsletter: axle.sanjoypaul.com/agent-aio
+🌐 Website: https://www.axle.sanjoypaul.com
 
 ♥ Built for the community
 """
@@ -274,22 +273,42 @@ def upgrade_pip():
 
 def install_dependencies():
     """Install dependencies from requirements.txt."""
-    req_file = Path("requirements.txt")
+    req_file = Path(__file__).parent.parent / "requirements.txt"
     if not req_file.exists():
-        print(f"   ⚠️ requirements.txt not found, skipping...")
-        return True
+        print(f"   ❌ requirements.txt not found at {req_file}. Cannot install dependencies.")
+        return False
 
     return run_command(
-        [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"],
+        [sys.executable, "-m", "pip", "install", "-r", str(req_file)],
         "Installing dependencies",
     )
 
 
 def install_package():
     """Install axle package in editable mode."""
-    return run_command(
+    result = run_command(
         [sys.executable, "-m", "pip", "install", "-e", "."], "Installing axle package"
     )
+
+    # Ensure tools directory exists after installation
+    if result:
+        tools_dir = Path(__file__).parent.parent / "tools"
+        if not tools_dir.exists():
+            print(f"\n📁 Creating tools directory at: {tools_dir}")
+            try:
+                tools_dir.mkdir(parents=True, exist_ok=True)
+                print(f"   ✅ Created tools directory")
+                # Create __init__.py
+                init_file = tools_dir / "__init__.py"
+                if not init_file.exists():
+                    init_file.write_text("# Axle tools directory\n")
+                    print(f"   ✅ Created __init__.py")
+            except Exception as e:
+                print(f"   ⚠️ Could not create tools directory: {e}")
+        else:
+            print(f"\n📁 Tools directory exists at: {tools_dir}")
+
+    return result
 
 
 def download_spacy_model():
@@ -368,8 +387,7 @@ def main():
         checks_passed &= check_ram()
 
         if not checks_passed:
-            print("\n⚠️ Some system checks failed. Continue anyway? [Y/n]: ")
-            response = input().strip().lower()
+            response = input("\n⚠️ Some system checks failed. Continue anyway? [Y/n]: ").strip().lower()
             if response in ["n", "no"]:
                 print("\n❌ Installation cancelled.")
                 sys.exit(1)

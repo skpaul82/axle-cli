@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 
-TOOLS_DIR = "tools"
+TOOLS_DIR = Path(__file__).parent.parent / "tools"
 
 COMMUNITY_FOOTER = """
 ---
@@ -153,7 +153,7 @@ def scan_scripts():
     print("\n🔍 Script Security Scan")
     print("-" * 60)
 
-    tools_path = Path(TOOLS_DIR)
+    tools_path = TOOLS_DIR
     if not tools_path.exists():
         print(f"⚠️ Tools directory '{TOOLS_DIR}' not found.\n")
         return []
@@ -181,10 +181,9 @@ def scan_scripts():
 
             for pattern, message in dangerous_patterns.items():
                 if pattern in content:
-                    # Check if shell=True is used for subprocess
-                    if "subprocess" in pattern and "shell=True" in content:
-                        file_issues.append(f"⚠️ {pattern} with shell=True")
-
+                    # For subprocess patterns, only flag when shell=True is also present
+                    if "subprocess" in pattern and "shell=True" not in content:
+                        continue
                     file_issues.append(f"⚠️ {message}")
 
             # Check for potential hardcoded secrets

@@ -152,10 +152,14 @@ class ToolValidator:
 
                     # Skip if in comment
                     line = lines[line_no - 1] if line_no <= len(lines) else ""
-                    if "#" in line and line.index("#") < match.start() - content.rfind(
-                        "\n", 0, match.start()
-                    ):
+                    if line.lstrip().startswith("#"):
                         continue
+                    hash_pos = line.find("#")
+                    if hash_pos != -1:
+                        line_start = content.rfind("\n", 0, match.start()) + 1
+                        match_col = match.start() - line_start
+                        if hash_pos < match_col:
+                            continue
 
                     findings.append(
                         SecurityFinding(severity, "Dangerous Pattern", message, line_no)
@@ -202,11 +206,9 @@ class ToolValidator:
                 continue
 
             for module, message in modules.items():
-                # Check for "import module" or "from module import"
-                if f"import {module}" in content or f"from {module}" in content:
-                    # Find line number
-                    line_no = content.index(f"import {module}").count("\n") + 1
-
+                pattern = rf"(?:^import\s+{re.escape(module)}\b|^from\s+{re.escape(module)}\s+import)"
+                for imp_match in re.finditer(pattern, content, re.MULTILINE):
+                    line_no = content[: imp_match.start()].count("\n") + 1
                     findings.append(
                         SecurityFinding(severity, "Unsafe Import", message, line_no)
                     )

@@ -13,15 +13,21 @@ from pathlib import Path
 # Import tool security validator
 from axle.tool_validator import validate_tool_before_execution, get_security_policy
 
-TOOLS_DIR = "tools"
+TOOLS_DIR = Path(__file__).parent.parent / "tools"
+
+# Version from package
+try:
+    from importlib.metadata import version
+    __version__ = version("axle-cli")
+except Exception:
+    __version__ = "1.1.0"
 
 COMMUNITY_FOOTER = """
 ---
 🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
+⭐ Star on GitHub: https://github.com/skpaul82/axle-cli
 🐦 Follow on X: @_skpaul82
-📸 Instagram: skpaul82
-📧 Newsletter: axle.sanjoypaul.com/agent-aio
+🌐 Website: https://www.axle.sanjoypaul.com
 
 ♥ Built for the community
 """
@@ -38,9 +44,16 @@ def list_tools():
         "Hey there, let me know how I can help you. Choose a tool from the list or enter a number.\n"
     )
 
-    tools_path = Path(TOOLS_DIR)
+    tools_path = TOOLS_DIR
     if not tools_path.exists():
-        print(f"❌ Tools directory '{TOOLS_DIR}' not found.")
+        print(f"❌ Tools directory not found.")
+        print(f"\n📁 Tools directory should be at: {tools_path.absolute()}")
+        print(f"\n💡 To get started:")
+        print(f"   1. Create the tools directory:")
+        print(f"      mkdir -p {tools_path.absolute()}")
+        print(f"   2. Add your Python tools to this directory")
+        print(f"   3. Each tool must implement get_description() and main(prompt) functions")
+        print(f"   4. Learn more at: https://www.axle.sanjoypaul.com")
         return 1
 
     files = sorted(
@@ -53,6 +66,17 @@ def list_tools():
 
     if not files:
         print("No tools found in the tools directory.")
+        print(f"\n📁 Tools directory: {tools_path.absolute()}")
+        print(f"\n💡 To add tools:")
+        print(f"   1. Create Python files in: {tools_path.absolute()}")
+        print(f"   2. Each tool must implement get_description() and main(prompt) functions")
+        print(f"   3. Example tool structure:")
+        print(f"      def get_description() -> str:")
+        print(f"          return 'Your tool description'")
+        print(f"      def main(prompt: str) -> None:")
+        print(f"          # Your tool logic here")
+        print(f"          pass")
+        print(f"   4. Learn more at: https://www.axle.sanjoypaul.com")
         return 0
 
     for i, f in enumerate(files, 1):
@@ -80,7 +104,7 @@ def _get_tool_description(tool_file):
 
 def run_tool(tool_identifier, prompt=""):
     """Run a tool by number or name."""
-    tools_path = Path(TOOLS_DIR)
+    tools_path = TOOLS_DIR
     if not tools_path.exists():
         print(f"❌ Tools directory '{TOOLS_DIR}' not found.")
         return 1
@@ -148,13 +172,15 @@ def run_tool(tool_identifier, prompt=""):
                 print(f"❌ Tool '{tool_file.stem}' does not have a main() function.")
                 return 1
     except Exception as e:
-        print(f"❌ Error running tool: {e}")
+        import traceback
+        print(f"❌ Error running tool: {e}", file=sys.stderr)
+        traceback.print_exc()
         return 1
 
 
 def show_tool_info(tool_name):
     """Show information about a specific tool."""
-    tools_path = Path(TOOLS_DIR)
+    tools_path = TOOLS_DIR
     if not tools_path.exists():
         print(f"❌ Tools directory '{TOOLS_DIR}' not found.")
         return 1
@@ -234,7 +260,7 @@ def scan_dependencies():
     # Basic script scan
     print("🔍 Scanning scripts for security issues...\n")
 
-    tools_path = Path(TOOLS_DIR)
+    tools_path = TOOLS_DIR
     if tools_path.exists():
         issues = []
         for py_file in tools_path.glob("*.py"):
@@ -322,14 +348,13 @@ def run_diagnostics():
     ]
 
     for dep in dependencies:
-        try:
-            __import__(dep)
+        if importlib.util.find_spec(dep) is not None:
             print(f"   ✓ {dep}")
-        except ImportError:
+        else:
             print(f"   ✗ {dep} (not installed)")
 
     # Check tools directory
-    tools_path = Path(TOOLS_DIR)
+    tools_path = TOOLS_DIR
     print(f"\n🔧 Tools Directory:")
     if tools_path.exists():
         tools_count = len(
@@ -337,8 +362,13 @@ def run_diagnostics():
         )
         print(f"   ✓ Found at: {tools_path.absolute()}")
         print(f"   ✓ Contains {tools_count} tools")
+        if tools_count == 0:
+            print(f"\n💡 To add tools, visit: https://www.axle.sanjoypaul.com")
     else:
         print(f"   ✗ Not found at: {tools_path.absolute()}")
+        print(f"\n💡 To create tools directory:")
+        print(f"      mkdir -p {tools_path.absolute()}")
+        print(f"   Learn more at: https://www.axle.sanjoypaul.com")
 
     # Check if CLI is installed
     print(f"\n⚙️ CLI Installation:")
@@ -358,8 +388,8 @@ def run_diagnostics():
 
 def show_tools_path():
     """Show the current tools folder location."""
-    tools_path = Path(TOOLS_DIR).absolute()
-    print(f"📁 Tools folder path: {tools_path}")
+    tools_path = TOOLS_DIR
+    print(f"📁 Tools folder path: {tools_path.absolute()}")
 
     if tools_path.exists():
         files = list(tools_path.glob("*.py"))
@@ -368,8 +398,21 @@ def show_tools_path():
             for f in sorted(files):
                 if f.name != "__init__.py":
                     print(f"  - {f.name}")
+        else:
+            print("\n📭 Directory is empty.")
+            print(f"\n💡 To add tools:")
+            print(f"   1. Create Python files in: {tools_path.absolute()}")
+            print(f"   2. Each tool must implement:")
+            print(f"      - get_description() -> str")
+            print(f"      - main(prompt: str) -> None")
+            print(f"   3. Learn more at: https://www.axle.sanjoypaul.com")
     else:
         print("\n⚠ Directory does not exist yet.")
+        print(f"\n💡 To get started:")
+        print(f"   1. Create the tools directory:")
+        print(f"      mkdir -p {tools_path.absolute()}")
+        print(f"   2. Add your Python tools to this directory")
+        print(f"   3. Learn more at: https://www.axle.sanjoypaul.com")
 
     print_community_footer()
     return 0
@@ -440,7 +483,7 @@ def uninstall_axle(keep_tools=True, remove_tools=False):
         keep_tools = False
 
     # Check what will be removed
-    tools_path = Path(TOOLS_DIR)
+    tools_path = TOOLS_DIR
     has_custom_tools = False
 
     if keep_tools and tools_path.exists():
@@ -475,6 +518,9 @@ def main():
     parser = argparse.ArgumentParser(
         prog="axle",
         description="Axle: A modular CLI platform for running Python microtools.",
+    )
+    parser.add_argument(
+        "-V", "--version", action="version", version=f"%(prog)s {__version__}"
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
