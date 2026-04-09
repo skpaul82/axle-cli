@@ -34,7 +34,13 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1>Axle CLI</h1>
+                <h1>
+                    Axle CLI
+                    <a href="https://www.axle.sanjoypaul.com" target="_blank" style="font-size: 0.6em; margin-left: 10px; text-decoration: none;">
+                        <i class="fas fa-volume-up" style="color: white;"></i>
+                        <span style="opacity: 0.9;">/ˈæksəl klaɪ/</span>
+                    </a>
+                </h1>
                 <p class="hero-subtitle">A Modular Platform for Python Microtools</p>
                 <p class="hero-description">
                     Run ANY Python tool consistently without remembering individual script locations or interfaces.
@@ -49,9 +55,14 @@
                     </a>
                 </div>
                 <div class="hero-install">
-                    <code class="install-command">
-                        <span class="prompt">$</span> pip install git+https://github.com/skpaul82/axle-cli.git
-                    </code>
+                    <div style="position: relative; display: inline-block;">
+                        <code class="install-command" id="installCommand">
+                            <span class="prompt">$</span> pip install git+https://github.com/skpaul82/axle-cli.git
+                        </code>
+                        <button onclick="copyInstallCommand()" class="copy-button-install" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: all 0.3s;">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -232,7 +243,7 @@
                 <div class="footer-section">
                     <h4>Axle CLI</h4>
                     <p>A modular platform for running Python microtools from a shared tools directory.</p>
-                    <p class="version">Version 1.1.1</p>
+                    <p class="version">Version 1.1.0</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
@@ -253,7 +264,8 @@
                 </div>
                 <div class="footer-section">
                     <h4>License</h4>
-                    <p>MIT License - Free for personal and commercial use.</p>
+                    <p>MIT License - Free for personal use. Commercial use requires permission.</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;">For commercial use: <a href="mailto:hello@skpaul.me" style="color: #60a5fa;">hello@skpaul.me</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -263,5 +275,23 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        function copyInstallCommand() {
+            const command = 'pip install git+https://github.com/skpaul82/axle-cli.git';
+            navigator.clipboard.writeText(command).then(() => {
+                const button = document.querySelector('.copy-button-install');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.style.background = 'rgba(16, 185, 129, 0.3)';
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.style.background = 'rgba(255,255,255,0.2)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+    </script>
 </body>
 </html>
