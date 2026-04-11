@@ -224,6 +224,7 @@
                         <li><a href="#commands">Commands</a></li>
                         <li><a href="#adding-tools">Adding Tools</a></li>
                         <li><a href="#security">Security</a></li>
+                        <li><a href="#code-review">Code Review</a></li>
                         <li><a href="#troubleshooting">Troubleshooting</a></li>
                     </ul>
                 </nav>
@@ -419,6 +420,74 @@ axle security --policy strict</code></pre>
 
                     <div class="info-box">
                         <strong>💡 Best Practice:</strong> Use "strict" mode for production environments and "warn" mode for development.
+                    </div>
+                </section>
+
+                <!-- Code Review -->
+                <section id="code-review" class="docs-section">
+                    <h2>Automatic Code Review</h2>
+
+                    <p>Axle includes automatic code review that runs AFTER security validation to help you maintain high code quality:</p>
+
+                    <h3>What Gets Checked</h3>
+                    <ul>
+                        <li><strong>Formatting:</strong> Black code style issues (auto-fixable)</li>
+                        <li><strong>Imports:</strong> isort import sorting issues (auto-fixable)</li>
+                        <li><strong>Linting:</strong> flake8 code quality issues (selectively auto-fixable)</li>
+                        <li><strong>Complexity:</strong> High complexity warnings (report only)</li>
+                    </ul>
+
+                    <h3>Issue Severity Levels</h3>
+                    <ul>
+                        <li>🔴 <strong>CRITICAL:</strong> Syntax errors, undefined names (must fix)</li>
+                        <li>🟠 <strong>HIGH:</strong> Major issues that should be fixed</li>
+                        <li>🟡 <strong>MEDIUM:</strong> Important but not blocking</li>
+                        <li>🟢 <strong>LOW:</strong> Minor issues (style, unused imports, etc.)</li>
+                    </ul>
+
+                    <h3>Automatic vs Manual Fixes</h3>
+                    <p><strong>Auto-fixable issues:</strong></p>
+                    <ul>
+                        <li>✅ Black formatting (all code style issues)</li>
+                        <li>✅ isort imports (import statement ordering)</li>
+                        <li>✅ Unused imports and variables (safe to remove)</li>
+                    </ul>
+
+                    <p><strong>Manual fixes needed:</strong></p>
+                    <ul>
+                        <li>❌ Syntax errors and undefined names</li>
+                        <li>❌ Line length issues (may require code restructuring)</li>
+                        <li>❌ High complexity (requires refactoring)</li>
+                    </ul>
+
+                    <h3>Code Review Commands</h3>
+                    <pre><code># Review a specific tool
+axle review my_tool
+
+# Review all tools
+axle review --all
+
+# Review with automatic fixes
+axle review my_tool --fix
+
+# Preview changes without applying
+axle review my_tool --fix --dry-run
+
+# Detailed output
+axle review my_tool --verbose</code></pre>
+
+                    <h3>Configuration Options</h3>
+                    <pre><code># When to run code review: always, auto (default), or never
+export AXLE_CODE_REVIEW=auto
+
+# Automatically fix issues without asking
+export AXLE_AUTO_FIX=false
+
+# Enable detailed output
+export AXLE_CODE_REVIEW_VERBOSE=false</code></pre>
+
+                    <div class="info-box">
+                        <strong>💡 Pro Tip:</strong> Code review runs automatically during tool execution in "auto" mode. Enable auto-fix for seamless development: <code>export AXLE_AUTO_FIX=true</code>
                     </div>
                 </section>
 

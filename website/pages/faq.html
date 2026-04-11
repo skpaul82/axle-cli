@@ -258,6 +258,7 @@
             <button class="faq-category-btn" data-category="getting-started">Getting Started</button>
             <button class="faq-category-btn" data-category="usage">Usage</button>
             <button class="faq-category-btn" data-category="security">Security</button>
+            <button class="faq-category-btn" data-category="code-review">Code Review</button>
             <button class="faq-category-btn" data-category="tools">Tools</button>
             <button class="faq-category-btn" data-category="troubleshooting">Troubleshooting</button>
             <button class="faq-category-btn" data-category="contributing">Contributing</button>
@@ -418,6 +419,117 @@ axle run seo_keyword_checker "your prompt"</code></pre>
                         </ul>
                         <p>Set the policy with:</p>
                         <pre><code>export AXLE_SECURITY_POLICY=strict</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Review -->
+            <div class="faq-item" data-category="code-review">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What is automatic code review?
+                        <span class="category-badge">Code Review</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Automatic code review is a feature that helps you maintain high code quality by checking your tools for common issues before they reach CI/CD pipelines. It runs automatically during tool execution and can fix many issues for you.</p>
+                        <p>The system checks for:</p>
+                        <ul>
+                            <li><strong>Formatting issues:</strong> Code style problems (auto-fixable)</li>
+                            <li><strong>Import issues:</strong> Import statement ordering (auto-fixable)</li>
+                            <li><strong>Linting issues:</strong> Code quality problems (selectively auto-fixable)</li>
+                            <li><strong>Complexity issues:</strong> High code complexity (report only)</li>
+                        </ul>
+                        <p>Issues are categorized by severity: 🔴 CRITICAL, 🟠 HIGH, 🟡 MEDIUM, 🟢 LOW</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="code-review">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I use the code review commands?
+                        <span class="category-badge">Code Review</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Axle provides several code review commands:</p>
+                        <pre><code># Review a specific tool
+axle review my_tool
+
+# Review all tools
+axle review --all
+
+# Review with automatic fixes
+axle review my_tool --fix
+
+# Preview changes without applying
+axle review my_tool --fix --dry-run</code></pre>
+                        <p>Code review also runs automatically during tool execution in "auto" mode (the default).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="code-review">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What code quality issues can be auto-fixed?
+                        <span class="category-badge">Code Review</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p><strong>Auto-fixable issues:</strong></p>
+                        <ul>
+                            <li>✅ Black formatting (all code style issues)</li>
+                            <li>✅ isort imports (import statement ordering)</li>
+                            <li>✅ Unused imports and variables (safe to remove)</li>
+                        </ul>
+                        <p><strong>Manual fixes needed:</strong></p>
+                        <ul>
+                            <li>❌ Syntax errors and undefined names</li>
+                            <li>❌ Line length issues (may require code restructuring)</li>
+                            <li>❌ High complexity (requires refactoring)</li>
+                        </ul>
+                        <p>The system includes safety features like backup creation and validation to ensure fixes don't break your code.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="code-review">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I configure code review behavior?
+                        <span class="category-badge">Code Review</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>You can configure code review behavior using environment variables:</p>
+                        <pre><code># When to run code review: always, auto (default), or never
+export AXLE_CODE_REVIEW=auto
+
+# Automatically fix issues without asking
+export AXLE_AUTO_FIX=false
+
+# Enable detailed output
+export AXLE_CODE_REVIEW_VERBOSE=false</code></pre>
+                        <p><strong>Recommended settings:</strong></p>
+                        <ul>
+                            <li><strong>New users:</strong> <code>AXLE_AUTO_FIX=true</code> for seamless experience</li>
+                            <li><strong>Development:</strong> <code>AXLE_CODE_REVIEW=auto</code> to review changed files</li>
+                            <li><strong>CI/CD:</strong> <code>AXLE_CODE_REVIEW=always</code> to fail on any issues</li>
+                        </ul>
                     </div>
                 </div>
             </div>
