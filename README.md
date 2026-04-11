@@ -65,7 +65,7 @@ pip install -e .
 
 | Command                    | Purpose                                      |
 | -------------------------- | -------------------------------------------- |
-| `axle -V, --version`     | Show Axle version.                          |
+| `axle -V, --version`     | Show Axle version.                           |
 | `axle list`              | List all tools in the `tools/` directory.  |
 | `axle run 1 "prompt"`    | Run tool by number and pass a prompt.        |
 | `axle run tool_name ...` | Run by filename (without `.py`).           |
@@ -108,6 +108,7 @@ Axle is designed as a platform for tools - you can easily add your own Python sc
 ### Tools Directory
 
 Run `axle path` to see your tools directory location. By default, it's created at:
+
 ```
 <axle_install_location>/tools/
 ```
@@ -115,16 +116,17 @@ Run `axle path` to see your tools directory location. By default, it's created a
 ### How to Add Tools
 
 1. **Find your tools directory**:
+
    ```bash
    axle path
    ```
-
 2. **Create a new Python file** in the tools directory:
+
    ```bash
    # Example: tools/04_my_tool.py
    ```
-
 3. **Implement the required functions**:
+
    ```python
    def get_description() -> str:
        """Return one-line description of the tool."""
@@ -135,8 +137,8 @@ Run `axle path` to see your tools directory location. By default, it's created a
        # Your tool logic here
        print(f"Processing: {prompt}")
    ```
-
 4. **Run your tool**:
+
    ```bash
    axle list              # Your tool appears in the list
    axle run 4 "your prompt"  # Run by number
@@ -161,6 +163,8 @@ If this helps your workflow:
 - ⭐ **Star on GitHub**: [skpaul82/axle-cli](https://github.com/skpaul82/axle-cli)
 - 🐦 **Follow on X**: [@_skpaul82](https://x.com/_skpaul82)
 - 🌐 **Website**: [www.axle.sanjoypaul.com](https://www.axle.sanjoypaul.com)
+- 🌐 ***FB Group***: [Agentic AIO](https://www.facebook.com/groups/agenticaio/)
+- 🌐 ***More Tools and Documentation***: Visit [Agentic AIO](#) website.
 
 ---
 
