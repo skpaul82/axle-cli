@@ -3,4 +3,4 @@
 # No manual redirect needed for / -> /index.html
 
 # Add www redirect if needed (uncomment to use)
-https://axle.sanjoypaul.com/* https://www.axle.sanjoypaul.com/:splat 301
+# https://axle.sanjoypaul.com/* https://www.axle.sanjoypaul.com/:splat 301
