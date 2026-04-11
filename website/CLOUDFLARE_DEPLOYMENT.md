@@ -74,7 +74,7 @@ URL redirects for clean navigation.
 - `website/index.html`
 - `website/css/style.css`
 - `website/js/main.js`
-- `website/pages/*.html`
+- `website//*.html`
 - All static assets
 
 ❌ **NOT Deployed:**

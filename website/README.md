@@ -53,7 +53,7 @@ website/
 │   └── style.css       # Main stylesheet
 ├── js/
 │   └── main.js         # JavaScript functionality
-├── pages/
+├── /
 │   ├── docs.html       # Documentation
 │   ├── faq.html        # FAQ with search
 │   └── community.html  # Community page
@@ -89,7 +89,7 @@ Edit CSS variables in `css/style.css`:
 
 - Edit HTML files directly
 - Update navigation links in all pages
-- Modify FAQ items in `pages/faq.html`
+- Modify FAQ items in `/faq.html`
 
 ### Analytics
 
@@ -100,7 +100,7 @@ Add your analytics code to `js/main.js` in the `trackEvent` function.
 The newsletter uses Zoho Campaigns. To configure:
 
 1. Get your Zoho Campaigns embed code
-2. Replace the form in `index.html` and `pages/community.html`
+2. Replace the form in `index.html` and `/community.html`
 3. Update the form action URL
 
 ## 🔗 Links
