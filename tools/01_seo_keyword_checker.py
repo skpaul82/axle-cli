@@ -2,8 +2,8 @@
 """SEO Keyword Checker - Analyze text for keyword density and SEO suggestions."""
 
 import re
-from collections import Counter
 import sys
+from collections import Counter
 
 
 def get_description():

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Meta Tag Auditor - Analyze HTML/webpage for meta tag completeness and SEO best practices."""
 
+import re
 import sys
 from urllib.parse import urlparse
-import re
 
 
 def get_description():
