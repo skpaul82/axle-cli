@@ -127,21 +127,45 @@
                     <div class="step-number">1</div>
                     <div class="step-content">
                         <h3>Install Axle</h3>
-                        <code>pip install git+https://github.com/skpaul82/axle-cli.git</code>
+                        <div style="position: relative; display: inline-block;">
+                            <code class="install-command" id="installAxle">
+                                <span class="prompt">$</span> pip install git+https://github.com/skpaul82/axle-cli.git
+
+                                <button onclick="copyInstallAxle()" class="copy-button-install" aria-label="Copy install command" title="Copy install command" data-clipboard-text="$ pip install git+https://github.com/skpaul82/axle-cli.git">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </code>
+                        </div>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-content">
                         <h3>List Available Tools</h3>
-                        <code>axle list</code>
+                        <div style="position: relative; display: inline-block;">
+                            <code class="install-command" id="listTools">
+                                <span class="prompt">$</span> axle list
+
+                                <button onclick="copyListTools()" class="copy-button-install" aria-label="Copy list command" title="Copy list command" data-clipboard-text="$ axle list">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </code>
+                        </div>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
                     <div class="step-content">
                         <h3>Run a Tool</h3>
-                        <code>axle run 1 "your prompt"</code>
+                        <div style="position: relative; display: inline-block;">
+                            <code class="install-command" id="runTool">
+                                <span class="prompt">$</span> axle run 1 "your prompt"
+
+                                <button onclick="copyRunTool()" class="copy-button-install" aria-label="Copy run command" title="Copy run command" data-clipboard-text="$ axle run 1 \"your prompt\"">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </code>
+                        </div>
                     </div>
                 </div>
                 <div class="step">
@@ -287,7 +311,7 @@
                         <li><a href="https://github.com/skpaul82/axle-cli/blob/main/docs/contributing.md">Contributing</a></li>
                     </ul>
                 </div>
-                <div class="footer-section">
+                <div class="footer-section footer-section-3">
                     <h4>License</h4>
                     <p>MIT License - Free for personal use. Commercial use requires permission.</p>
                     <p style="margin-top: 0.5rem; font-size: 0.9rem;">For commercial use: <a href="mailto:hello@skpaul.me" style="color: #60a5fa;">hello@skpaul.me</a></p>
@@ -305,6 +329,57 @@
             const command = 'pip install git+https://github.com/skpaul82/axle-cli.git';
             navigator.clipboard.writeText(command).then(() => {
                 const button = document.querySelector('.copy-button-install');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.style.background = 'rgba(16, 185, 129, 0.3)';
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.style.background = 'rgba(255,255,255,0.2)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        function copyInstallAxle() {
+            const command = 'pip install git+https://github.com/skpaul82/axle-cli.git';
+            navigator.clipboard.writeText(command).then(() => {
+                const button = document.querySelector('#installAxle .copy-button-install');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.style.background = 'rgba(16, 185, 129, 0.3)';
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.style.background = 'rgba(255,255,255,0.2)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        function copyListTools() {
+            const command = 'axle list';
+            navigator.clipboard.writeText(command).then(() => {
+                const button = document.querySelector('#listTools .copy-button-install');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.style.background = 'rgba(16, 185, 129, 0.3)';
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.style.background = 'rgba(255,255,255,0.2)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        function copyRunTool() {
+            const command = 'axle run 1 "your prompt"';
+            navigator.clipboard.writeText(command).then(() => {
+                const button = document.querySelector('#runTool .copy-button-install');
                 const originalHTML = button.innerHTML;
                 button.innerHTML = '<i class="fas fa-check"></i>';
                 button.style.background = 'rgba(16, 185, 129, 0.3)';
