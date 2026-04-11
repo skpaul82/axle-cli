@@ -1,7 +1,7 @@
 # Cloudflare Pages Configuration
 # This file configures Cloudflare Pages to deploy only the website directory
 
-name = "axle-cli-website"
+name = "axle-cli"
 compatibility_date = "2024-04-10"
 
 # Build configuration for Cloudflare Pages
