@@ -50,6 +50,15 @@ pip install -e .
 - **Real-time protection**: Automatic validation on every tool execution
 - **Dependency vulnerability scanning**: Integrated pip-audit for package security
 
+### 🔍 Automatic Code Review (NEW!)
+
+- **Pre-execution code quality checks**: Automatic review before running tools
+- **Auto-fixing**: Fixes formatting (Black) and import sorting (isort) issues
+- **Clear feedback**: Shows exactly what's wrong and how to fix it
+- **Non-blocking**: Won't stop your workflow by default
+- **Manual review**: Run `axle review` anytime for comprehensive checks
+- **CI/CD integration**: Catch issues locally before they reach CI
+
 ### Core Features
 
 - Modular platform for running ANY Python tool consistently
@@ -65,16 +74,19 @@ pip install -e .
 
 | Command                    | Purpose                                      |
 | -------------------------- | -------------------------------------------- |
-| `axle -V, --version`     | Show Axle version.                           |
-| `axle list`              | List all tools in the `tools/` directory.  |
-| `axle run 1 "prompt"`    | Run tool by number and pass a prompt.        |
-| `axle run tool_name ...` | Run by filename (without `.py`).           |
-| `axle info tool_name`    | Show tool description.                       |
-| `axle scan`              | Scan dependencies for known vulnerabilities. |
-| `axle doctor`            | Check Python, disk, and required modules.    |
-| `axle path`              | Show current tools folder location.          |
-| `axle security`          | Show or configure security policy.           |
-| `axle help`              | Show all commands.                           |
+| `axle -V, --version`   | Show Axle version.                           |
+| `axle list`            | List all tools in the `tools/` directory.  |
+| `axle run 1 "prompt"`   | Run tool by number and pass a prompt.        |
+| `axle run tool_name ...`| Run by filename (without `.py`).           |
+| `axle info tool_name`   | Show tool description.                       |
+| `axle scan`             | Scan dependencies for known vulnerabilities. |
+| `axle doctor`           | Check Python, disk, and required modules.    |
+| `axle path`             | Show current tools folder location.          |
+| `axle review <tool>`    | Run code review on a specific tool.          |
+| `axle review --all`     | Run code review on all tools.                |
+| `axle review --fix`     | Apply automatic fixes to issues found.       |
+| `axle security`         | Show or configure security policy.           |
+| `axle help`             | Show all commands.                           |
 
 ---
 

@@ -13,6 +13,14 @@ from pathlib import Path
 # Import tool security validator
 from axle.tool_validator import get_security_policy, validate_tool_before_execution
 
+# Import code reviewer
+from axle.code_reviewer import (
+    CodeReviewer,
+    get_auto_fix_policy,
+    get_code_review_policy,
+    should_run_code_review,
+)
+
 TOOLS_DIR = Path(__file__).parent.parent / "tools"
 
 # Version from package
@@ -160,6 +168,58 @@ def run_tool(tool_identifier, prompt=""):
         return 1
 
     print(f"   ✅ Security validation passed")
+
+    # 🔍 CODE REVIEW: Check code quality after security validation
+    if should_run_code_review(tool_file):
+        print(f"\n🔍 Running automatic code review...")
+        reviewer = CodeReviewer(verbose=False)
+        issues = reviewer.review_file(tool_file)
+
+        if issues:
+            print(f"   Found {len(issues)} code quality issue(s):")
+            for issue in issues:
+                print(f"   {issue}")
+
+            # Determine if we should auto-fix
+            auto_fix = get_auto_fix_policy()
+            if auto_fix:
+                auto_fixed, manual_fixes = reviewer.auto_fix_issues(tool_file, issues)
+                if auto_fixed > 0:
+                    print(f"   ✅ Applied {auto_fixed} automatic fix(es)")
+                if manual_fixes > 0:
+                    print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+            else:
+                # Ask user if they want to fix
+                auto_fixable = sum(1 for i in issues if i.fixable == "AUTO")
+                if auto_fixable > 0:
+                    print(f"\n   📋 Apply {auto_fixable} automatic fix(es)? [Y/n]: ", end="")
+                    try:
+                        user_choice = input().strip().lower()
+                        if user_choice != "n":
+                            auto_fixed, manual_fixes = reviewer.auto_fix_issues(tool_file, issues)
+                            if auto_fixed > 0:
+                                print(f"   ✅ Applied {auto_fixed} automatic fix(es)")
+                            if manual_fixes > 0:
+                                print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+                        else:
+                            manual_fixes = sum(1 for i in issues if i.fixable == "MANUAL")
+                            if manual_fixes > 0:
+                                print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+                    except (EOFError, KeyboardInterrupt):
+                        # In non-interactive mode, skip the fixes
+                        manual_fixes = sum(1 for i in issues if i.fixable == "MANUAL")
+                        if manual_fixes > 0:
+                            print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+                else:
+                    manual_fixes = sum(1 for i in issues if i.fixable == "MANUAL")
+                    if manual_fixes > 0:
+                        print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+        else:
+            print(f"   ✅ Code review passed")
+    else:
+        # Code review disabled
+        if get_code_review_policy() != "never":
+            print(f"\n⏭️  Code review skipped (auto mode: file not recently modified)")
 
     # Load and run the tool
     try:
@@ -519,6 +579,126 @@ def uninstall_axle(keep_tools=True, remove_tools=False):
     return 0
 
 
+def run_code_review_command(tool=None, fix=False, review_all=False, dry_run=False, verbose=False):
+    """Run code review on tool(s).
+
+    Args:
+        tool: Specific tool name to review
+        fix: Apply automatic fixes
+        review_all: Review all tools
+        dry_run: Show what would be fixed without making changes
+        verbose: Enable detailed output
+    """
+    print("🔍 Axle Code Review")
+    print("=" * 50)
+
+    tools_path = TOOLS_DIR
+    if not tools_path.exists():
+        print(f"❌ Tools directory '{TOOLS_DIR}' not found.")
+        return 1
+
+    # Determine which tools to review
+    tools_to_review = []
+    if review_all:
+        tools_to_review = [
+            f for f in tools_path.glob("*.py") if f.name != "__init__.py"
+        ]
+    elif tool:
+        # Find the specific tool
+        tool_file = tool if tool.endswith(".py") else f"{tool}.py"
+        tool_path = tools_path / tool_file
+        if tool_path.exists():
+            tools_to_review = [tool_path]
+        else:
+            # Try to find by name part
+            for f in tools_path.glob("*.py"):
+                if tool in f.stem:
+                    tools_to_review = [f]
+                    break
+        if not tools_to_review:
+            print(f"❌ Tool '{tool}' not found.")
+            print(f"   Run 'axle list' to see available tools.")
+            return 1
+    else:
+        print("❌ Please specify a tool or use --all to review all tools.")
+        print("   Usage: axle review <tool_name>")
+        print("          axle review --all")
+        return 1
+
+    if not tools_to_review:
+        print("No tools found to review.")
+        return 1
+
+    # Create reviewer
+    reviewer = CodeReviewer(verbose=verbose)
+    all_issues = []
+    total_auto_fixed = 0
+    total_manual_fixes = 0
+
+    # Review each tool
+    for tool_path in sorted(tools_to_review):
+        print(f"\n📁 {tool_path.name}:")
+
+        issues = reviewer.review_file(tool_path)
+        all_issues.extend(issues)
+
+        if issues:
+            print(f"   Found {len(issues)} issue(s)")
+            for issue in issues:
+                if verbose:
+                    print(f"   {issue}")
+                else:
+                    # Show only severity and category in non-verbose mode
+                    print(f"   {issue.severity} [{issue.category}] {issue.message}")
+
+            # Apply fixes if requested
+            if fix or dry_run:
+                auto_fixed, manual_fixes = reviewer.auto_fix_issues(
+                    tool_path, issues, dry_run=dry_run
+                )
+                if auto_fixed > 0:
+                    if dry_run:
+                        print(f"   📋 Would fix: {auto_fixed} automatic fix(es)")
+                    else:
+                        print(f"   ✅ Applied {auto_fixed} automatic fix(es)")
+                    total_auto_fixed += auto_fixed
+                if manual_fixes > 0:
+                    print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+                    total_manual_fixes += manual_fixes
+        else:
+            print("   ✅ No issues found")
+
+    # Summary
+    print(f"\n{'=' * 50}")
+    print(f"📊 Review Summary:")
+    print(f"   Tools reviewed: {len(tools_to_review)}")
+    print(f"   Total issues: {len(all_issues)}")
+    if fix or dry_run:
+        if dry_run:
+            print(f"   Would apply: {total_auto_fixed} automatic fix(es)")
+        else:
+            print(f"   Applied: {total_auto_fixed} automatic fix(es)")
+        print(f"   Manual fixes needed: {total_manual_fixes}")
+
+    # Show policy info
+    print(f"\n🔧 Configuration:")
+    print(f"   Code Review Policy: {get_code_review_policy().upper()}")
+    print(f"   Auto-Fix: {get_auto_fix_policy()}")
+
+    # Show environment variables
+    print(f"\n💡 Environment Variables:")
+    print(f"   AXLE_CODE_REVIEW={get_code_review_policy()}")
+    print(f"   AXLE_AUTO_FIX={get_auto_fix_policy()}")
+
+    # Exit with error if critical issues found
+    has_critical = any(i.severity == "CRITICAL" for i in all_issues)
+    if has_critical:
+        print(f"\n❌ Critical issues found!")
+        return 1
+
+    return 0
+
+
 def main():
     """Main entry point for the Axle CLI."""
     parser = argparse.ArgumentParser(
@@ -566,6 +746,24 @@ def main():
         help="Set security policy (or use AXLE_SECURITY_POLICY env var)",
     )
 
+    # axle review
+    review_parser = subparsers.add_parser("review", help="Run code review on tools")
+    review_parser.add_argument(
+        "tool", nargs="?", help="Tool name to review (omit for --all)"
+    )
+    review_parser.add_argument(
+        "--fix", action="store_true", help="Apply automatic fixes"
+    )
+    review_parser.add_argument(
+        "--all", action="store_true", help="Review all tools"
+    )
+    review_parser.add_argument(
+        "--dry-run", action="store_true", help="Show what would be fixed without making changes"
+    )
+    review_parser.add_argument(
+        "--verbose", action="store_true", help="Detailed output"
+    )
+
     # axle uninstall
     uninstall_parser = subparsers.add_parser(
         "uninstall", help="Uninstall Axle CLI (preserves tools directory)"
@@ -597,6 +795,14 @@ def main():
         return show_tools_path()
     elif args.command == "security":
         return show_security_config(getattr(args, "policy", None))
+    elif args.command == "review":
+        return run_code_review_command(
+            tool=getattr(args, "tool", None),
+            fix=getattr(args, "fix", False),
+            review_all=getattr(args, "all", False),
+            dry_run=getattr(args, "dry_run", False),
+            verbose=getattr(args, "verbose", False),
+        )
     elif args.command == "uninstall":
         return uninstall_axle(
             keep_tools=not getattr(args, "remove_tools", False),
