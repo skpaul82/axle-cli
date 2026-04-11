@@ -1,6 +1,6 @@
 # Cloudflare Pages Redirects
-# Redirect root to index.html
-/ /index.html 200
+# Note: Cloudflare Pages automatically serves index.html for root path
+# No manual redirect needed for / -> /index.html
 
-# Add www redirect if needed
+# Add www redirect if needed (uncomment to use)
 # https://axle.sanjoypaul.com/* https://www.axle.sanjoypaul.com/:splat 301
