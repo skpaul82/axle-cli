@@ -65,6 +65,32 @@ def divide(a: float, b: float) -> float:
 
 def main():
     """Main calculator function - runs an interactive calculator."""
+    import sys
+
+    # Check if arguments are provided (command-line mode)
+    if len(sys.argv) >= 4:
+        try:
+            operation = sys.argv[1].lower()
+            a = float(sys.argv[2])
+            b = float(sys.argv[3])
+
+            if operation not in ['add', 'subtract', 'multiply', 'divide']:
+                print(f"❌ Unknown operation: {operation}")
+                print("   Valid operations: add, subtract, multiply, divide")
+                sys.exit(1)
+
+            func = globals()[operation]
+            result = func(a, b)
+            print(f"✅ Result: {result}")
+            return
+        except ValueError as e:
+            print(f"❌ Error: {e}")
+            sys.exit(1)
+        except KeyError:
+            print(f"❌ Unknown operation")
+            sys.exit(1)
+
+    # Interactive mode
     print("🔢 Simple Calculator")
     print("=" * 40)
     print("Available operations:")

@@ -1232,13 +1232,13 @@ def main():
                 # Argparse-based tool - remaining args are for the tool
                 tool_args = sys.argv[2:]  # All args after 'axle tool_name'
 
-                # No args given OR --help/-h → show axle-formatted help
-                if not tool_args or '--help' in tool_args or '-h' in tool_args:
+                # Explicit --help/-h → show axle-formatted help
+                if '--help' in tool_args or '-h' in tool_args:
                     print(tool.get_help_text())
                     print_community_footer()
                     return 0
 
-                # Run the tool's main() with tool args
+                # Run the tool's main() with tool args (even if empty - for interactive tools)
                 old_argv = sys.argv
                 try:
                     sys.argv = [tool.name] + tool_args
