@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAQ - Axle CLI</title>
-    <meta name="description" content="Frequently asked questions about Axle CLI. Find answers about installation, usage, security, and more.">
+    <title>FAQ - Axle CLI v1.3.0</title>
+    <meta name="description" content="Frequently asked questions about Axle CLI v1.3.0. Interactive mode, direct execution, per-tool examples, security, and more.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google tag (gtag.js) -->
@@ -266,6 +266,7 @@
             <button class="faq-category-btn active" data-category="all">All</button>
             <button class="faq-category-btn" data-category="getting-started">Getting Started</button>
             <button class="faq-category-btn" data-category="usage">Usage</button>
+            <button class="faq-category-btn" data-category="v130">v1.3.0 Features</button>
             <button class="faq-category-btn" data-category="security">Security</button>
             <button class="faq-category-btn" data-category="code-review">Code Review</button>
             <button class="faq-category-btn" data-category="tools">Tools</button>
@@ -290,15 +291,115 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        <p>Axle is a modular CLI platform for running Python microtools from a shared tools directory. It provides:</p>
+                        <p>Axle is a modular CLI platform for running Python microtools from a shared tools directory. v1.3.0 provides:</p>
                         <ul>
-                            <li>Built-in security validation before executing any tool</li>
-                            <li>Automatic tool discovery - just drop Python files in your tools directory</li>
-                            <li>Simple numbered command system for easy tool execution</li>
-                            <li>Dependency vulnerability scanning</li>
-                            <li>Built-in SEO and productivity tools</li>
+                            <li>Interactive arrow-key menu — run <code>axle</code> with no args to pick a tool</li>
+                            <li>Direct execution — <code>axle tool_name --flags</code> or <code>axle N --flags</code></li>
+                            <li>Per-tool examples — <code>axle tool_name</code> shows that tool's own usage</li>
+                            <li>Automatic tool discovery — drop any Python script in your tools directory</li>
+                            <li>Optional security validation and code review</li>
+                            <li>Built-in SEO and content tools</li>
                         </ul>
                         <p>Think of it as a platform where anyone can add tools without modifying core code.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- v1.3.0 Features -->
+            <div class="faq-item" data-category="v130">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I use interactive mode?
+                        <span class="category-badge">v1.3.0</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Just run <code>axle</code> with no arguments in a terminal:</p>
+                        <pre><code>axle</code></pre>
+                        <p>An arrow-key scrollable tool picker appears. Navigate with:</p>
+                        <ul>
+                            <li><strong>↑ / k</strong> — move up</li>
+                            <li><strong>↓ / j</strong> — move down</li>
+                            <li><strong>Enter</strong> — select</li>
+                            <li><strong>q / Esc / Ctrl+C</strong> — cancel</li>
+                        </ul>
+                        <p>After selecting, Axle prompts for arguments based on the tool type (flags for argparse tools, free text for contract tools, function name for multi-function scripts).</p>
+                        <p><strong>Note:</strong> Requires a real terminal (TTY). Works on macOS and Linux. On Windows, falls back to standard help output.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="v130">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Can I run tools without <code>axle run</code>?
+                        <span class="category-badge">v1.3.0</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Yes! In v1.3.0 you can run any tool directly by name or number:</p>
+                        <pre><code># By tool name
+axle competitor_analysis --urls https://rival.com --target-keyword "cloud hosting"
+axle content_optimizer --file article.html --target-keyword "SaaS"
+
+# By number
+axle 4 --urls https://rival.com --target-keyword "cloud hosting"</code></pre>
+                        <p>All flags are forwarded to the tool unchanged. The old <code>axle run</code> syntax still works too.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="v130">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What does <code>axle tool_name</code> do with no arguments?
+                        <span class="category-badge">v1.3.0</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>It shows the tool's own usage examples — automatically extracted from the tool's <code>Usage:</code> docstring block and converted to <code>axle</code> syntax:</p>
+                        <pre><code>$ axle competitor_analysis
+
+competitor_analysis — Analyze competitor websites for SEO insights
+
+📌 Examples:
+  axle competitor_analysis  --urls https://comp1.com --target-keyword "cloud hosting"
+  axle competitor_analysis  --files comp1.html --target-keyword "crm software"
+
+Run with --details for full options.</code></pre>
+                        <p>This works the same way with the tool number: <code>axle 4</code></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="v130">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What is the <code>--details</code> flag?
+                        <span class="category-badge">v1.3.0</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Use <code>--details</code> (or <code>-d</code>) with <code>axle help</code> to see the full argparse help and function list for a tool:</p>
+                        <pre><code># Default — name, summary, examples
+axle help competitor_analysis
+
+# Full details — all flags, types, defaults, functions
+axle help competitor_analysis --details
+axle help 4 --details</code></pre>
+                        <p>This replaces the old <code>--verbose</code> flag on <code>axle help</code>.</p>
                     </div>
                 </div>
             </div>
@@ -354,13 +455,21 @@
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        <p>You can run tools by number or by name:</p>
-                        <pre><code># Run by number
-axle run 1 "your prompt"
+                        <p>Three ways to run a tool:</p>
+                        <p><strong>1. Interactive mode (easiest)</strong> — pick with arrow keys:</p>
+                        <pre><code>axle</code></pre>
+                        <p><strong>2. Direct execution by name or number:</strong></p>
+                        <pre><code># By name
+axle competitor_analysis --urls https://rival.com --target-keyword "cloud hosting"
+axle seo_keyword_checker "my keyword"
 
-# Run by name
+# By number
+axle 4 --urls https://rival.com --target-keyword "cloud hosting"
+axle 1 "my keyword"</code></pre>
+                        <p><strong>3. Legacy syntax (still works):</strong></p>
+                        <pre><code>axle run 1 "your prompt"
 axle run seo_keyword_checker "your prompt"</code></pre>
-                        <p>Use <code>axle list</code> to see all available tools with their numbers.</p>
+                        <p>Not sure of the flags? Run the tool name alone to see its examples: <code>axle competitor_analysis</code></p>
                     </div>
                 </div>
             </div>
@@ -376,13 +485,16 @@ axle run seo_keyword_checker "your prompt"</code></pre>
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        <p>Axle comes with built-in tools:</p>
+                        <p>Axle comes with built-in SEO and content tools:</p>
                         <ul>
-                            <li><strong>SEO Keyword Checker:</strong> Analyze text for keyword density and optimization</li>
-                            <li><strong>Meta Tag Auditor:</strong> Analyze HTML/webpages for meta tag completeness</li>
-                            <li><strong>Daily Life Hack Generator:</strong> Generate personalized productivity tips</li>
+                            <li><strong>seo_keyword_checker:</strong> Analyze text for keyword density and optimization</li>
+                            <li><strong>meta_tag_auditor:</strong> Analyze HTML/webpages for meta tag completeness</li>
+                            <li><strong>competitor_analysis:</strong> Analyze competitor websites for SEO insights</li>
+                            <li><strong>content_optimizer:</strong> Optimize existing content for target keywords</li>
+                            <li><strong>content_brief_generator:</strong> Generate detailed SEO content briefs</li>
+                            <li><strong>daily_life_hack_generator:</strong> Generate personalized productivity tips</li>
                         </ul>
-                        <p>Plus, you can easily add your own tools!</p>
+                        <p>Run <code>axle list</code> to see all available tools with descriptions. You can also add your own!</p>
                     </div>
                 </div>
             </div>
@@ -557,21 +669,25 @@ export AXLE_CODE_REVIEW_VERBOSE=false</code></pre>
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        <p>Adding tools is easy!</p>
+                        <p>Drop any Python script in your tools directory — no contract required! Three supported formats:</p>
                         <ol>
                             <li>Find your tools directory: <code>axle path</code></li>
                             <li>Create a Python file (e.g., <code>04_my_tool.py</code>)</li>
-                            <li>Implement two functions:
-                                <pre><code>def get_description() -> str:
-    return "Brief description"
-
-def main(prompt: str) -> None:
-    # Your logic here
-    pass</code></pre>
-                            </li>
-                            <li>Run it: <code>axle run my_tool "prompt"</code></li>
+                            <li>Use any of these formats:</li>
                         </ol>
-                        <p>That's it! No changes to core code required.</p>
+                        <p><strong>Argparse tool</strong> (recommended — flags pass straight through):</p>
+                        <pre><code>import argparse
+def main(args=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", required=True)
+    parsed = parser.parse_args(args)
+    print(parsed.input)</code></pre>
+                        <p><strong>Contract tool</strong> (simple text prompt):</p>
+                        <pre><code>def get_description() -> str:
+    return "Brief description"
+def main(prompt: str) -> None:
+    print(f"Processing: {prompt}")</code></pre>
+                        <p>Run it: <code>axle my_tool</code> (see examples) or <code>axle my_tool --flags</code> (run it). No core code changes needed.</p>
                     </div>
                 </div>
             </div>
@@ -759,7 +875,7 @@ axle metadata search "meta tag"</code></pre>
                 </div>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        <p>Starting with v1.2.0, security validation and code review are <strong>disabled by default</strong> for better performance:</p>
+                        <p>Since v1.2.0, security validation and code review are <strong>disabled by default</strong> for better performance:</p>
                         <ul>
                             <li>⚡ <strong>66% faster</strong> tool execution (~150ms → ~50ms)</li>
                             <li>🎯 Better experience for trusted tools</li>
@@ -920,7 +1036,7 @@ cat ~/.axle/config.json
                 <div class="footer-section">
                     <h4>Axle CLI</h4>
                     <p>A modular platform for running Python microtools from a shared tools directory.</p>
-                    <p class="version">Version 1.2.0</p>
+                    <p class="version">Version 1.3.0</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>

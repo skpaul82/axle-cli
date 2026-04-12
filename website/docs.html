@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation - Axle CLI</title>
-    <meta name="description" content="Complete documentation for Axle CLI. Installation guide, usage examples, command reference, and more.">
+    <title>Documentation - Axle CLI v1.3.0</title>
+    <meta name="description" content="Complete documentation for Axle CLI v1.3.0. Interactive mode, direct execution, per-tool examples, installation guide, and command reference.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google tag (gtag.js) -->
@@ -230,7 +230,10 @@
                     <ul>
                         <li><a href="#installation">Installation</a></li>
                         <li><a href="#quick-start">Quick Start</a></li>
-                        <li><a href="#commands">Commands</a></li>
+                        <li><a href="#interactive">Interactive Mode</a></li>
+                        <li><a href="#direct-execution">Direct Execution</a></li>
+                        <li><a href="#per-tool-examples">Per-Tool Examples</a></li>
+                        <li><a href="#commands">Commands Reference</a></li>
                         <li><a href="#adding-tools">Adding Tools</a></li>
                         <li><a href="#security">Security</a></li>
                         <li><a href="#code-review">Code Review</a></li>
@@ -285,54 +288,167 @@ pip install -e .</code></pre>
 
                     <p>After installation, you can immediately start using Axle:</p>
 
-                    <h3>1. Check Your Version</h3>
-                    <pre><code>axle -V</code></pre>
+                    <h3>1. Launch Interactive Mode</h3>
+                    <pre><code>axle</code></pre>
+                    <p>No arguments — an arrow-key scrollable tool picker appears. Navigate with ↑↓ or j/k, press Enter to select, type your args, and run.</p>
 
-                    <h3>2. List Available Tools</h3>
+                    <h3>2. Run a Tool Directly by Name or Number</h3>
+                    <pre><code># By tool name
+axle competitor_analysis --urls https://rival.com --target-keyword "web developer"
+
+# By number
+axle 4 --urls https://rival.com --target-keyword "web developer"</code></pre>
+
+                    <h3>3. See a Tool's Usage Examples</h3>
+                    <pre><code># Type tool name with no args — shows its examples
+axle content_optimizer
+axle 3</code></pre>
+
+                    <h3>4. List All Available Tools</h3>
                     <pre><code>axle list</code></pre>
-
-                    <h3>3. Run a Tool</h3>
-                    <pre><code># Run by number
-axle run 1 "your prompt"
-
-# Run by name
-axle run seo_keyword_checker "your prompt"</code></pre>
-
-                    <h3>4. Get Tool Information</h3>
-                    <pre><code>axle info seo_keyword_checker</code></pre>
 
                     <h3>5. Check Your Environment</h3>
                     <pre><code>axle doctor</code></pre>
+
+                    <h3>6. Check Your Version</h3>
+                    <pre><code>axle -V</code></pre>
+                </section>
+
+                <!-- Interactive Mode -->
+                <section id="interactive" class="docs-section">
+                    <h2>Interactive Mode</h2>
+
+                    <p>Run <code>axle</code> with no arguments in a terminal to launch the interactive arrow-key picker.</p>
+
+                    <pre><code>axle</code></pre>
+
+                    <h3>Navigation</h3>
+                    <ul>
+                        <li><strong>↑ / k</strong> — move up</li>
+                        <li><strong>↓ / j</strong> — move down</li>
+                        <li><strong>Enter</strong> — select tool</li>
+                        <li><strong>q / Esc / Ctrl+C</strong> — cancel and exit</li>
+                    </ul>
+
+                    <h3>After Selecting a Tool</h3>
+                    <p>Axle shows the tool type and prompts for arguments context-aware:</p>
+                    <ul>
+                        <li><strong>Argparse tools</strong> — shows usage example, prompts for flags. Leave blank to see <code>--help</code>.</li>
+                        <li><strong>Contract tools</strong> — prompts for a free-text prompt string.</li>
+                        <li><strong>Multi-function tools</strong> — lists available functions, prompts for <code>[function] [args]</code>.</li>
+                    </ul>
+
+                    <p>Before running, Axle echoes the full command so you can see exactly what will execute:</p>
+                    <pre><code>Running: axle competitor_analysis --urls https://rival.com --target-keyword "cloud hosting"</code></pre>
+
+                    <div class="info-box">
+                        <strong>💡 Note:</strong> Interactive mode requires a real terminal (TTY). It's not available in piped or non-interactive shells. On Windows, it falls back gracefully to standard help output.
+                    </div>
+                </section>
+
+                <!-- Direct Execution -->
+                <section id="direct-execution" class="docs-section">
+                    <h2>Direct Execution</h2>
+
+                    <p>In v1.3.0, you can run any tool directly without the <code>axle run</code> prefix — just pass the tool name or number followed by its flags.</p>
+
+                    <h3>By Tool Name</h3>
+                    <pre><code>axle competitor_analysis --urls https://rival.com --target-keyword "cloud hosting"
+axle content_optimizer --file article.html --target-keyword "SaaS"
+axle seo_keyword_checker "my keyword phrase"</code></pre>
+
+                    <h3>By Tool Number</h3>
+                    <pre><code>axle 4 --urls https://rival.com --target-keyword "cloud hosting"
+axle 3 --file article.html --target-keyword "SaaS"
+axle 1 "my keyword phrase"</code></pre>
+
+                    <h3>Flags Pass Through Unchanged</h3>
+                    <p>All flags are forwarded directly to the tool. Axle does not intercept or modify them.</p>
+
+                    <div class="info-box">
+                        <strong>💡 Backward Compatible:</strong> The old <code>axle run tool_name args</code> syntax still works. Direct execution is an additional shorthand.
+                    </div>
+                </section>
+
+                <!-- Per-Tool Examples -->
+                <section id="per-tool-examples" class="docs-section">
+                    <h2>Per-Tool Usage Examples</h2>
+
+                    <p>Running a tool name or number with no arguments shows that tool's own usage examples instead of erroring.</p>
+
+                    <pre><code>axle competitor_analysis
+axle 4</code></pre>
+
+                    <p>Example output:</p>
+                    <pre><code>competitor_analysis — Analyze competitor websites for SEO insights
+
+📌 Examples:
+  axle competitor_analysis  --urls https://comp1.com --target-keyword "cloud hosting"
+  axle competitor_analysis  --files comp1.html --target-keyword "crm software"
+
+Run with --details for full options.</code></pre>
+
+                    <h3>How Examples Are Extracted</h3>
+                    <p>Axle reads the <code>Usage:</code> block from each tool's module docstring and automatically converts <code>python tool_name.py --args</code> format into <code>axle tool_name --args</code> format.</p>
+
+                    <h3>Full Options with --details</h3>
+                    <pre><code>axle help competitor_analysis --details</code></pre>
+                    <p>This shows the complete argparse help (all flags, types, defaults) plus a list of available functions.</p>
                 </section>
 
                 <!-- Commands -->
                 <section id="commands" class="docs-section">
                     <h2>Commands Reference</h2>
 
-                    <h3>axle -V, --version</h3>
-                    <p>Show the Axle version number.</p>
-                    <pre><code>axle -V</code></pre>
+                    <h3>axle (no arguments)</h3>
+                    <p>Launches the interactive arrow-key tool picker when run in a real terminal (TTY). In a non-TTY context (pipes, scripts), shows the tool list and usage tip.</p>
+                    <pre><code>axle</code></pre>
 
-                    <h3>axle list</h3>
-                    <p>List all available tools in the tools directory.</p>
-                    <pre><code>axle list</code></pre>
+                    <h3>axle &lt;tool_name&gt; or axle &lt;N&gt; (no further args)</h3>
+                    <p>Shows the tool's own usage examples and a one-line summary. Does not run the tool.</p>
+                    <pre><code>axle competitor_analysis
+axle content_optimizer
+axle 4</code></pre>
 
-                    <h3>axle run &lt;tool&gt; [prompt] [--security] [--code-review]</h3>
-                    <p>Execute a tool by number or name. Optionally enable security validation or code review for this run.</p>
+                    <h3>axle &lt;tool_name&gt; [flags...] or axle &lt;N&gt; [flags...]</h3>
+                    <p>Runs the tool directly. All flags are forwarded to the tool unchanged.</p>
+                    <pre><code># Argparse tools — pass flags directly
+axle competitor_analysis --urls https://rival.com --target-keyword "cloud hosting"
+axle content_optimizer --file article.html --target-keyword "SaaS"
+
+# Contract tools — pass prompt as positional argument
+axle seo_keyword_checker "my keyword phrase"
+
+# By number
+axle 4 --urls https://rival.com --target-keyword "cloud hosting"
+axle 1 "my keyword phrase"</code></pre>
+
+                    <h3>axle run &lt;tool&gt; [args] [--security] [--code-review]</h3>
+                    <p>Legacy execution syntax — still works. Optionally enable security validation or code review per run.</p>
                     <pre><code># By number
 axle run 1 "your prompt"
 
 # By name
 axle run seo_keyword_checker "your prompt"
 
-# With security validation
-axle run 1 "your prompt" --security
-
-# With code review
-axle run 1 "your prompt" --code-review
-
-# With both
+# With security and code review
 axle run 1 "your prompt" --security --code-review</code></pre>
+
+                    <h3>axle help [&lt;tool&gt;] [--details / -d]</h3>
+                    <p>Show general help or per-tool help. Default shows name, summary, and examples. Use <code>--details</code> for full argparse options and function list.</p>
+                    <pre><code># General help
+axle help
+
+# Tool help (summary + examples)
+axle help competitor_analysis
+
+# Full details (all flags + functions)
+axle help competitor_analysis --details
+axle help 4 --details</code></pre>
+
+                    <h3>axle list</h3>
+                    <p>List all available tools in the tools directory with numbers and descriptions.</p>
+                    <pre><code>axle list</code></pre>
 
                     <h3>axle info &lt;tool_name&gt;</h3>
                     <p>Show detailed information about a specific tool.</p>
@@ -350,48 +466,40 @@ axle run 1 "your prompt" --security --code-review</code></pre>
                     <p>Show the current tools folder location.</p>
                     <pre><code>axle path</code></pre>
 
+                    <h3>axle -V, --version</h3>
+                    <p>Show the Axle version number.</p>
+                    <pre><code>axle -V</code></pre>
+
                     <h3>axle security [--policy &lt;policy&gt;] [--enable] [--disable] [--show]</h3>
                     <p>Show or configure security policy and settings.</p>
-                    <pre><code># Show current policy and configuration
-axle security
-
-# Set security policy
-axle security --policy strict
-
-# Enable security by default
+                    <pre><code># Enable security by default
 axle security --enable
 
 # Disable security by default
 axle security --disable
 
 # Show current configuration
-axle security --show</code></pre>
+axle security --show
 
-                    <h3>axle review &lt;tool&gt; [--all] [--fix] [--dry-run] [--verbose] [--enable] [--disable] [--show]</h3>
+# Set security policy
+axle security --policy strict</code></pre>
+
+                    <h3>axle review [&lt;tool&gt;] [--all] [--fix] [--dry-run] [--enable] [--disable] [--show]</h3>
                     <p>Run code review on tools or configure code review settings.</p>
-                    <pre><code># Review a specific tool
-axle review my_tool
-
-# Review all tools
-axle review --all
-
-# Review with automatic fixes
-axle review my_tool --fix
-
-# Preview changes without applying
-axle review my_tool --fix --dry-run
-
-# Detailed output
-axle review my_tool --verbose
-
-# Enable code review by default
+                    <pre><code># Enable code review by default
 axle review --enable
 
 # Disable code review by default
 axle review --disable
 
-# Show current configuration
-axle review --show</code></pre>
+# Review a specific tool
+axle review my_tool
+
+# Review with automatic fixes
+axle review my_tool --fix
+
+# Preview changes without applying
+axle review my_tool --fix --dry-run</code></pre>
 
                     <h3>axle update [--check]</h3>
                     <p>Update Axle CLI to the latest version from GitHub.</p>
@@ -410,7 +518,7 @@ axle metadata scan
 axle metadata list
 
 # Show detailed metadata for a tool
-axle metadata show 01_seo_keyword_checker
+axle metadata show competitor_analysis
 
 # Search tools by name, function, or description
 axle metadata search keyword
@@ -423,50 +531,87 @@ axle uninstall
 
 # Remove tools directory
 axle uninstall --remove-tools</code></pre>
-
-                    <h3>axle help</h3>
-                    <p>Show help message and all available commands.</p>
-                    <pre><code>axle help</code></pre>
                 </section>
 
                 <!-- Adding Tools -->
                 <section id="adding-tools" class="docs-section">
                     <h2>Adding Your Own Tools</h2>
 
-                    <p>Axle is designed as a platform for tools - you can easily add your own Python scripts!</p>
+                    <p>Drop any Python script into your tools directory and run it immediately. No contract required — Axle auto-discovers the tool type.</p>
 
                     <h3>1. Find Your Tools Directory</h3>
                     <pre><code>axle path</code></pre>
 
-                    <h3>2. Create a New Python File</h3>
-                    <pre><code># Example: tools/04_my_tool.py</code></pre>
+                    <h3>2. Choose a Tool Type</h3>
+                    <p>Axle supports three tool types. All are discovered automatically.</p>
 
-                    <h3>3. Implement the Required Functions</h3>
-                    <pre><code>def get_description() -> str:
-    """Return one-line description of the tool."""
-    return "Brief description of what your tool does"
+                    <h4>Type A — Argparse Tool (recommended for new tools)</h4>
+                    <p>Standard Python script with <code>argparse</code> and a <code>main(args)</code> function. Axle passes CLI flags straight through.</p>
+                    <pre><code>"""
+My Tool — does something useful.
+
+Usage:
+    python my_tool.py --input file.txt --output result.json
+    python my_tool.py --input file.txt --verbose
+"""
+import argparse
+
+def main(args=None):
+    parser = argparse.ArgumentParser(description="My tool")
+    parser.add_argument("--input", required=True, help="Input file")
+    parser.add_argument("--output", default="result.json", help="Output file")
+    parser.add_argument("--verbose", action="store_true")
+    parsed = parser.parse_args(args)
+    # tool logic here
+    print(f"Processing {parsed.input}")</code></pre>
+
+                    <pre><code># Run it directly
+axle my_tool --input data.txt --output out.json
+
+# See usage examples (from the docstring Usage: block)
+axle my_tool</code></pre>
+
+                    <h4>Type B — Contract Tool (simple prompt-based)</h4>
+                    <p>Implements <code>get_description()</code> and <code>main(prompt: str)</code>. Best for tools that take a single text input.</p>
+                    <pre><code">def get_description() -> str:
+    return "Brief description of what this tool does"
 
 def main(prompt: str) -> None:
-    """Main entry point. Called by CLI router."""
     # Your tool logic here
     print(f"Processing: {prompt}")</code></pre>
 
-                    <h3>4. Run Your Tool</h3>
+                    <pre><code># Run it
+axle my_contract_tool "your input text here"</code></pre>
+
+                    <h4>Type C — Multi-function Script</h4>
+                    <p>Any Python script with multiple top-level functions. Call specific functions by name.</p>
+                    <pre><code">def analyze(text):
+    """Analyze the given text."""
+    print(f"Analyzing: {text}")
+
+def summarize(url):
+    """Fetch and summarize a URL."""
+    print(f"Summarizing: {url}")</code></pre>
+
+                    <pre><code># List functions
+axle my_script
+
+# Call a specific function
+axle my_script analyze "some text to analyze"
+axle my_script summarize https://example.com</code></pre>
+
+                    <h3>3. Run Your Tool</h3>
                     <pre><code>axle list              # Your tool appears in the list
-axle run 4 "your prompt"  # Run by number
-axle run my_tool "your prompt"  # Run by name</code></pre>
+axle my_tool           # See its usage examples
+axle my_tool --flags   # Run it directly</code></pre>
 
-                    <h3>Tool Requirements</h3>
+                    <h3>Tips</h3>
                     <ul>
-                        <li>✅ Must implement <code>get_description()</code> function (returns string)</li>
-                        <li>✅ Must implement <code>main(prompt: str)</code> function (no return value)</li>
+                        <li>✅ Use numeric prefix for ordering (e.g., <code>04_my_tool.py</code>)</li>
+                        <li>✅ Add a <code>Usage:</code> block in your module docstring for auto-extracted examples</li>
+                        <li>✅ No core code changes needed — just drop the file and run</li>
                         <li>✅ File must be valid Python 3.10+</li>
-                        <li>✅ Optional: Use numeric prefix for ordering (e.g., <code>04_my_tool.py</code>)</li>
                     </ul>
-
-                    <div class="warning-box">
-                        <strong>⚠️ Security Note:</strong> All tools are validated for security issues before execution. Dangerous patterns like eval(), exec(), and shell=True will be blocked unless you override the security policy.
-                    </div>
                 </section>
 
                 <!-- Security -->
@@ -509,7 +654,7 @@ export AXLE_SECURITY_POLICY=strict
 axle security --policy strict</code></pre>
 
                     <div class="warning-box">
-                        <strong>⚠️ Important:</strong> Security validation is disabled by default in v1.2.0. Enable it with <code>axle security --enable</code> or use <code>--security</code> flag per run.
+                        <strong>⚠️ Important:</strong> Security validation is disabled by default in v1.3.0. Enable it with <code>axle security --enable</code> or use <code>--security</code> flag per run.
                     </div>
 
                     <div class="info-box">
@@ -592,7 +737,7 @@ export AXLE_AUTO_FIX=false
 export AXLE_CODE_REVIEW_VERBOSE=false</code></pre>
 
                     <div class="warning-box">
-                        <strong>⚠️ Important:</strong> Code review is disabled by default in v1.2.0. Enable it with <code>axle review --enable</code> or use <code>--code-review</code> flag per run.
+                        <strong>⚠️ Important:</strong> Code review is disabled by default in v1.3.0. Enable it with <code>axle review --enable</code> or use <code>--code-review</code> flag per run.
                     </div>
 
                     <div class="info-box">
@@ -755,7 +900,7 @@ axle run your_tool "prompt"</code></pre>
                 <div class="footer-section">
                     <h4>Axle CLI</h4>
                     <p>A modular platform for running Python microtools from a shared tools directory.</p>
-                    <p class="version">Version 1.2.0</p>
+                    <p class="version">Version 1.3.0</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>

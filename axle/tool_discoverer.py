@@ -157,68 +157,140 @@ class DiscoveredTool:
                 return func
         return None
 
-    def get_help_text(self) -> str:
-        """Generate help text for this tool."""
+    def get_docstring_examples(self) -> List[str]:
+        """Extract Usage: examples from module docstring and convert to axle syntax."""
+        docstring = self.metadata.get('docstring', '') or ''
+        examples = []
+        in_usage = False
+
+        for line in docstring.split('\n'):
+            stripped = line.strip()
+            if stripped.lower().startswith('usage:'):
+                in_usage = True
+                continue
+            if not in_usage:
+                continue
+            if not stripped:
+                # blank line ends the usage block
+                if examples:
+                    break
+                continue
+            # Detect a new section header (non-example line after examples started)
+            if examples and not stripped.startswith('python') and not stripped.startswith('axle') \
+                    and not stripped.startswith('-') and not stripped.startswith('#'):
+                break
+            if stripped.startswith('python '):
+                parts = stripped.split(None, 2)   # ['python', 'tool_file.py', 'rest...']
+                if len(parts) >= 2:
+                    tool_stem = Path(parts[1]).stem
+                    rest = parts[2] if len(parts) > 2 else ''
+                    line_out = f"  axle {tool_stem}"
+                    if rest:
+                        line_out += f"  {rest}"
+                    examples.append(line_out)
+
+        return examples
+
+    def get_argparse_help(self) -> Optional[str]:
+        """Capture and return the tool's --help output reformatted with axle prefix."""
+        main_func = self.get_main_function()
+        if not main_func or main_func.arg_count != 0:
+            return None
+        if not self.module:
+            return None
+
+        import io
+        import contextlib
+
+        buf = io.StringIO()
+        old_argv = sys.argv
+        try:
+            sys.argv = [self.tool_path.stem, '--help']
+            with contextlib.redirect_stdout(buf):
+                try:
+                    main_func.func_obj()
+                except SystemExit:
+                    pass
+                except Exception:
+                    pass
+        except Exception:
+            return None
+        finally:
+            sys.argv = old_argv
+
+        text = buf.getvalue().strip()
+        if not text:
+            return None
+
+        # Replace "usage: tool_name" and "usage: python tool_name.py" with "usage: axle tool_name"
+        stem = self.tool_path.stem
+        text = text.replace(f'usage: {stem}', f'usage: axle {stem}')
+        text = text.replace(f'usage: python {self.tool_path.name}', f'usage: axle {stem}')
+        # Remove the generic argparse "description" line if it duplicates our summary
+        return text
+
+    def get_help_text(self, verbose=False) -> str:
+        """Generate help text for this tool.
+
+        Args:
+            verbose: If True, show full argparse options + function list.
+                     If False (default), show name, summary, and examples only.
+        """
         output = []
         output.append(f"\n{'=' * 60}")
         output.append(f"Tool: {self.name}")
-        output.append(f"File: {self.tool_path.name}")
         output.append(f"{'=' * 60}")
 
-        # Description
-        output.append(f"\n{self.description}")
+        # One-line summary
+        output.append(f"\n{self.description}\n")
 
-        # Module docstring
-        if self.metadata.get('docstring'):
-            output.append(f"\n{self.metadata['docstring']}")
+        main_func   = self.get_main_function()
+        is_argparse = main_func and main_func.arg_count == 0
+        is_contract = self.metadata.get('has_contract')
 
-        # Available functions/commands
-        if self.functions:
-            output.append(f"\n📋 Available Functions:")
-            for func in self.functions:
-                args = func.get_arg_names()
-                args_display = " ".join([f"<{arg}>" for arg in args])
-                signature = f"{func.name}({args_display})" if args else func.name + "()"
+        # ── Examples extracted from the tool's own docstring ─────────────────
+        examples = self.get_docstring_examples()
+        if examples:
+            output.append("📌 Examples:")
+            output.extend(examples)
+        elif is_contract:
+            output.append("📌 Examples:")
+            output.append(f'  axle {self.name} "your prompt here"')
+        elif is_argparse:
+            output.append("📌 Examples:")
+            output.append(f"  axle {self.name} --help       # see all available flags")
+            output.append(f"  axle {self.name} [--flag value ...]")
+        elif main_func:
+            output.append("📌 Examples:")
+            funcs = [f.name for f in self.functions if f.is_main]
+            output.append(f"  axle {self.name}")
+            if len(self.functions) > 1:
+                output.append(f"  axle {self.name} <function> [args]")
 
-                is_main = " 🔴 MAIN" if func.is_main else ""
-                output.append(f"  • {signature}{is_main}")
+        # ── Full details (verbose / --details mode) ──────────────────────────
+        if verbose:
+            argparse_help = self.get_argparse_help() if is_argparse else None
+            if argparse_help:
+                output.append(f"\n📋 Options:")
+                # indent each line
+                for line in argparse_help.splitlines():
+                    output.append(f"  {line}")
+            elif self.metadata.get('docstring'):
+                output.append(f"\n📄 Documentation:")
+                output.append(self.metadata['docstring'].strip())
 
-                if func.docstring:
-                    first_line = func.docstring.split('\n')[0] if func.docstring else ""
-                    output.append(f"    {first_line}")
-
-        # Classes
-        if self.classes:
-            output.append(f"\n🏗️  Available Classes:")
-            for name, cls in self.classes:
-                output.append(f"  • {name}")
-
-        # Usage examples
-        main_func = self.get_main_function()
-        if main_func:
-            args = main_func.get_arg_names()
-            if main_func.arg_count == 0:
-                # Tool with its own CLI interface
-                output.append(f"\n💡 Usage: axle run {self.name}")
-                output.append(f"   Note: This tool uses its own CLI interface (argparse-based)")
-                output.append(f"   Run directly for more options: python {self.tool_path} --help")
-            elif args:
-                args_display = " ".join([f"<{arg}>" for arg in args])
-                output.append(f"\n💡 Usage (main): axle run {self.name}")
-            else:
-                output.append(f"\n💡 Usage (main): axle run {self.name}")
-
-        # Show examples for other functions
-        if len(self.functions) > 1:
-            output.append(f"\n💡 Other functions:")
-            for func in self.functions[:5]:  # Show up to 5 functions
-                if func.name != main_func.name if main_func else True:
+            if self.functions:
+                output.append(f"\n🔧 Functions:")
+                for func in self.functions:
                     args = func.get_arg_names()
-                    if args:
-                        args_display = " ".join([f"<{arg}>" for arg in args])
-                        output.append(f"   • axle run {self.name} {func.name} {args_display}")
-                    else:
-                        output.append(f"   • axle run {self.name} {func.name}")
+                    args_display = " ".join([f"<{a}>" for a in args]) if args else ""
+                    sig = f"{func.name}({args_display})" if args_display else f"{func.name}()"
+                    tag = "  🔴 MAIN" if func.is_main else ""
+                    output.append(f"  • {sig}{tag}")
+                    if func.docstring:
+                        output.append(f"    {func.docstring.splitlines()[0]}")
+        else:
+            output.append(f"\n  axle help {self.name} --details   # full options & function list")
 
         return "\n".join(output)
 

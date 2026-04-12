@@ -1,383 +1,297 @@
 # Usage Guide
 
-This guide shows you how to use Axle CLI effectively.
+How to use Axle CLI v1.3.0 effectively.
 
-## Basic Concepts
+---
 
-### The Tool Numbering System
+## The Two Ways to Run Tools
 
-Tools are numbered for easy reference:
+Axle gives you two equally good ways to run tools:
 
-```
-1. seo_keyword_checker
-2. meta_tag_auditor
-3. daily_life_hack_generator
-```
-
-You can run tools by number or by name:
+### 1. Interactive mode (recommended for exploration)
 
 ```bash
-# By number
-axle run 1 "your prompt"
-
-# By name
-axle run seo_keyword_checker "your prompt"
+axle
 ```
 
-### Prompts
+Run with no arguments on a real terminal. A scrollable arrow-key menu appears — pick a tool, type your arguments, and Axle runs it.
 
-Most tools accept a "prompt" - this is the input text or context for the tool:
+### 2. Direct mode (recommended for scripting / daily use)
 
 ```bash
-axle run 1 "python is a great programming language for data science"
+axle <tool_name> [flags or prompt]
+axle <N> [flags or prompt]
 ```
 
-## Common Commands
+No subcommand needed. Flags pass straight through to the tool.
 
-### List All Tools
+---
 
-See what tools are available:
+## Understanding Tool Types
+
+Axle works with any Python script. There are three types:
+
+### Argparse-based tools
+These have their own CLI flags. Run them like any CLI tool:
+
+```bash
+axle competitor_analysis --urls https://rival.com --target-keyword "web developer"
+axle content_optimizer --file article.html --target-keyword "SaaS"
+```
+
+### Contract-based tools
+These accept a free-text prompt:
+
+```bash
+axle seo_keyword_checker "python is a great language for data science"
+axle daily_life_hack_generator "morning routine tips"
+```
+
+### Multi-function tools
+These expose multiple callable functions. Call them directly:
+
+```bash
+axle my_tool                    # runs main()
+axle my_tool analyze            # runs analyze()
+axle my_tool export output.csv  # runs export("output.csv")
+```
+
+---
+
+## Discovering What a Tool Expects
+
+### See examples for any tool
+
+```bash
+axle competitor_analysis     # shows tool's own examples
+axle 4                       # same, by number
+```
+
+Output:
+```
+Tool: competitor_analysis
+============================================================
+
+SERP & Competitor Content Analysis
+
+📌 Examples:
+  axle competitor_analysis  --urls https://comp1.com https://comp2.com --target-keyword "cloud hosting"
+  axle competitor_analysis  --files comp1.html comp2.html --target-keyword "crm software"
+
+  axle help competitor_analysis --details   # full options & function list
+```
+
+### See full options
+
+```bash
+axle help content_optimizer --details
+```
+
+Shows the complete argparse options list and all functions in the module.
+
+---
+
+## Real-World Examples
+
+### SEO competitor analysis
+
+```bash
+# Analyze competitor URLs
+axle competitor_analysis --urls https://rival1.com https://rival2.com --target-keyword "web developer"
+
+# By number (same tool)
+axle 4 --urls https://rival1.com https://rival2.com --target-keyword "web developer"
+
+# With local HTML files
+axle competitor_analysis --files comp1.html comp2.html --target-keyword "crm software"
+
+# Including your own content for gap analysis
+axle competitor_analysis --urls https://rival.com --my-content my_page.html --target-keyword "seo tools"
+
+# Save results to Excel
+axle competitor_analysis --urls https://rival.com --target-keyword "keyword" --output report.xlsx
+```
+
+### Content optimization
+
+```bash
+# Analyze a live URL
+axle content_optimizer --url https://mysite.com/blog --target-keyword "cloud hosting"
+axle 5 --url https://mysite.com/blog --target-keyword "cloud hosting"
+
+# Analyze a local file (with competitor files)
+axle content_optimizer --file article.html --target-keyword "SaaS" --competitors c1.html c2.html
+
+# Analyze raw text
+axle content_optimizer --text "Your content here..." --target-keyword "best crm software"
+
+# Save HTML report
+axle content_optimizer --url https://mysite.com --target-keyword "keyword" --output report.html
+```
+
+### Keyword & meta analysis (prompt-based tools)
+
+```bash
+axle seo_keyword_checker "python is a great language for data science and machine learning"
+axle meta_tag_auditor "https://example.com"
+axle meta_tag_auditor "./page.html"
+```
+
+---
+
+## Using `axle list`
+
+Shows all tools with their number, type, and description:
 
 ```bash
 axle list
 ```
 
-Output:
 ```
-Hey axle, let me know how I can help you. Choose a tool from the list or enter a number.
-
-  1. seo_keyword_checker - Analyze text for SEO keyword density and optimization suggestions
-  2. meta_tag_auditor - Analyze HTML/webpage for meta tag completeness and SEO best practices
-  3. daily_life_hack_generator - Generate personalized productivity and life optimization tips
-```
-
-### Run a Tool
-
-Execute a tool with a prompt:
-
-```bash
-axle run 1 "your text here"
-```
-
-### Get Tool Information
-
-Learn more about a specific tool:
-
-```bash
-axle info seo_keyword_checker
-```
-
-### Check Your Setup
-
-Verify everything is working:
-
-```bash
-axle doctor
-```
-
-### Security Scan
-
-Check for vulnerabilities:
-
-```bash
-axle scan
-```
-
-## Tool-Specific Usage
-
-### 1. SEO Keyword Checker
-
-Analyzes text for keyword density and SEO optimization.
-
-**Basic Usage:**
-
-```bash
-axle run 1 "python is a great programming language for data science and machine learning"
-```
-
-**What It Does:**
-
-- Extracts important keywords from your text
-- Calculates keyword density (frequency/percentage)
-- Checks if keywords appear in the first 100 words
-- Provides SEO recommendations
-
-**Best Practices:**
-
-1. **Optimal Density**: Aim for 1-2% keyword density
-2. **Prominence**: Include focus keywords in the first 100 words
-3. **Variations**: Use natural variations of keywords
-4. **Readability**: Don't sacrifice readability for metrics
-
-**Example Output:**
-
-```
-🔍 SEO Keyword Analysis
+🔧 Available tools
 ============================================================
 
-📝 Analyzing text (15 words)...
+Found 8 tool(s):
 
-🎯 Top Keywords:
-------------------------------------------------------------
-
-1. "Python"
-   Occurrences: 2 / 15 words
-   Density: 13.3%
-   Status: ⚠ High density (13.3%), may appear as keyword stuffing
-
-💡 Recommendations:
-• Consider reducing keyword frequency for better SEO
+  1. ✅ 01_seo_keyword_checker    SEO Keyword Checker
+  2. ✅ 02_meta_tag_auditor        Meta Tag Auditor
+  3. ✅ 03_daily_life_hack_generator  Daily Life Hack Generator
+  4. 📜 competitor_analysis       SERP & Competitor Content Analysis
+  5. 📜 content_optimizer         Content Optimization & SEO Scoring
+  ...
 ```
 
-### 2. Meta Tag Auditor
+Badge legend:
+- ✅ — contract-based tool (`get_description` + `main(prompt)`)
+- 📜 — standalone script (argparse or multi-function)
 
-Analyzes HTML or webpages for meta tag completeness and SEO best practices.
+---
 
-**Basic Usage with URL:**
+## Interactive Mode in Detail
 
 ```bash
-axle run 2 "https://example.com"
+axle
 ```
 
-**Basic Usage with HTML File:**
+```
+  Axle CLI  —  Choose a tool to run
+  ──────────────────────────────────────────────────────────
+  ↑ ↓  navigate    Enter  select    q  quit
+
+▶  4.  📜  competitor_analysis            SERP & Competitor Content...
+   5.  📜  content_optimizer              Content Optimization & SE...
+   1.  ✅  01_seo_keyword_checker         SEO Keyword Checker - Ana...
+   ...
+```
+
+After selection (argparse tool):
+```
+  ▶ competitor_analysis  —  SERP & Competitor Content Analysis
+
+  Argparse-based tool — pass flags directly.
+  Press Enter with no input to show --help.
+
+  e.g.  axle competitor_analysis --flag value
+  ▸ --urls https://rival.com --target-keyword "web developer"
+
+  Running:  axle competitor_analysis --urls https://rival.com --target-keyword "web developer"
+```
+
+---
+
+## Security & Code Review
+
+Both are **disabled by default** for speed.
+
+Enable per-run:
+```bash
+axle run seo_keyword_checker "keyword" --security
+axle run seo_keyword_checker "keyword" --code-review
+```
+
+Enable globally:
+```bash
+axle security --enable
+axle review --enable
+```
+
+Check current settings:
+```bash
+axle security --show
+axle review --show
+```
+
+---
+
+## Adding Your Own Tools
+
+Find your tools directory:
+```bash
+axle path
+```
+
+### Argparse tool (for flag-driven tools)
+
+```python
+"""
+My Custom Tool
+==============
+Does something useful.
+
+Usage:
+    python my_tool.py --input data.csv --output results.json
+    python my_tool.py --url https://example.com --verbose
+"""
+
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser(description="My Custom Tool")
+    parser.add_argument("--input", help="Input file")
+    parser.add_argument("--output", default="out.json", help="Output file")
+    args = parser.parse_args()
+    # your logic here
+
+if __name__ == "__main__":
+    main()
+```
+
+Run immediately:
+```bash
+axle my_tool --input data.csv
+axle my_tool                    # shows your Usage: examples
+```
+
+### Contract tool (for prompt-driven tools)
+
+```python
+def get_description() -> str:
+    return "Brief description of what this tool does"
+
+def main(prompt: str) -> None:
+    print(f"Processing: {prompt}")
+```
 
 ```bash
-axle run 2 "./page.html"
+axle my_tool "your prompt here"
 ```
 
-**What It Checks:**
+### Tool numbering
 
-- Title tag (50-60 characters optimal)
-- Meta description (150-160 characters optimal)
-- Viewport tag (mobile-friendly)
-- Canonical URL
-- Open Graph tags (social sharing)
-- Twitter Card tags
-- Schema.org markup
-- Heading structure (H1 tags)
-- Image alt text
-
-**Best Practices:**
-
-1. **Title Length**: Keep between 50-60 characters
-2. **Description**: 150-160 characters for optimal display
-3. **Open Graph**: Include for better social sharing
-4. **H1 Tags**: Use only one H1 per page
-5. **Alt Text**: Add descriptive alt text to all images
-
-**Example Output:**
-
+Prefix files with `XX_` for consistent ordering:
 ```
-🔍 Meta Tag Audit
-============================================================
-
-📝 Analyzing: https://example.com
-
-⚠️ Issues Found
-
-HIGH:
-• Missing meta description (150-160 chars recommended)
-
-✅ Present Tags
-
-   Title:
-     Example Domain
-     13 chars
-
-💡 Quick Wins:
-   1. Add/optimize meta description (150-160 characters)
-   2. Ensure title tag is 50-60 characters
-   3. Add Open Graph tags for social sharing
+tools/
+  01_seo_keyword_checker.py
+  04_my_tool.py
+  05_another_tool.py
 ```
 
-### 3. Daily Life Hack Generator
+---
 
-Generates personalized productivity and life optimization tips.
+## Tips
 
-**Basic Usage:**
-
-```bash
-axle run 3 "I need better productivity"
-```
-
-**More Specific:**
-
-```bash
-axle run 3 "morning routine tips"
-```
-
-**What It Does:**
-
-- Matches your context to relevant life hacks
-- Provides difficulty ratings (Easy/Medium/Hard)
-- Shows time estimates
-- Explains why each hack works
-
-**Categories:**
-
-- Morning Routine
-- Productivity
-- Health
-- Finance
-- Tech
-- Organization
-- Mindfulness
-
-**Example Prompts:**
-
-- "morning routine"
-- "productivity tips"
-- "save money"
-- "get organized"
-- "fitness motivation"
-- "work from home"
-
-**Example Output:**
-
-```
-💡 Personalized Life Hacks for: "I need better productivity"
-
-============================================================
-
-1. 🟢 Pomodoro Technique: 25min work, 5min break
-   Category: Productivity
-   Difficulty: Easy | Time: N/A
-   💭 Why: Prevents burnout, maintains focus, and creates urgency for tasks.
-
-2. 🟢 2-minute rule: If it takes <2 min, do it now
-   Category: Productivity
-   Difficulty: Easy | Time: N/A
-   💭 Why: Prevents small tasks from piling up and becoming overwhelming.
-```
-
-## Tips for Better Results
-
-### SEO Tools
-
-1. **Use Real Content**: Analyze actual web content, not placeholder text
-2. **Compare Competitors**: Run the same analysis on competitor content
-3. **Iterate**: Make changes and re-analyze to see improvements
-4. **Focus**: Optimize for one primary keyword per piece of content
-
-### Meta Tag Auditor
-
-1. **Check Your Own Site**: Regularly audit your own pages
-2. **Competitor Analysis**: See what meta tags competitors use
-3. **Social Preview**: Use Open Graph checking tools to preview social shares
-4. **Mobile**: Always check viewport and mobile optimization
-
-### Life Hack Generator
-
-1. **Be Specific**: More specific prompts give better results
-2. **Try Variations**: Experiment with different phrasing
-3. **Start Small**: Begin with "Easy" difficulty hacks
-4. **Build Habits**: Focus on one or two hacks at a time
-
-## Advanced Usage
-
-### Piping Content
-
-You can pipe content into tools (on Unix-like systems):
-
-```bash
-echo "Your content here" | xargs axle run 1
-```
-
-### Chaining Commands
-
-Combine axle commands:
-
-```bash
-axle scan && axle list && axle run 3 "productivity"
-```
-
-### Using in Scripts
-
-Use axle commands in shell scripts:
-
-```bash
-#!/bin/bash
-# Daily SEO check
-axle run 1 "$(cat today's-content.txt)"
-```
-
-### Integration with Other Tools
-
-Combine with other CLI tools:
-
-```bash
-# Get content from URL, analyze keywords
-curl -s https://example.com | axle run 1
-```
-
-## Common Use Cases
-
-### Content Creation
-
-```bash
-# Analyze blog post for SEO
-axle run 1 "$(cat blog-post.md)"
-
-# Get writing productivity tips
-axle run 3 "writing focus"
-```
-
-### Website Audit
-
-```bash
-# Audit homepage
-axle run 2 "https://mysite.com"
-
-# Security check
-axle scan
-```
-
-### Daily Routine
-
-```bash
-# Morning productivity tips
-axle run 3 "morning routine energy"
-
-# Health optimization
-axle run 3 "daily health habits"
-```
-
-## Troubleshooting
-
-### Tool Not Found
-
-If you get "tool not found":
-
-1. Check the tool name with `axle list`
-2. Use the number instead: `axle run 1 "prompt"`
-3. Verify the tool file exists in `tools/`
-
-### Empty Results
-
-If a tool produces no results:
-
-1. Make sure you provided a prompt
-2. Check if the prompt is relevant to the tool
-3. Try a more specific prompt
-
-### Slow Performance
-
-Some tools may be slow due to:
-
-1. ML model loading (first run)
-2. Large file processing
-3. Network requests (URL analysis)
-
-## Best Practices Summary
-
-1. **Start with `axle list`** - See what's available
-2. **Use meaningful prompts** - Better input = better output
-3. **Read the recommendations** - Tools provide actionable advice
-4. **Iterate and improve** - Make changes based on suggestions
-5. **Combine tools** - Use multiple tools together for best results
-
-## Getting More Help
-
-- [Command Reference](commands.md) - Detailed command documentation
-- [Troubleshooting](troubleshooting.md) - Solve common problems
-- GitHub Issues - Report bugs or request features
+1. **Add `Usage:` to your docstrings** — Axle extracts these as `axle`-prefixed examples automatically.
+2. **Use numbers for quick access** — `axle 4 --args` is faster to type than the full name.
+3. **`--details` for deep dives** — `axle help tool --details` shows every argparse flag and every function.
+4. **Interactive mode for discovery** — use `axle` when you're not sure which tool to use.
+5. **Chain commands** — `axle scan && axle list && axle seo_keyword_checker "keyword"`
