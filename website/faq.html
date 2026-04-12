@@ -269,6 +269,8 @@
             <button class="faq-category-btn" data-category="security">Security</button>
             <button class="faq-category-btn" data-category="code-review">Code Review</button>
             <button class="faq-category-btn" data-category="tools">Tools</button>
+            <button class="faq-category-btn" data-category="update">Update</button>
+            <button class="faq-category-btn" data-category="metadata">Metadata</button>
             <button class="faq-category-btn" data-category="troubleshooting">Troubleshooting</button>
             <button class="faq-category-btn" data-category="contributing">Contributing</button>
         </div>
@@ -608,6 +610,204 @@ def main(prompt: str) -> None:
                             <li><strong>Custom Tools:</strong> Your own tools that you create for your specific needs</li>
                         </ul>
                         <p>You can mix and match tools from different sources seamlessly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update -->
+            <div class="faq-item" data-category="update">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I update Axle CLI to the latest version?
+                        <span class="category-badge">Update</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Use the built-in update command:</p>
+                        <pre><code># Update to latest version
+axle update
+
+# Check for updates without installing
+axle update --check</code></pre>
+                        <p>The update command will:</p>
+                        <ol>
+                            <li>Fetch latest changes from GitHub</li>
+                            <li>Pull updates from origin/main branch</li>
+                            <li>Update dependencies from requirements.txt</li>
+                            <li>Reinstall the package (pip install -e .)</li>
+                            <li>Show the new version number</li>
+                        </ol>
+                        <p><strong>Safety features:</strong></p>
+                        <ul>
+                            <li>✅ Detects uncommitted changes and stops</li>
+                            <li>✅ Shows exactly what will be updated</li>
+                            <li>✅ Provides instructions to stash/commit changes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="update">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What if I have uncommitted changes when updating?
+                        <span class="category-badge">Update</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>The update command includes safety checks and will stop if you have uncommitted changes:</p>
+                        <pre><code>⚠️  You have uncommitted changes:
+ M CLAUDE.md
+ M README.md
+ M axle/axle.py
+
+💡 Please commit or stash your changes before updating.
+   git stash
+   axle update
+   git stash pop</code></pre>
+                        <p>This prevents accidental data loss. You can either:</p>
+                        <ol>
+                            <li><strong>Commit your changes</strong> - Recommended if you want to keep them</li>
+                            <li><strong>Stash your changes</strong> - Temporarily save changes, update, then restore</li>
+                            <li><strong>Discard changes</strong> - If you don't need them anymore</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metadata -->
+            <div class="faq-item" data-category="metadata">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What is the tool metadata system?
+                        <span class="category-badge">Metadata</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>The tool metadata system helps you discover and explore tools without reading source code. It extracts and caches information about:</p>
+                        <ul>
+                            <li>📝 Function names and signatures</li>
+                            <li>🔧 Parameters with type annotations</li>
+                            <li>🏗️ Class definitions and methods</li>
+                            <li>📦 Import statements and dependencies</li>
+                            <li>📄 Docstrings and documentation</li>
+                            <li>✅ Tool contract compliance (get_description, main)</li>
+                        </ul>
+                        <p><strong>Common commands:</strong></p>
+                        <pre><code>axle metadata scan      # Build metadata cache
+axle metadata list      # List all tools
+axle metadata show <tool> # Show tool details
+axle metadata search <query> # Search tools</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="metadata">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I search for tools by functionality?
+                        <span class="category-badge">Metadata</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Use the metadata search command to find tools by name, function, or description:</p>
+                        <pre><code># Search by keyword
+axle metadata search keyword
+
+# Search by function name
+axle metadata search extract
+
+# Search by description
+axle metadata search "meta tag"</code></pre>
+                        <p>The search matches against:</p>
+                        <ul>
+                            <li>Tool names</li>
+                            <li>Function names</li>
+                            <li>Descriptions and docstrings</li>
+                            <li>Class names</li>
+                        </ul>
+                        <p><strong>Example output:</strong></p>
+                        <pre><code>🔍 Search Results for 'keyword':
+📋 01_seo_keyword_checker
+   Analyze text for SEO keyword density...
+   Matching functions: extract_keywords</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration -->
+            <div class="faq-item" data-category="update">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Why are security and code review disabled by default?
+                        <span class="category-badge">Update</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Starting with v1.2.0, security validation and code review are <strong>disabled by default</strong> for better performance:</p>
+                        <ul>
+                            <li>⚡ <strong>66% faster</strong> tool execution (~150ms → ~50ms)</li>
+                            <li>🎯 Better experience for trusted tools</li>
+                            <li>🔧 User choice - enable when needed</li>
+                        </ul>
+                        <p><strong>To enable them:</strong></p>
+                        <pre><code># Per-run (one time)
+axle run 1 "prompt" --security --code-review
+
+# Persistent (all runs)
+axle security --enable
+axle review --enable</code></pre>
+                        <p><strong>Configuration storage:</strong> Settings are stored in <code>~/.axle/config.json</code> for persistent configuration across sessions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item" data-category="update">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do I enable security and code review persistently?
+                        <span class="category-badge">Update</span>
+                    </span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        <p>Use the enable commands to persistently activate security and code review:</p>
+                        <pre><code># Enable security validation by default
+axle security --enable
+
+# Enable code review by default
+axle review --enable
+
+# Check current configuration
+axle security --show
+axle review --show</code></pre>
+                        <p><strong>Configuration file:</strong></p>
+                        <pre><code># View config file
+cat ~/.axle/config.json
+
+# Example output:
+{
+  "security": "enabled",
+  "code_review": "enabled"
+}</code></pre>
+                        <p>To disable, use the disable commands: <code>axle security --disable</code> or <code>axle review --disable</code>.</p>
                     </div>
                 </div>
             </div>

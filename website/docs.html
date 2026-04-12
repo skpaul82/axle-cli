@@ -234,6 +234,8 @@
                         <li><a href="#adding-tools">Adding Tools</a></li>
                         <li><a href="#security">Security</a></li>
                         <li><a href="#code-review">Code Review</a></li>
+                        <li><a href="#update">Update Command</a></li>
+                        <li><a href="#metadata">Tool Metadata</a></li>
                         <li><a href="#troubleshooting">Troubleshooting</a></li>
                     </ul>
                 </nav>
@@ -315,16 +317,22 @@ axle run seo_keyword_checker "your prompt"</code></pre>
                     <p>List all available tools in the tools directory.</p>
                     <pre><code>axle list</code></pre>
 
-                    <h3>axle run &lt;tool&gt; [prompt]</h3>
-                    <p>Execute a tool by number or name.</p>
+                    <h3>axle run &lt;tool&gt; [prompt] [--security] [--code-review]</h3>
+                    <p>Execute a tool by number or name. Optionally enable security validation or code review for this run.</p>
                     <pre><code># By number
 axle run 1 "your prompt"
 
 # By name
 axle run seo_keyword_checker "your prompt"
 
-# Without prompt
-axle run 3</code></pre>
+# With security validation
+axle run 1 "your prompt" --security
+
+# With code review
+axle run 1 "your prompt" --code-review
+
+# With both
+axle run 1 "your prompt" --security --code-review</code></pre>
 
                     <h3>axle info &lt;tool_name&gt;</h3>
                     <p>Show detailed information about a specific tool.</p>
@@ -342,13 +350,71 @@ axle run 3</code></pre>
                     <p>Show the current tools folder location.</p>
                     <pre><code>axle path</code></pre>
 
-                    <h3>axle security [--policy &lt;policy&gt;]</h3>
-                    <p>Show or configure security policy.</p>
-                    <pre><code># Show current policy
+                    <h3>axle security [--policy &lt;policy&gt;] [--enable] [--disable] [--show]</h3>
+                    <p>Show or configure security policy and settings.</p>
+                    <pre><code># Show current policy and configuration
 axle security
 
-# Set policy
-axle security --policy strict</code></pre>
+# Set security policy
+axle security --policy strict
+
+# Enable security by default
+axle security --enable
+
+# Disable security by default
+axle security --disable
+
+# Show current configuration
+axle security --show</code></pre>
+
+                    <h3>axle review &lt;tool&gt; [--all] [--fix] [--dry-run] [--verbose] [--enable] [--disable] [--show]</h3>
+                    <p>Run code review on tools or configure code review settings.</p>
+                    <pre><code># Review a specific tool
+axle review my_tool
+
+# Review all tools
+axle review --all
+
+# Review with automatic fixes
+axle review my_tool --fix
+
+# Preview changes without applying
+axle review my_tool --fix --dry-run
+
+# Detailed output
+axle review my_tool --verbose
+
+# Enable code review by default
+axle review --enable
+
+# Disable code review by default
+axle review --disable
+
+# Show current configuration
+axle review --show</code></pre>
+
+                    <h3>axle update [--check]</h3>
+                    <p>Update Axle CLI to the latest version from GitHub.</p>
+                    <pre><code># Update to latest version
+axle update
+
+# Check for updates without installing
+axle update --check</code></pre>
+
+                    <h3>axle metadata scan | list | show &lt;tool&gt; | search &lt;query&gt;</h3>
+                    <p>Manage and explore tool metadata.</p>
+                    <pre><code># Scan all tools and build metadata cache
+axle metadata scan
+
+# List all tools with summaries
+axle metadata list
+
+# Show detailed metadata for a tool
+axle metadata show 01_seo_keyword_checker
+
+# Search tools by name, function, or description
+axle metadata search keyword
+axle metadata search "meta tag"</code></pre>
 
                     <h3>axle uninstall [--keep-tools] [--remove-tools]</h3>
                     <p>Uninstall Axle CLI.</p>
@@ -357,6 +423,10 @@ axle uninstall
 
 # Remove tools directory
 axle uninstall --remove-tools</code></pre>
+
+                    <h3>axle help</h3>
+                    <p>Show help message and all available commands.</p>
+                    <pre><code>axle help</code></pre>
                 </section>
 
                 <!-- Adding Tools -->
@@ -401,9 +471,20 @@ axle run my_tool "your prompt"  # Run by name</code></pre>
 
                 <!-- Security -->
                 <section id="security" class="docs-section">
-                    <h2>Security</h2>
+                    <h2>Security (Optional)</h2>
 
-                    <p>Axle includes built-in security validation that runs BEFORE executing any tool:</p>
+                    <p>Axle includes <strong>optional</strong> security validation that can run BEFORE executing any tool. Security validation is <strong>disabled by default</strong> for better performance.</p>
+
+                    <h3>Enabling Security Validation</h3>
+
+                    <p><strong>Per-run (enable for one execution):</strong></p>
+                    <pre><code>axle run 1 "prompt" --security</code></pre>
+
+                    <p><strong>Persistent (enable for all runs):</strong></p>
+                    <pre><code>axle security --enable</code></pre>
+
+                    <p><strong>Disable persistent setting:</strong></p>
+                    <pre><code>axle security --disable</code></pre>
 
                     <h3>What Gets Checked</h3>
                     <ul>
@@ -416,27 +497,42 @@ axle run my_tool "your prompt"  # Run by name</code></pre>
                     <h3>Security Policies</h3>
                     <ul>
                         <li><strong>strict</strong>: Blocks ALL security findings</li>
-                        <li><strong>warn</strong> (default): Blocks only CRITICAL findings, warns on others</li>
-                        <li><strong>permissive</strong>: Blocks only CRITICAL/HIGH findings</li>
+                        <li><strong>warn</strong>: Blocks only CRITICAL findings, warns on others</li>
+                        <li><strong>permissive</strong> (default): Blocks only CRITICAL/HIGH findings</li>
                     </ul>
 
                     <h3>Setting Security Policy</h3>
-                    <pre><code># Environment variable (recommended)
+                    <pre><code># Environment variable
 export AXLE_SECURITY_POLICY=strict
 
 # Or set via command
 axle security --policy strict</code></pre>
 
+                    <div class="warning-box">
+                        <strong>⚠️ Important:</strong> Security validation is disabled by default in v1.2.0. Enable it with <code>axle security --enable</code> or use <code>--security</code> flag per run.
+                    </div>
+
                     <div class="info-box">
-                        <strong>💡 Best Practice:</strong> Use "strict" mode for production environments and "warn" mode for development.
+                        <strong>💡 Best Practice:</strong> Use "strict" mode for production environments and "permissive" mode for development. Enable security when working with untrusted tools.
                     </div>
                 </section>
 
                 <!-- Code Review -->
                 <section id="code-review" class="docs-section">
-                    <h2>Automatic Code Review</h2>
+                    <h2>Automatic Code Review (Optional)</h2>
 
-                    <p>Axle includes automatic code review that runs AFTER security validation to help you maintain high code quality:</p>
+                    <p>Axle includes <strong>optional</strong> automatic code review that can run AFTER security validation to help you maintain high code quality. Code review is <strong>disabled by default</strong> for better performance.</p>
+
+                    <h3>Enabling Code Review</h3>
+
+                    <p><strong>Per-run (enable for one execution):</strong></p>
+                    <pre><code>axle run 1 "prompt" --code-review</code></pre>
+
+                    <p><strong>Persistent (enable for all runs):</strong></p>
+                    <pre><code>axle review --enable</code></pre>
+
+                    <p><strong>Disable persistent setting:</strong></p>
+                    <pre><code>axle review --disable</code></pre>
 
                     <h3>What Gets Checked</h3>
                     <ul>
@@ -486,7 +582,7 @@ axle review my_tool --fix --dry-run
 axle review my_tool --verbose</code></pre>
 
                     <h3>Configuration Options</h3>
-                    <pre><code># When to run code review: always, auto (default), or never
+                    <pre><code># When to run code review: always, auto, or never (default)
 export AXLE_CODE_REVIEW=auto
 
 # Automatically fix issues without asking
@@ -495,8 +591,124 @@ export AXLE_AUTO_FIX=false
 # Enable detailed output
 export AXLE_CODE_REVIEW_VERBOSE=false</code></pre>
 
+                    <div class="warning-box">
+                        <strong>⚠️ Important:</strong> Code review is disabled by default in v1.2.0. Enable it with <code>axle review --enable</code> or use <code>--code-review</code> flag per run.
+                    </div>
+
                     <div class="info-box">
-                        <strong>💡 Pro Tip:</strong> Code review runs automatically during tool execution in "auto" mode. Enable auto-fix for seamless development: <code>export AXLE_AUTO_FIX=true</code>
+                        <strong>💡 Pro Tip:</strong> For development, enable code review persistently to catch issues early: <code>axle review --enable</code>
+                    </div>
+                </section>
+
+                <!-- Update Command -->
+                <section id="update" class="docs-section">
+                    <h2>Update Command</h2>
+
+                    <p>Axle includes a built-in update command to keep your CLI up-to-date with the latest features and bug fixes from GitHub.</p>
+
+                    <h3>Updating Axle CLI</h3>
+                    <pre><code># Update to the latest version
+axle update</code></pre>
+
+                    <p>This will:</p>
+                    <ol>
+                        <li>Fetch the latest changes from GitHub</li>
+                        <li>Pull updates from the origin/main branch</li>
+                        <li>Update dependencies from requirements.txt</li>
+                        <li>Reinstall the package (pip install -e .)</li>
+                        <li>Show the new version number</li>
+                    </ol>
+
+                    <h3>Checking for Updates</h3>
+                    <pre><code># Check if updates are available without installing
+axle update --check</code></pre>
+
+                    <h3>Safety Features</h3>
+                    <p>The update command includes safety checks to prevent data loss:</p>
+                    <ul>
+                        <li>✅ Detects uncommitted changes and stops</li>
+                        <li>✅ Shows exactly what will be updated</li>
+                        <li>✅ Provides instructions to stash/commit changes</li>
+                        <li>✅ Timeout protection for network operations</li>
+                    </ul>
+
+                    <h3>Requirements</h3>
+                    <ul>
+                        <li>Must be in a git repository</li>
+                        <li>No uncommitted changes (or must be committed first)</li>
+                        <li>Internet connection for fetching updates</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <strong>💡 Tip:</strong> Run <code>axle update --check</code> first to see if updates are available without installing them.
+                    </div>
+                </section>
+
+                <!-- Tool Metadata -->
+                <section id="metadata" class="docs-section">
+                    <h2>Tool Metadata System</h2>
+
+                    <p>The tool metadata system helps you discover, explore, and understand tools without reading the source code. Metadata includes function signatures, parameters, imports, and documentation.</p>
+
+                    <h3>Scanning Tools</h3>
+                    <pre><code># Scan all tools and build metadata cache
+axle metadata scan</code></pre>
+
+                    <p>This analyzes all Python files in your tools directory and extracts:</p>
+                    <ul>
+                        <li>Function names and signatures</li>
+                        <li>Parameters with type annotations</li>
+                        <li>Class definitions and methods</li>
+                        <li>Import statements</li>
+                        <li>Docstrings and documentation</li>
+                        <li>Tool contract compliance (get_description, main)</li>
+                    </ul>
+
+                    <h3>Listing Tools</h3>
+                    <pre><code># List all tools with summaries
+axle metadata list</code></pre>
+
+                    <p>Shows a concise overview of all tools including:</p>
+                    <ul>
+                        <li>Tool name and status</li>
+                        <li>Description</li>
+                        <li>Function and class counts</li>
+                        <li>Contract compliance status</li>
+                    </ul>
+
+                    <h3>Viewing Tool Details</h3>
+                    <pre><code># Show detailed metadata for a specific tool
+axle metadata show 01_seo_keyword_checker</code></pre>
+
+                    <p>Displays comprehensive information about a tool:</p>
+                    <ul>
+                        <li>File path, size, and last modified date</li>
+                        <li>Tool contract status</li>
+                        <li>Description from get_description()</li>
+                        <li>Module and function docstrings</li>
+                        <li>Complete function signatures with parameters</li>
+                        <li>All imports and dependencies</li>
+                    </ul>
+
+                    <h3>Searching Tools</h3>
+                    <pre><code># Search by tool name, function name, or description
+axle metadata search keyword
+axle metadata search "meta tag"
+axle metadata search extract</code></pre>
+
+                    <p>Search matches against:</p>
+                    <ul>
+                        <li>Tool names</li>
+                        <li>Function names</li>
+                        <li>Descriptions and docstrings</li>
+                        <li>Class names</li>
+                    </ul>
+
+                    <h3>Metadata Cache</h3>
+                    <p>Metadata is cached in <code>~/.axle/metadata/tools_metadata.json</code> for instant lookups. Rescan with <code>axle metadata scan</code> after adding or modifying tools.</p>
+
+                    <div class="info-box">
+                        <strong>💡 Use Case:</strong> Perfect for discovering what tools are available and understanding their capabilities without reading through source code.
                     </div>
                 </section>
 

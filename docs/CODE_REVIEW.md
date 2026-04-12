@@ -37,9 +37,28 @@ The system detects issues in four categories:
 
 ## Usage
 
-### Automatic Review (Default)
+> **Note:** Code review is **disabled by default** in v1.2.0 for better performance.
 
-When you run a tool, code review happens automatically:
+### Enable Code Review
+
+**Per-run (one time):**
+```bash
+axle run my_tool "prompt" --code-review
+```
+
+**Persistent (all runs):**
+```bash
+axle review --enable
+```
+
+**Check configuration:**
+```bash
+axle review --show
+```
+
+### Automatic Review (When Enabled)
+
+When code review is enabled, it runs automatically during tool execution:
 
 ```bash
 axle run my_tool "prompt"

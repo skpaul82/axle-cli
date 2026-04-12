@@ -1,6 +1,8 @@
 # 🔒 Security Features
 
-**Axle** includes **mandatory built-in security validation** for all tools. Every tool is automatically scanned for security issues **before execution**.
+**Axle** includes **optional built-in security validation** for all tools. Tools can be scanned for security issues **before execution** when enabled.
+
+> **Note:** Security validation is **disabled by default** in v1.2.0 for better performance. Enable with `axle security --enable` or `--security` flag.
 
 ---
 
@@ -13,21 +15,29 @@ Axle's security system protects you from:
 - **Dangerous subprocess calls** (shell=True)
 - **Command injection** vulnerabilities
 
-**This is a MANDATORY feature** - all tools are validated by default before execution.
+**This is an OPTIONAL feature** - security validation is disabled by default but can be enabled per-run or persistently.
 
 ---
 
-## How It Works
+## Enabling Security Validation
 
-### 1. Automatic Pre-Execution Validation
-
-Every time you run a tool with `axle run`, it undergoes security validation:
+### Per-Run (One Time)
 
 ```bash
-$ axle run 1 "test prompt"
+axle run 1 "test prompt" --security
+```
 
-🔒 Validating tool security...
-   Security Policy: WARN
+### Persistent (All Runs)
+
+```bash
+axle security --enable
+```
+
+### Check Configuration
+
+```bash
+axle security --show
+```
    ✅ Security validation passed
 
 🔧 Running 01_seo_keyword_checker.py...

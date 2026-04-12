@@ -9,12 +9,27 @@ Complete reference for all Axle CLI commands.
 | `axle -V, --version` | Show Axle version |
 | `axle list` | List all available tools |
 | `axle run` | Execute a tool by number or name |
+| `axle run --security` | Execute tool with security validation |
+| `axle run --code-review` | Execute tool with code review |
 | `axle info` | Show detailed tool information |
 | `axle scan` | Run security vulnerability scan |
 | `axle doctor` | Run environment diagnostics |
 | `axle path` | Show tools folder location |
 | `axle help` | Display help message |
 | `axle security` | Show or configure security policy |
+| `axle security --enable` | Enable security by default |
+| `axle security --disable` | Disable security by default |
+| `axle security --show` | Show security configuration |
+| `axle review` | Run code review on tools |
+| `axle review --enable` | Enable code review by default |
+| `axle review --disable` | Disable code review by default |
+| `axle review --show` | Show code review configuration |
+| `axle update` | Update Axle CLI to latest version |
+| `axle update --check` | Check for updates without installing |
+| `axle metadata scan` | Scan tools and build metadata cache |
+| `axle metadata list` | List all tools with summaries |
+| `axle metadata show` | Show detailed tool metadata |
+| `axle metadata search` | Search tools by name/function/description |
 | `axle uninstall` | Uninstall Axle CLI |
 
 ---
@@ -60,12 +75,12 @@ Hey axle, let me know how I can help you. Choose a tool from the list or enter a
 
 ## axle run
 
-Execute a tool by number or name.
+Execute a tool by number or name. Optionally enable security validation or code review for this execution.
 
 ### Syntax
 
 ```bash
-axle run <tool_identifier> [prompt]
+axle run <tool_identifier> [prompt] [--security] [--code-review]
 ```
 
 ### Arguments
@@ -75,7 +90,8 @@ axle run <tool_identifier> [prompt]
 
 ### Options
 
-None
+- `--security`: Enable security validation for this run (disabled by default)
+- `--code-review`: Enable code review for this run (disabled by default)
 
 ### Examples
 
@@ -91,12 +107,38 @@ axle run 1 "python is a great programming language"
 axle run seo_keyword_checker "python is a great programming language"
 ```
 
+**With Security Validation:**
+
+```bash
+axle run 1 "test" --security
+```
+
+**With Code Review:**
+
+```bash
+axle run 1 "test" --code-review
+```
+
+**With Both:**
+
+```bash
+axle run 1 "test" --security --code-review
+```
+
 **Without Prompt:**
 
 ```bash
 axle run 3
 # Tool will prompt for input or use default behavior
 ```
+
+### Notes
+
+- Security and code review are **disabled by default** in v1.2.0
+- Use `--security` flag to enable security validation for one execution
+- Use `--code-review` flag to enable code review for one execution
+- For persistent enablement, use `axle security --enable` or `axle review --enable`
+- Configuration stored in `~/.axle/config.json`
 
 **Multi-word Prompt:**
 
