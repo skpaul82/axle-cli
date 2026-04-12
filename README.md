@@ -10,6 +10,11 @@ A modular CLI platform for running Python microtools from a shared tools directo
 pip install git+https://github.com/skpaul82/axle-cli.git
 ```
 
+If you have Python 3 installed, try using pip3:
+```bash
+pip3 install git+https://github.com/skpaul82/axle-cli.git
+```
+
 Or clone manually:
 
 ```bash
@@ -25,7 +30,7 @@ pip install -e .
 
 ## 🎬 Quick Start Video
 
-Watch how Axle works in 2 minutes:
+Watch how Axle-CLI works:
 
 [![Axle CLI Demo](https://img.youtube.com/vi/tjzVi2pIcXc/0.jpg)](https://www.youtube.com/watch?v=tjzVi2pIcXc)
 
@@ -36,6 +41,7 @@ Watch how Axle works in 2 minutes:
 ## 🎉 What's New in v1.3.0
 
 ### 🖱️ Interactive Arrow-Key Menu
+
 Run `axle` with no arguments to get a full interactive tool picker — navigate with ↑↓ arrow keys, press Enter to select, then type your arguments:
 
 ```bash
@@ -43,6 +49,7 @@ axle       # opens interactive menu
 ```
 
 ### ⚡ Direct Tool Execution (No `axle run` needed)
+
 Run any tool directly by name **or number** — flags pass straight through to the tool:
 
 ```bash
@@ -59,6 +66,7 @@ axle seo_keyword_checker "target keyword to analyse"
 ```
 
 ### 📌 Per-Tool Example Commands
+
 Running `axle tool_name` or `axle N` with no extra args now shows that tool's own usage examples (pulled from its `Usage:` docstring, automatically converted to `axle` syntax):
 
 ```bash
@@ -68,6 +76,7 @@ axle help content_optimizer  # same, via help command
 ```
 
 ### 🔍 Simplified `axle help`
+
 `axle help <tool>` now shows only: **name → summary → examples**. Use `--details` for the full options list and function inventory:
 
 ```bash
@@ -80,35 +89,41 @@ axle help content_optimizer --details  # full argparse options + functions
 ## 📦 Features
 
 ### 🖱️ Interactive Mode
+
 - Launch `axle` with no arguments on a real terminal to get an arrow-key tool picker
 - Navigates with ↑↓ / j k, Enter to select, q to quit
 - After selection: context-aware argument prompt (flags / prompt / function)
 - Echoes the resolved command before running
 
 ### ⚡ Direct Execution
+
 - `axle <tool_name> [flags]` — run without going through `axle run`
 - `axle <N> [flags]` — run by tool number
 - `axle <tool_name> <function> [args]` — call specific function in multi-function tools
 - `axle <tool_name>` alone → shows tool examples, never errors
 
 ### 📌 Smart Per-Tool Help
+
 - Examples extracted automatically from each tool's `Usage:` docstring
 - `python tool.py --args` → shown as `axle tool_name --args`
 - `axle help <tool> --details` for full argparse options + function list
 
 ### 🔒 Optional Security Validation
+
 - Pre-execution security scan (disabled by default)
 - Enable per-run: `axle run <tool> --security`
 - Enable globally: `axle security --enable`
 - Policies: strict / warn / permissive
 
 ### 🔍 Optional Code Review
+
 - Automatic code quality checks before running (disabled by default)
 - Enable per-run: `axle run <tool> --code-review`
 - Enable globally: `axle review --enable`
 - Auto-fixes formatting and import issues
 
 ### 🧠 Intelligent Tool Discovery
+
 - Works with **any** Python script — no contract required
 - Auto-detects argparse-based tools, contract tools, and multi-function scripts
 - Extracts functions, docstrings, and usage examples automatically
@@ -119,34 +134,34 @@ axle help content_optimizer --details  # full argparse options + functions
 
 ### Running Tools
 
-| Command | Description |
-|---------|-------------|
-| `axle` | Interactive arrow-key tool picker |
-| `axle <tool_name>` | Show tool examples (no args) or run directly |
-| `axle <N>` | Same, by tool number |
-| `axle <tool_name> [--flags]` | Run tool with flags passed through |
-| `axle <N> [--flags]` | Same, by number |
+| Command                        | Description                                  |
+| ------------------------------ | -------------------------------------------- |
+| `axle`                       | Interactive arrow-key tool picker            |
+| `axle <tool_name>`           | Show tool examples (no args) or run directly |
+| `axle <N>`                   | Same, by tool number                         |
+| `axle <tool_name> [--flags]` | Run tool with flags passed through           |
+| `axle <N> [--flags]`         | Same, by number                              |
 
 ### Built-in Commands
 
-| Command | Description |
-|---------|-------------|
-| `axle list` | List all available tools |
-| `axle run <tool> [args]` | Run a tool (classic syntax) |
-| `axle run <tool> --security` | Run with security validation |
-| `axle run <tool> --code-review` | Run with code review |
-| `axle help <tool>` | Show tool examples |
-| `axle help <tool> --details` | Show full options + function list |
-| `axle info <tool>` | Show tool description |
-| `axle scan` | Dependency vulnerability scan |
-| `axle doctor` | Environment diagnostics |
-| `axle path` | Show tools folder location |
-| `axle security --enable/--disable/--show` | Configure security |
-| `axle review --enable/--disable/--show` | Configure code review |
-| `axle update` | Update to latest version |
-| `axle update --check` | Check for updates |
-| `axle metadata scan/show/search/list` | Tool metadata system |
-| `axle -V` | Show version |
+| Command                                     | Description                       |
+| ------------------------------------------- | --------------------------------- |
+| `axle list`                               | List all available tools          |
+| `axle run <tool> [args]`                  | Run a tool (classic syntax)       |
+| `axle run <tool> --security`              | Run with security validation      |
+| `axle run <tool> --code-review`           | Run with code review              |
+| `axle help <tool>`                        | Show tool examples                |
+| `axle help <tool> --details`              | Show full options + function list |
+| `axle info <tool>`                        | Show tool description             |
+| `axle scan`                               | Dependency vulnerability scan     |
+| `axle doctor`                             | Environment diagnostics           |
+| `axle path`                               | Show tools folder location        |
+| `axle security --enable/--disable/--show` | Configure security                |
+| `axle review --enable/--disable/--show`   | Configure code review             |
+| `axle update`                             | Update to latest version          |
+| `axle update --check`                     | Check for updates                 |
+| `axle metadata scan/show/search/list`     | Tool metadata system              |
+| `axle -V`                                 | Show version                      |
 
 ---
 
@@ -204,6 +219,7 @@ if __name__ == "__main__":
 ```
 
 Run it as:
+
 ```bash
 axle my_tool --input data.csv
 ```
@@ -219,6 +235,7 @@ def main(prompt: str) -> None:
 ```
 
 Run it as:
+
 ```bash
 axle my_tool "your prompt here"
 ```
@@ -226,6 +243,7 @@ axle my_tool "your prompt here"
 ### Tool numbering
 
 Use `XX_tool_name.py` for ordering:
+
 ```
 tools/
   01_seo_keyword_checker.py
