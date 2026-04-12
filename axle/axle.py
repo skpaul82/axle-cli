@@ -54,7 +54,7 @@ try:
 
     __version__ = version("axle-cli")
 except Exception:
-    __version__ = "1.2.0"
+    __version__ = "1.3.0"
 
 COMMUNITY_FOOTER = """
 ---
@@ -74,7 +74,9 @@ def print_community_footer():
 
 def list_tools():
     """List all available tools in the tools directory."""
-    print("\n🔧 Discovering tools...")
+    if sys.stdin.isatty():
+        print("\n💡 Tip: run  axle  (no args) for interactive arrow-key picker\n")
+    print("🔧 Available tools")
     print("=" * 60)
 
     tools_path = TOOLS_DIR
@@ -274,11 +276,12 @@ def run_tool(tool_identifier, command=None, prompt_or_args=None, enable_security
     return discoverer.run_tool(tool_identifier, command, args_list)
 
 
-def show_tool_usage_help(tool_identifier):
+def show_tool_usage_help(tool_identifier, verbose=False):
     """Show usage help for a specific tool.
 
     Args:
         tool_identifier: Tool name or number
+        verbose: Show detailed function list
 
     Returns:
         Exit code (0 for success, 1 for error)
@@ -296,7 +299,7 @@ def show_tool_usage_help(tool_identifier):
         print(f"   Run 'axle list' to see available tools.")
         return 1
 
-    print(tool.get_help_text())
+    print(tool.get_help_text(verbose=verbose))
     print_community_footer()
     return 0
 
@@ -1170,9 +1173,133 @@ def run_metadata_command(action, tool=None, query=None):
 
 def main():
     """Main entry point for the Axle CLI."""
+    import sys
+
+    # Handle version flag early
+    if "-V" in sys.argv or "--version" in sys.argv:
+        print(f"axle {__version__}")
+        return 0
+
+    # ── Interactive mode when no args and running in a real terminal ─────────
+    if len(sys.argv) == 1 and sys.stdin.isatty() and sys.stdout.isatty():
+        tools_path = TOOLS_DIR
+        if tools_path.exists():
+            try:
+                from axle.interactive import run_interactive
+                result = run_interactive(tools_path)
+                if result is None:
+                    return 0
+                tool, args_list = result
+                main_func = tool.get_main_function()
+                is_argparse = main_func and main_func.arg_count == 0
+                if is_argparse:
+                    old_argv = sys.argv
+                    try:
+                        sys.argv = [tool.name] + args_list
+                        return tool.module.main()
+                    except SystemExit as e:
+                        return e.code if e.code is not None else 0
+                    finally:
+                        sys.argv = old_argv
+                elif tool.metadata.get('has_contract'):
+                    prompt = " ".join(args_list)
+                    return run_tool(tool.name, prompt_or_args=[prompt] if prompt else [])
+                else:
+                    cmd = None
+                    func_args = args_list
+                    if args_list:
+                        fn = tool.get_function_by_name(args_list[0])
+                        if fn:
+                            cmd = args_list[0]
+                            func_args = args_list[1:]
+                    return run_tool(tool.name, command=cmd, prompt_or_args=func_args)
+            except Exception:
+                pass  # fall through to standard help on any error
+
+    # Get command (first arg after 'axle')
+    command = sys.argv[1] if len(sys.argv) > 1 else None
+
+    # Check if this is a tool command first (before argparse validation)
+    tools_path = TOOLS_DIR
+    if command and tools_path.exists():
+        discoverer = ToolDiscoverer(tools_path)
+        tool = discoverer.get_tool(command)
+        if tool:
+            # This is a tool command - run it directly
+            main_func = tool.get_main_function()
+
+            if main_func and main_func.arg_count == 0:
+                # Argparse-based tool - remaining args are for the tool
+                tool_args = sys.argv[2:]  # All args after 'axle tool_name'
+
+                # No args given OR --help/-h → show axle-formatted help
+                if not tool_args or '--help' in tool_args or '-h' in tool_args:
+                    print(tool.get_help_text())
+                    print_community_footer()
+                    return 0
+
+                # Run the tool's main() with tool args
+                old_argv = sys.argv
+                try:
+                    sys.argv = [tool.name] + tool_args
+                    return tool.module.main()
+                except SystemExit as e:
+                    return e.code if e.code is not None else 0
+                finally:
+                    sys.argv = old_argv
+            elif tool.metadata.get('has_contract'):
+                # Contract-based tool - remaining args form the prompt
+                tool_args = sys.argv[2:]
+                if not tool_args or '--help' in tool_args or '-h' in tool_args:
+                    print(tool.get_help_text())
+                    print_community_footer()
+                    return 0
+                prompt = " ".join(tool_args)
+                return run_tool(tool.name, command=None, prompt_or_args=[prompt])
+            else:
+                # Multi-function or simple tool - check if first arg is a function name
+                remaining_args = sys.argv[2:]
+                if not remaining_args or '--help' in remaining_args or '-h' in remaining_args:
+                    print(tool.get_help_text())
+                    print_community_footer()
+                    return 0
+                cmd = None
+                func_args = remaining_args
+                if remaining_args:
+                    func = tool.get_function_by_name(remaining_args[0])
+                    if func:
+                        cmd = remaining_args[0]
+                        func_args = remaining_args[1:]
+                return run_tool(tool.name, command=cmd, prompt_or_args=func_args)
+
+    # Not a tool command - use argparse for built-in commands
     parser = argparse.ArgumentParser(
         prog="axle",
         description="Axle: A modular CLI platform for running Python microtools.",
+        epilog="""
+Examples
+────────
+  Run a tool by name or number:
+    axle competitor_analysis --urls https://example.com https://rival.com --target-keyword "web developer"
+    axle 4                   --urls https://example.com https://rival.com --target-keyword "web developer"
+
+    axle content_optimizer   --url https://example.com/blog --target-keyword "cloud hosting"
+    axle 7                   --url https://example.com/blog --target-keyword "cloud hosting"
+
+    axle content_optimizer   --file article.html --target-keyword "SaaS" --competitors c1.html c2.html
+    axle content_optimizer   --text "Your content here..." --target-keyword "best crm software"
+
+    axle seo_keyword_checker "target keyword to analyse"
+
+  Interactive mode (no arguments):
+    axle                     # arrow-key menu to pick and run any tool
+
+  Tool management:
+    axle list                # list all available tools
+    axle help <tool>         # show usage for a specific tool
+    axle help <tool> --details  # full docs + function list
+""",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "-V", "--version", action="version", version=f"%(prog)s {__version__}"
@@ -1222,6 +1349,7 @@ def main():
     # axle help
     help_parser = subparsers.add_parser("help", help="Show this help message")
     help_parser.add_argument("tool", nargs="?", help="Show help for a specific tool")
+    help_parser.add_argument("--details", "-d", action="store_true", help="Show full details including all functions and documentation")
 
     # axle security
     security_parser = subparsers.add_parser(
@@ -1323,6 +1451,11 @@ def main():
 
     args = parser.parse_args()
 
+    # Check if no command was provided
+    if not args.command:
+        parser.print_help()
+        return 0
+
     # Route to appropriate command
     if args.command == "list":
         return list_tools()
@@ -1380,13 +1513,67 @@ def main():
         tool = getattr(args, "tool", None)
         if tool:
             # Show tool-specific help
-            return show_tool_usage_help(tool)
+            verbose = getattr(args, "details", False)
+            return show_tool_usage_help(tool, verbose=verbose)
         else:
             # Show general help
             parser.print_help()
             return 0
 
-    return 0
+    # Check if this is a tool command (not a built-in axle command)
+    tools_path = TOOLS_DIR
+    if tools_path.exists():
+        discoverer = ToolDiscoverer(tools_path)
+        tool = discoverer.get_tool(args.command)
+
+        if tool:
+            # This is a tool command - route appropriately based on tool type
+            main_func = tool.get_main_function()
+
+            if main_func and main_func.arg_count == 0:
+                # Argparse-based tool - remaining args are for the tool
+                tool_args = unknown[1:] if len(unknown) > 1 else []
+
+                # Show help for the tool if --help is requested
+                if '--help' in tool_args or '-h' in tool_args:
+                    print(f"\n🔧 Tool: {tool.name}")
+                    print(f"{'=' * 60}")
+                    print(f"\n{tool.description}\n")
+                    print(f"💡 To see this tool's options, run:")
+                    print(f"   python {tool.tool_path.name} --help\n")
+                    print_community_footer()
+                    return 0
+
+                # Run the tool's main() with tool args
+                old_argv = sys.argv
+                try:
+                    sys.argv = [tool.name] + tool_args
+                    return tool.module.main()
+                except SystemExit as e:
+                    return e.code if e.code is not None else 0
+                finally:
+                    sys.argv = old_argv
+            elif tool.metadata.get('has_contract'):
+                # Contract-based tool - remaining args form the prompt
+                prompt = " ".join(unknown[1:] if len(unknown) > 1 else [])
+                return run_tool(tool.name, command=None, prompt_or_args=[prompt] if prompt else [])
+            else:
+                # Multi-function or simple tool - check if first arg is a function name
+                remaining_args = unknown[1:] if len(unknown) > 1 else []
+                cmd = None
+                func_args = remaining_args
+                if remaining_args:
+                    func = tool.get_function_by_name(remaining_args[0])
+                    if func:
+                        cmd = remaining_args[0]
+                        func_args = remaining_args[1:]
+                return run_tool(tool.name, command=cmd, prompt_or_args=func_args)
+
+    # Unknown command
+    print(f"❌ Unknown command: {args.command}")
+    print(f"   Run 'axle help' to see available commands")
+    print(f"   Run 'axle list' to see available tools")
+    return 1
 
 
 if __name__ == "__main__":

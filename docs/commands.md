@@ -1,458 +1,319 @@
 # Command Reference
 
-Complete reference for all Axle CLI commands.
+Complete reference for all Axle CLI commands — v1.3.0.
 
-## Commands Overview
+---
+
+## Quick Command Map
 
 | Command | Description |
 |---------|-------------|
-| `axle -V, --version` | Show Axle version |
+| `axle` | Interactive arrow-key tool picker |
 | `axle list` | List all available tools |
-| `axle run` | Execute a tool by number or name |
-| `axle run --security` | Execute tool with security validation |
-| `axle run --code-review` | Execute tool with code review |
-| `axle info` | Show detailed tool information |
-| `axle scan` | Run security vulnerability scan |
-| `axle doctor` | Run environment diagnostics |
+| `axle <tool_name>` | Show tool examples (no args) or run tool |
+| `axle <N>` | Same, by tool number |
+| `axle <tool_name> [--flags]` | Run tool — flags pass to the tool |
+| `axle <N> [--flags]` | Same, by number |
+| `axle run <tool> [args]` | Classic run syntax |
+| `axle run <tool> --security` | Run with security validation |
+| `axle run <tool> --code-review` | Run with code review |
+| `axle help <tool>` | Show tool summary + examples |
+| `axle help <tool> --details` | Show full options + function list |
+| `axle info <tool>` | Show tool description |
+| `axle scan` | Dependency vulnerability scan |
+| `axle doctor` | Environment diagnostics |
 | `axle path` | Show tools folder location |
-| `axle help` | Display help message |
-| `axle security` | Show or configure security policy |
-| `axle security --enable` | Enable security by default |
-| `axle security --disable` | Disable security by default |
-| `axle security --show` | Show security configuration |
-| `axle review` | Run code review on tools |
-| `axle review --enable` | Enable code review by default |
-| `axle review --disable` | Disable code review by default |
-| `axle review --show` | Show code review configuration |
-| `axle update` | Update Axle CLI to latest version |
-| `axle update --check` | Check for updates without installing |
-| `axle metadata scan` | Scan tools and build metadata cache |
-| `axle metadata list` | List all tools with summaries |
-| `axle metadata show` | Show detailed tool metadata |
-| `axle metadata search` | Search tools by name/function/description |
-| `axle uninstall` | Uninstall Axle CLI |
+| `axle security --enable/--disable/--show` | Configure security |
+| `axle review --enable/--disable/--show` | Configure code review |
+| `axle update` | Update to latest version |
+| `axle update --check` | Check for updates |
+| `axle metadata scan/show/search/list` | Tool metadata |
+| `axle uninstall` | Uninstall Axle |
+| `axle -V` | Show version |
+
+---
+
+## axle (no arguments)
+
+Launch the interactive tool picker.
+
+```bash
+axle
+```
+
+Only activates when running in a real terminal (TTY). If stdout is piped or non-interactive, falls back to showing the standard help.
+
+**Navigation:**
+- `↑` / `k` — move up
+- `↓` / `j` — move down
+- `Enter` — select tool
+- `q` / `Esc` / `Ctrl+C` — cancel
+
+After selecting a tool, Axle shows a context-aware argument prompt:
+- **Argparse tools** — prompts for CLI flags (shows example)
+- **Contract tools** — prompts for free-text prompt
+- **Multi-function tools** — shows available functions, prompts for `[function] [args]`
+
+Then echoes the resolved command and runs:
+```
+  Running:  axle competitor_analysis --urls https://rival.com --target-keyword "seo"
+```
 
 ---
 
 ## axle list
 
-List all available tools in the tools directory.
-
-### Syntax
+List all tools in the tools directory.
 
 ```bash
 axle list
 ```
 
-### Description
-
-Displays all available tools with their numbers, names, and descriptions. Tools are shown in alphabetical order.
-
-### Examples
-
-```bash
-$ axle list
-
-Hey axle, let me know how I can help you. Choose a tool from the list or enter a number.
-
-  1. daily_life_hack_generator - Generate personalized productivity and life optimization tips
-  2. meta_tag_auditor - Analyze HTML/webpage for meta tag completeness and SEO best practices
-  3. seo_keyword_checker - Analyze text for SEO keyword density and optimization suggestions
+Shows each tool's number, name, type badge, and description. If running in a terminal, also shows the interactive mode tip.
 
 ---
-🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
-...
+
+## axle \<tool_name\> / axle \<N\>
+
+Run a tool directly by name or number.
+
+### With no arguments — shows examples
+
+```bash
+axle competitor_analysis        # shows this tool's Usage: examples
+axle 4                          # same, by number
+axle content_optimizer          # shows examples for content_optimizer
 ```
 
-### Notes
+Output:
+```
+============================================================
+Tool: competitor_analysis
+============================================================
 
-- Tool numbers are based on alphabetical order
-- Each tool must have a `get_description()` function
-- Shows tools from the configured tools directory
+SERP & Competitor Content Analysis
+
+📌 Examples:
+  axle competitor_analysis  --urls https://comp1.com https://comp2.com --target-keyword "cloud hosting"
+  axle competitor_analysis  --files comp1.html comp2.html --target-keyword "crm software"
+  axle competitor_analysis  --urls https://a.com --target-keyword "seo tools" --output report.xlsx
+
+  axle help competitor_analysis --details   # full options & function list
+```
+
+### With arguments — runs the tool
+
+```bash
+# Run by name with flags
+axle competitor_analysis --urls https://rival.com --target-keyword "web developer"
+
+# Run by number with flags
+axle 4 --urls https://rival.com --target-keyword "web developer"
+
+# Content optimizer examples
+axle content_optimizer --url https://mysite.com/page --target-keyword "cloud hosting"
+axle content_optimizer --file article.html --target-keyword "SaaS" --competitors c1.html c2.html
+axle content_optimizer --text "Your article content..." --target-keyword "best crm software"
+
+# Contract-based tool (takes a prompt)
+axle seo_keyword_checker "python is a great language for data science"
+axle 1 "python is a great language for data science"
+
+# Multi-function tool — call a specific function
+axle my_tool analyze --input data.csv
+axle my_tool export --output results.json
+```
+
+### With --help / -h
+
+Shows the tool's own help instead of running:
+```bash
+axle competitor_analysis --help
+axle 4 -h
+```
 
 ---
 
 ## axle run
 
-Execute a tool by number or name. Optionally enable security validation or code review for this execution.
-
-### Syntax
+Classic run syntax — equivalent to `axle <tool_name> [args]`.
 
 ```bash
-axle run <tool_identifier> [prompt] [--security] [--code-review]
+axle run <tool_identifier> [func] [args...] [--security] [--code-review]
 ```
 
-### Arguments
+**Arguments:**
+- `tool_identifier` — tool number or name (without `.py`)
+- `func` *(optional)* — specific function to call (for multi-function tools)
+- `args` *(optional)* — arguments passed to the tool
 
-- `tool_identifier` (required): Tool number (from `axle list`) or tool name (without .py)
-- `prompt` (optional): Text input for the tool
-
-### Options
-
-- `--security`: Enable security validation for this run (disabled by default)
-- `--code-review`: Enable code review for this run (disabled by default)
-
-### Examples
-
-**By Number:**
+**Options:**
+- `--security` — enable security validation for this run
+- `--code-review` — enable code review for this run
 
 ```bash
-axle run 1 "python is a great programming language"
-```
-
-**By Name:**
-
-```bash
-axle run seo_keyword_checker "python is a great programming language"
-```
-
-**With Security Validation:**
-
-```bash
-axle run 1 "test" --security
-```
-
-**With Code Review:**
-
-```bash
-axle run 1 "test" --code-review
-```
-
-**With Both:**
-
-```bash
+axle run 1 "keyword to check"
+axle run seo_keyword_checker "keyword to check"
+axle run competitor_analysis --urls https://site.com --target-keyword "seo"
 axle run 1 "test" --security --code-review
 ```
-
-**Without Prompt:**
-
-```bash
-axle run 3
-# Tool will prompt for input or use default behavior
-```
-
-### Notes
-
-- Security and code review are **disabled by default** in v1.2.0
-- Use `--security` flag to enable security validation for one execution
-- Use `--code-review` flag to enable code review for one execution
-- For persistent enablement, use `axle security --enable` or `axle review --enable`
-- Configuration stored in `~/.axle/config.json`
-
-**Multi-word Prompt:**
-
-```bash
-axle run 1 "analyze this content for keyword density and SEO optimization"
-```
-
-### Common Errors
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| Invalid tool number | Number out of range | Run `axle list` to see valid numbers |
-| Tool not found | Tool name doesn't exist | Check spelling or use number |
-| Tool failed | Tool execution error | Check tool-specific requirements |
-
-### Notes
-
-- Tools are invoked dynamically using Python's importlib
-- Each tool must implement a `main(prompt)` function
-- The prompt is passed as a string (may be empty)
-- Community footer is displayed after tool execution
-
----
-
-## axle info
-
-Show detailed information about a specific tool.
-
-### Syntax
-
-```bash
-axle info <tool_name>
-```
-
-### Arguments
-
-- `tool_name` (required): Name of the tool (without .py extension)
-
-### Options
-
-None
-
-### Examples
-
-```bash
-$ axle info seo_keyword_checker
-
-📋 Tool: seo_keyword_checker
-📍 Location: /path/to/tools/01_seo_keyword_checker.py
-📝 Description: Analyze text for SEO keyword density and optimization suggestions
-
----
-🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
-...
-```
-
-### What It Shows
-
-- Tool name
-- File location (absolute path)
-- Tool description (from `get_description()`)
-- Tool docstring (if available)
-
-### Common Errors
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| Tool not found | Tool name doesn't exist | Run `axle list` to see available tools |
-
----
-
-## axle scan
-
-Run security vulnerability scan on dependencies and scripts.
-
-### Syntax
-
-```bash
-axle scan
-```
-
-### Description
-
-Scans for security vulnerabilities using pip-audit and basic static analysis of Python scripts.
-
-### What It Checks
-
-1. **Dependencies**: Uses pip-audit to check for known vulnerabilities
-2. **Scripts**: Basic static analysis for:
-   - Hardcoded passwords/API keys
-   - Dangerous function usage (eval, exec)
-   - Unsafe imports (pickle, marshal)
-   - Shell command injection risks
-
-### Examples
-
-```bash
-$ axle scan
-
-🔒 Buddy Tools Security Scan
-============================================================
-
-📦 Dependency Scan
-------------------------------------------------------------
-✅ No critical vulnerabilities found in dependencies.
-
-🔍 Script Security Scan
-------------------------------------------------------------
-✅ No obvious security issues found in scripts!
-
-💡 Recommendations
-------------------------------------------------------------
-LOW Priority:
-   • [General] Run security scan regularly: axle scan
-   • [General] Keep dependencies updated regularly
-```
-
-### Output Sections
-
-1. **Dependency Scan**: Results from pip-audit
-2. **Script Security Scan**: Static analysis findings
-3. **Recommendations**: Prioritized action items
-
-### Notes
-
-- Requires pip-audit to be installed
-- May produce false positives
-- Review all findings before taking action
-- Critical issues should be addressed immediately
-
----
-
-## axle doctor
-
-Run environment diagnostics to check system setup.
-
-### Syntax
-
-```bash
-axle doctor
-```
-
-### Description
-
-Checks your environment to ensure Buddy Tools is properly configured and can run efficiently.
-
-### What It Checks
-
-1. **Python Version**: Verifies 3.10+
-2. **Platform**: Operating system and architecture
-3. **Disk Space**: At least 5GB free
-4. **RAM**: At least 8GB (requires psutil)
-5. **Dependencies**: Key Python packages
-6. **Tools Directory**: Exists and contains tools
-7. **CLI Installation**: axle command works
-
-### Examples
-
-```bash
-$ axle doctor
-
-🏥 Buddy Tools Environment Check
-============================================================
-
-🐍 Python Version: 3.10.12
-   ✓ Python version OK
-
-💻 Platform: Darwin arm64
-
-💾 Disk Space:
-   Free: 25.3 GB
-   ✓ Disk space OK
-
-🧠 RAM: 16.0 GB
-   ✓ RAM OK
-
-📦 Key Dependencies:
-   ✓ pandas
-   ✓ numpy
-   ✓ requests
-   ✓ bs4
-   ✓ nltk
-   ✓ sklearn
-   ✓ spacy
-   ✓ sentence_transformers
-
-🔧 Tools Directory:
-   ✓ Found at: /path/to/tools
-   ✓ Contains 3 tools
-
-⚙️ CLI Installation:
-   ✓ CLI command 'axle' is working
-```
-
-### Notes
-
-- RAM check requires psutil (optional dependency)
-- Warnings don't prevent usage but indicate potential issues
-- Run after installation to verify setup
-- Use when troubleshooting issues
-
----
-
-## axle path
-
-Show the current tools folder location.
-
-### Syntax
-
-```bash
-axle path
-```
-
-### Description
-
-Displays the absolute path to the tools directory and lists its contents.
-
-### Examples
-
-```bash
-$ axle path
-
-📁 Tools folder path: /absolute/path/to/tools
-
-Contains 3 file(s):
-  - 01_seo_keyword_checker.py
-  - 02_meta_tag_auditor.py
-  - 03_daily_life_hack_generator.py
-
----
-🌐 Community & Support
-⭐ Star the GitHub repo: https://github.com/skpaul82/axle-cli
-...
-```
-
-### Use Cases
-
-- Verify tools directory location
-- Check which tools are installed
-- Troubleshoot missing tools
-- Confirm custom tools directory
 
 ---
 
 ## axle help
 
-Display help message and command reference.
-
-### Syntax
+Show help for a specific tool or general help.
 
 ```bash
-axle help
+axle help                          # general help (all commands + examples)
+axle help <tool_name>              # tool summary + examples
+axle help <tool_name> --details    # full options + function list
+axle help <tool_name> -d           # same
 ```
 
-### Description
+### Default output (no `--details`)
 
-Shows comprehensive help information including all available commands and their usage.
+Shows: **name → one-line summary → 📌 Examples → hint for --details**
 
-### Examples
+```
+============================================================
+Tool: content_optimizer
+============================================================
+
+Content Optimization & SEO Scoring
+
+📌 Examples:
+  axle content_optimizer  --url https://example.com/page --target-keyword "project management tools"
+  axle content_optimizer  --file article.html --target-keyword "cloud hosting" --competitors comp1.html comp2.html
+  axle content_optimizer  --text "Your content here..." --target-keyword "best crm software"
+
+  axle help content_optimizer --details   # full options & function list
+```
+
+### With `--details`
+
+Adds:
+- **📋 Options** — full argparse `--help` output (reformatted with `axle` prefix)
+- **🔧 Functions** — all functions in the module with signatures and docstrings
+
+---
+
+## axle info
+
+Show file location and description for a tool.
 
 ```bash
-$ axle help
-
-usage: axle [-h] {list,run,info,scan,doctor,path,help} ...
-
-Buddy Tools: microtools for SEO and daily-life hacks.
-
-options:
-  -h, --help  show this help message and exit
-
-commands:
-  {list,run,info,scan,doctor,path,help}
-    list       List all available tools
-    run        Run a tool by number or name
-    info       Show tool information
-    scan       Scan dependencies for vulnerabilities
-    doctor     Run environment diagnostics
-    path       Show tools folder location
-    help       Show this help message
+axle info <tool_name>
 ```
 
-### Notes
+---
 
-- Also available with `-h` or `--help`
-- Shows all subcommands
-- Displays command syntax and options
+## axle scan
+
+Dependency vulnerability scan using pip-audit and static analysis.
+
+```bash
+axle scan
+```
+
+Checks:
+1. Dependencies — pip-audit for CVEs
+2. Scripts — basic static analysis (eval, exec, hardcoded secrets)
+
+---
+
+## axle doctor
+
+Environment diagnostics.
+
+```bash
+axle doctor
+```
+
+Checks Python version, disk space, RAM, key dependencies, tools directory, and CLI installation.
+
+---
+
+## axle path
+
+Show tools folder location and contents.
+
+```bash
+axle path
+```
+
+---
+
+## axle security
+
+Configure security validation.
+
+```bash
+axle security --enable    # enable by default for all runs
+axle security --disable   # disable (default)
+axle security --show      # show current setting
+axle security --policy <strict|warn|permissive>
+```
+
+---
+
+## axle review
+
+Run code review or configure it.
+
+```bash
+axle review <tool_name>          # review a specific tool
+axle review --all                # review all tools
+axle review --all --fix          # review + apply auto-fixes
+axle review --all --dry-run      # preview fixes without applying
+axle review --enable             # enable by default for all runs
+axle review --disable            # disable (default)
+axle review --show               # show current setting
+```
+
+---
+
+## axle update
+
+Update Axle to the latest version.
+
+```bash
+axle update           # pull latest + reinstall
+axle update --check   # check for updates without installing
+```
+
+---
+
+## axle metadata
+
+Tool metadata commands.
+
+```bash
+axle metadata scan               # scan all tools, build cache
+axle metadata list               # list all tools with summaries
+axle metadata show <tool>        # detailed metadata for one tool
+axle metadata search <query>     # search by name, function, description
+```
+
+---
+
+## axle uninstall
+
+Uninstall Axle (tools directory preserved by default).
+
+```bash
+axle uninstall               # preserves tools/
+axle uninstall --remove-tools  # also removes tools/
+```
 
 ---
 
 ## Global Options
 
-These options apply to all commands:
-
-### `-h, --help`
-
-Show help message and exit.
-
 ```bash
-axle -h
-axle --help
-axle run -h
+axle -h / --help     # general help
+axle -V / --version  # show version
 ```
-
-### `-V, --version`
-
-Show version information and exit.
-
-```bash
-axle -V
-axle --version
-```
-
-This displays the current version of Axle installed on your system.
 
 ---
 
@@ -461,35 +322,23 @@ This displays the current version of Axle installed on your system.
 | Code | Meaning |
 |------|---------|
 | 0 | Success |
-| 1 | Error occurred |
-| 2 | Invalid command or arguments |
-
----
-
-## Configuration Files
-
-Axle uses these configuration files:
-
-- `pyproject.toml` - Package metadata and dependencies
-- `requirements.txt` - Pinned dependency versions
-- `.axlerc` (optional) - User configuration (not yet implemented)
+| 1 | Error |
+| 2 | Invalid argument |
 
 ---
 
 ## Environment Variables
 
-These environment variables affect Axle behavior:
-
 | Variable | Purpose | Default |
 |----------|---------|---------|
-| `AXLE_TOOLS_DIR` | Custom tools directory | `tools/` |
-| `AXLE_SECURITY_POLICY` | Security policy (strict/warn/permissive) | `warn` |
-| `PYTHONPATH` | Python module search path | (system default) |
+| `AXLE_SECURITY_POLICY` | Security policy (strict/warn/permissive) | `permissive` |
+| `AXLE_CODE_REVIEW` | Code review policy | `never` |
+| `AXLE_AUTO_FIX` | Auto-fix policy | `false` |
 
 ---
 
 ## See Also
 
-- [Usage Guide](usage.md) - How to use tools effectively
-- [Installation Guide](installation.md) - Setup instructions
-- [Troubleshooting](troubleshooting.md) - Solve common problems
+- [Usage Guide](usage.md)
+- [Installation Guide](installation.md)
+- [Troubleshooting](troubleshooting.md)

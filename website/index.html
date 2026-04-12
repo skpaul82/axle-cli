@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Axle CLI - A Modular Platform for Python Microtools</title>
-    <meta name="description" content="Axle is a modular CLI platform for running Python microtools from a shared tools directory. Built-in security, automatic tool discovery, and simple command structure.">
+    <title>Axle CLI v1.3.0 - A Modular Platform for Python Microtools</title>
+    <meta name="description" content="Axle is a modular CLI platform for running Python microtools. Interactive arrow-key menu, direct tool execution by name or number, per-tool examples, and intelligent discovery.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google tag (gtag.js) -->
@@ -44,12 +44,13 @@
         <div class="container">
             <div class="hero-content">
                 <h1>
-                    Axle CLI
+                    Axle CLI <span style="font-size:0.5em; opacity:0.7">v1.3.0</span>
                 </h1>
                 <p class="hero-subtitle">A Modular Platform for Python Microtools</p>
                 <p class="hero-description">
-                    Run ANY Python tool consistently without remembering individual script locations or interfaces.
-                    Built-in security validation, automatic code review, and intelligent tool discovery.
+                    Run ANY Python tool by name or number — flags pass straight through.
+                    Interactive arrow-key menu, per-tool usage examples, and intelligent auto-discovery.
+                    No contract required.
                 </p>
                 <div class="hero-buttons">
                     <a href="docs.html" class="btn btn-primary">
@@ -80,39 +81,39 @@
             <h2>Why Choose Axle?</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
-                    <h3>Built-in Security</h3>
-                    <p>Pre-execution validation scans all tools for security issues. Blocks dangerous patterns, hardcoded secrets, and unsafe imports automatically.</p>
+                    <div class="feature-icon">🖱️</div>
+                    <h3>Interactive Menu</h3>
+                    <p>Run <code>axle</code> with no arguments to get a scrollable arrow-key tool picker. Navigate, select, type your args — done.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
-                    <h3>Automatic Code Review</h3>
-                    <p>Catch code quality issues before CI with automatic review and fixing. Checks formatting, imports, and linting. Auto-fixes common issues.</p>
+                    <div class="feature-icon">⚡</div>
+                    <h3>Direct Execution</h3>
+                    <p><code>axle tool_name --flags</code> or <code>axle 4 --flags</code> — run any tool by name or number. Flags pass straight through. No <code>axle run</code> needed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📌</div>
+                    <h3>Per-Tool Examples</h3>
+                    <p>Type <code>axle tool_name</code> with no args to see that tool's own usage examples — automatically extracted and shown with <code>axle</code> prefix.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚙️</div>
                     <h3>Modular Platform</h3>
-                    <p>Drop any Python script into your tools directory and run it instantly. No modifications to core code required. Zero friction.</p>
+                    <p>Drop any Python script into your tools directory and run it instantly. Argparse tools, prompt tools, and multi-function scripts all work. No contract required.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>Simple Commands</h3>
-                    <p>Consistent interface with numbered tools. Run by number or name. No need to remember individual script locations.</p>
+                    <div class="feature-icon">🔒</div>
+                    <h3>Optional Security</h3>
+                    <p>Pre-execution validation scans tools for security issues. Disabled by default for speed — enable per-run with <code>--security</code> or globally with <code>axle security --enable</code>.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Dependency Scanning</h3>
-                    <p>Integrated pip-audit for package security. Know when your dependencies have vulnerabilities.</p>
+                    <div class="feature-icon">🔍</div>
+                    <h3>Optional Code Review</h3>
+                    <p>Automatic code quality checks and auto-fixing. Enable per-run with <code>--code-review</code> or globally with <code>axle review --enable</code>.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📦</div>
-                    <h3>SEO Tools</h3>
-                    <p>Built-in keyword checker, meta tag auditor, and content optimization tools for SEO professionals.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💡</div>
-                    <h3>Productivity Hacks</h3>
-                    <p>Daily-life automation helpers that generate personalized tips for productivity and optimization.</p>
+                    <h3>SEO & Content Tools</h3>
+                    <p>Keyword checker, meta tag auditor, competitor analysis, content optimizer, and content brief generator — all built in.</p>
                 </div>
             </div>
         </div>
@@ -133,29 +134,32 @@
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <h3>List Available Tools</h3>
-                        <code>axle list</code>
+                        <h3>Launch Interactive Mode</h3>
+                        <code>axle</code>
+                        <p>Arrow-key menu — pick a tool, type your args, run it.</p>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <h3>Run a Tool</h3>
-                        <code>axle run 1 "your prompt"</code>
+                        <h3>Or Run Directly by Name or Number</h3>
+                        <code>axle competitor_analysis --urls https://rival.com --target-keyword "web developer"</code>
+                        <code>axle 4 --urls https://rival.com --target-keyword "web developer"</code>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">4</div>
                     <div class="step-content">
-                        <h3>Add Your Own Tools</h3>
-                        <p>Drop Python files in your tools directory. That's it!</p>
+                        <h3>See Tool Examples</h3>
+                        <code>axle content_optimizer</code>
+                        <p>Shows that tool's own usage examples — converted to <code>axle</code> syntax automatically.</p>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">5</div>
                     <div class="step-content">
-                        <h3>Automatic Code Review</h3>
-                        <p>Axle automatically reviews your code for quality issues and can fix formatting and import problems before you even commit!</p>
+                        <h3>Add Your Own Tools</h3>
+                        <p>Drop any Python script in your tools directory. Works with argparse tools, prompt tools, and multi-function scripts — no contract needed.</p>
                     </div>
                 </div>
                 <div class="step">
@@ -268,7 +272,7 @@
                 <div class="footer-section">
                     <h4>Axle CLI</h4>
                     <p>A modular platform for running Python microtools from a shared tools directory.</p>
-                    <p class="version">Version 1.2.0</p>
+                    <p class="version">Version 1.3.0</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>

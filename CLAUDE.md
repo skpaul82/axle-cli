@@ -4,163 +4,156 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Status
 
-**Axle** is a **production-ready v1.2.0** Python CLI platform for running Python microtools from a shared tools directory. The project has been fully implemented and rebranded from the original "Buddy CLI" concept to "Axle" with platform positioning.
+**Axle** is a **production-ready v1.3.0** Python CLI platform for running Python microtools from a shared tools directory.
 
 ## Project Overview
 
-Axle is a modular CLI platform that allows users to drop Python scripts into a `tools/` directory and run them consistently through a unified interface. It's designed as a platform for tools (not a toolkit), with the philosophy that anyone can add tools without modifying core code.
+Axle is a modular CLI platform. Users drop Python scripts into a `tools/` directory and run them through a unified interface. v1.3.0 adds an interactive arrow-key menu, direct tool execution by name or number, and per-tool usage examples.
 
 ```
 axle/
-├── pyproject.toml           # Package metadata, dependencies, CLI entry point
-├── requirements.txt         # Pinned dependencies
-├── README.md               # Public landing page
-├── LICENSE                 # MIT license
-├── scripts/
-│   ├── axle.py             # Main CLI router with argparse (7 commands)
-│   ├── install_axle.py     # Interactive setup script
-│   └── security_scan.py    # Dependency vulnerability scanner
-├── tools/                  # Modular tool scripts (numbered)
+├── pyproject.toml              # Package metadata, dependencies, entry point
+├── requirements.txt            # Pinned dependencies
+├── README.md                   # Public landing page
+├── LICENSE                     # MIT license
+├── axle/
+│   ├── axle.py                 # Main CLI router (~1500 lines)
+│   ├── interactive.py          # Arrow-key menu and argument prompt UI (NEW v1.3.0)
+│   ├── tool_discoverer.py      # Intelligent tool discovery + execution
+│   ├── tool_validator.py       # Optional security validation
+│   ├── code_reviewer.py        # Optional code review
+│   ├── tool_metadata.py        # AST-based metadata extraction
+│   ├── config.py               # Persistent configuration (~/.axle/config.json)
+│   ├── install_axle.py         # Interactive setup script
+│   └── security_scan.py        # Dependency vulnerability scanner
+├── tools/                      # Modular tool scripts
 │   ├── 01_seo_keyword_checker.py
 │   ├── 02_meta_tag_auditor.py
-│   └── 03_daily_life_hack_generator.py
-├── docs/                   # User documentation
-└── .github/workflows/      # CI/CD configuration
+│   ├── 03_daily_life_hack_generator.py
+│   ├── competitor_analysis.py
+│   ├── content_optimizer.py
+│   └── ...
+├── docs/                       # User documentation
+├── website/                    # Static website (Cloudflare Pages)
+└── .github/workflows/          # CI/CD
 ```
 
-## Core Commands
+## Core Commands (v1.3.0)
 
-The CLI interface (`axle` command):
+### Direct execution (new preferred syntax)
+- `axle` — interactive arrow-key tool picker (no args + TTY)
+- `axle <tool_name>` — show tool examples (no extra args) OR run tool (with args)
+- `axle <N>` — same, by tool number
+- `axle <tool_name> [--flags]` — run tool with flags passed through
+- `axle <N> [--flags]` — same, by number
+- `axle <tool_name> <function> [args]` — call specific function in multi-function tools
 
-- `axle list` - List all available tools in the tools directory
-- `axle run <number_or_name> <prompt>` - Execute a tool by number or filename
-- `axle run <number_or_name> <prompt> --security` - Execute tool with security validation
-- `axle run <number_or_name> <prompt> --code-review` - Execute tool with code review
-- `axle info <tool_name>` - Show tool description
-- `axle scan` - Run dependency vulnerability checks
-- `axle doctor` - Environment and setup diagnostics
-- `axle path` - Show tools folder location
-- `axle security --enable` - Enable security validation by default
-- `axle security --disable` - Disable security validation by default
-- `axle security --show` - Show current security configuration
-- `axle review --enable` - Enable code review by default
-- `axle review --disable` - Disable code review by default
-- `axle review --show` - Show current code review configuration
-- `axle update` - Update Axle CLI to the latest version
-- `axle update --check` - Check for updates without installing
-- `axle metadata scan` - Scan tools and build metadata cache
-- `axle metadata show <tool>` - Show detailed metadata for a tool
-- `axle metadata search <query>` - Search tools by name, functions, etc.
-- `axle metadata list` - List all tools with summaries
-- `axle help` - Display command help
+### Classic run syntax (still works)
+- `axle run <tool> [args]` — run a tool
+- `axle run <tool> --security` — run with security validation
+- `axle run <tool> --code-review` — run with code review
+
+### Help
+- `axle help <tool>` — show tool name, summary, and examples (clean default)
+- `axle help <tool> --details` — full argparse options + function list
+- `axle help <tool> -d` — same
+
+### Tool management
+- `axle list` — list all tools
+- `axle info <tool>` — show tool description
+- `axle scan` — dependency vulnerability scan
+- `axle doctor` — environment diagnostics
+- `axle path` — show tools folder location
+
+### Configuration
+- `axle security --enable/--disable/--show`
+- `axle review --enable/--disable/--show`
+- `axle update` / `axle update --check`
+- `axle metadata scan/show/search/list`
+
+## Real-World Examples (v1.3.0)
+
+```bash
+axle competitor_analysis --urls https://rival.com --target-keyword "web developer"
+axle 4 --urls https://rival.com --target-keyword "web developer"
+
+axle content_optimizer --url https://mysite.com/blog --target-keyword "cloud hosting"
+axle content_optimizer --file article.html --target-keyword "SaaS" --competitors c1.html c2.html
+axle content_optimizer --text "Your content..." --target-keyword "best crm software"
+
+axle seo_keyword_checker "python is great for data science"
+```
 
 ## Architecture Principles
 
-**Tool Contract**: All tools MUST implement two functions:
+### Tool Types (v1.3.0)
+Axle auto-detects three types — no contract required:
 
-```python
-def get_description() -> str:
-    """Return one-line description of the tool."""
-    return "Brief description"
+1. **Argparse-based** — `main()` takes 0 args, uses argparse internally. Flags pass through directly.
+2. **Contract-based** — implements `get_description()` + `main(prompt: str)`. Takes free-text prompt.
+3. **Multi-function** — any other Python script. Functions called by name.
 
-def main(prompt: str) -> None:
-    """Main entry point. Called by CLI router."""
-    # Tool logic here
-    pass
-```
+### Interactive Mode (NEW v1.3.0)
+`axle/interactive.py` provides:
+- `arrow_select(items, title, format_item, max_visible)` — reusable arrow-key list selector
+- `run_interactive(tools_dir)` — full interactive launch flow, returns `(DiscoveredTool, args_list)`
 
-**Dynamic Tool Loading**: Tools are discovered automatically from the `tools/` directory using importlib. Tools can be invoked by number (as displayed by `axle list`) or by filename without the `.py` extension (with or without numeric prefix).
+Triggered in `main()` when `len(sys.argv) == 1` and `sys.stdin.isatty() and sys.stdout.isatty()`.
 
-**Numbered Tool System**: Tools use `XX_tool_name.py` format for clear ordering. This prevents naming conflicts and sorts naturally in file listings.
+### Per-Tool Examples (NEW v1.3.0)
+`DiscoveredTool.get_docstring_examples()` parses the `Usage:` block from a tool's module docstring and converts `python tool_name.py --args` → `axle tool_name  --args`.
 
-**CLI Router**: The main `scripts/axle.py` uses argparse with subcommands. The entry point is defined in `pyproject.toml` as `axle = "scripts.axle:main"`.
+`DiscoveredTool.get_argparse_help()` captures the tool's `--help` output (via stdout redirect + SystemExit catch) and rewrites `usage: tool_name` → `usage: axle tool_name`.
 
-**Platform Positioning**: Axle is positioned as a platform for running ANY Python tool consistently, not just the built-in SEO/productivity tools. Users can add their own tools by dropping `.py` files in the `tools/` directory.
+### Show-help-on-no-args (NEW v1.3.0)
+All three tool-type branches in `main()` now check `if not tool_args:` and show `get_help_text()` instead of running (which would error on missing required args).
 
-## Development Workflow
+### Help Verbosity (NEW v1.3.0)
+`get_help_text(verbose=False)`:
+- Default: name + summary + `📌 Examples` (from docstring) + hint for `--details`
+- `verbose=True`: also shows full argparse `--help` output + all functions
 
-**Installation**:
+`axle help` parser uses `--details` / `-d` (renamed from `--verbose`).
 
-```bash
-pip install -r requirements.txt
-pip install -e .
-```
-
-**Running commands**:
-
-```bash
-axle list              # See available tools
-axle run 1 "prompt"    # Run tool #1 with prompt
-axle run seo_keyword_checker "prompt"  # Run by name
-```
-
-**Adding a new tool**:
-
-1. Create `tools/04_my_tool.py` (numbered for ordering)
-2. Implement `get_description()` and `main(prompt)` functions
-3. Tool automatically appears in `axle list`
-4. No changes to core code required
-
-**Package metadata**: The project uses `pyproject.toml` with setuptools. Package name is `axle`, version `0.1.0`. Entry point: `axle = "scripts.axle:main"`.
-
-## Dependencies
-
-Core requirements (Python 3.10+):
-
-- **Data Processing**: pandas, numpy, openpyxl
-- **ML/NLP**: scikit-learn, spacy, sentence-transformers, nltk
-- **Web**: beautifulsoup4, requests, lxml
-- **Security**: pip-audit
-
-**Heavy Dependencies**: ML/NLP packages require ~5-8GB disk space. Minimum 8GB RAM (16GB preferred).
-
-**spaCy Model**: Installation script downloads `en_core_web_sm` model automatically.
+### Dynamic Tool Loading
+Tools discovered from `tools/` via `ToolDiscoverer`. Can invoke by name (with or without numeric prefix) or by number.
 
 ## Key Files
 
-- **scripts/axle.py**: Main CLI router (~376 lines). Implements all 7 commands, dynamic tool loading, error handling, community footer.
-- **scripts/install_axle.py**: Interactive installer with system checks, guided setup, spaCy model download.
-- **scripts/security_scan.py**: Vulnerability scanner using pip-audit and static analysis.
-- **tools/*.py**: Tool implementations following the tool contract.
+- **axle/axle.py**: Main CLI router. `main()` handles interactive mode, early tool dispatch (before argparse), and all built-in commands.
+- **axle/interactive.py**: Arrow-key terminal UI. No external dependencies (`tty`, `termios`, `select` are all stdlib).
+- **axle/tool_discoverer.py**: `DiscoveredTool` + `ToolDiscoverer`. Handles discovery, help generation, and execution.
 
 ## Branding & URLs
 
-- **Product Name**: Axle (not Buddy CLI, not Buddy Tools)
-- **Command**: axle (not buddy)
+- **Product Name**: Axle
+- **Command**: `axle`
+- **Version**: 1.3.0
 - **Repository**: https://github.com/skpaul82/axle-cli
-- **Documentation**: axle.sanjoypaul.com/agent-aio
+- **Website**: https://www.axle.sanjoypaul.com
 - **Email**: hello@skpaul.me
 
-**Rebranding Complete**: All references to "Buddy CLI" have been replaced with "Axle" platform positioning. Historical context preserved in `.docs/` directory.
+## Community Footer
 
-## Community & Support
-
-All tool outputs include community footer:
-
-- GitHub: https://github.com/skpaul82/axle-cli
-- X/Twitter: @_skpaul82
-- Instagram: @skpaul82
-- Newsletter: axle.sanjoypaul.com/agent-aio
+All tool outputs include:
+```
+⭐ Star on GitHub: https://github.com/skpaul82/axle-cli
+🐦 Follow on X: @_skpaul82
+🌐 Website: https://www.axle.sanjoypaul.com
+```
 
 ## Platform Philosophy
 
-**Key Positioning**: Axle is a platform for tools, not a toolkit. Users can drop any Python script into the `tools/` directory and run it with `axle run <tool_name>`.
-
-**Value Prop**: Run ANY Python tool consistently without remembering individual script locations or interfaces.
-
-**Extensibility**: Zero code changes required to add new tools. Just drop a `.py` file in `tools/` that implements the contract.
+Axle is a **platform for tools**, not a toolkit. Drop any `.py` file in `tools/` and run it with `axle tool_name`. No contract required in v1.3.0.
 
 ## License
 
-MIT License - see LICENSE file.
+MIT — see LICENSE file.
 
 ## Internal Documentation
 
-Planning and historical documentation in `.docs/`:
-
-- **PRD.md**: Product Requirements Document
-- **IMPLEMENTATION_PLAN.md**: Implementation phases
-- **CONTEXT.md**: Architecture and technical decisions
-- **2nd-note.md**: Original platform pivot discussion (historical)
-- **2nd-thoughts.md**: Strategic analysis (historical)
-- **INTERNAL_DOCS_UPDATE.md**: Rebranding documentation
+Planning and historical docs in `.docs/`:
+- **PRD.md** — Product Requirements Document
+- **CONTEXT.md** — Architecture and technical decisions
+- **IMPLEMENTATION_PLAN.md** — Implementation phases
+- **VERSION_1.3.0_RELEASE_NOTES.md** — v1.3.0 release notes
