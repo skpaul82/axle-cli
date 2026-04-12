@@ -137,6 +137,7 @@ security_report.txt
 # Internal documentation (DO NOT PUBLISH)
 .docs/
 .claude/
+.battle-field/
 
 # Internal planning and strategic analysis
 # Contains: PRD, implementation plans, strategic analysis, decision history
