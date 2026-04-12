@@ -112,6 +112,10 @@ def list_tools():
         has_contract = tool.metadata.get('has_contract', False)
         contract_badge = "✅" if has_contract else "📜"
 
+        # Check if it uses argparse (main with no args)
+        main_func = tool.get_main_function()
+        uses_argparse = main_func and main_func.arg_count == 0
+
         print(f"  {i}. {contract_badge} {tool.name} - {tool.description}")
 
         # Show available functions
@@ -119,7 +123,10 @@ def list_tools():
             funcs = tool.metadata['all_functions']
             main_funcs = tool.metadata.get('main_functions', [])
             if main_funcs:
-                print(f"     🔴 Main: {', '.join(main_funcs)}")
+                if uses_argparse:
+                    print(f"     🔴 Main: {main_funcs[0]} (argparse-based tool)")
+                else:
+                    print(f"     🔴 Main: {', '.join(main_funcs)}")
 
         # Show help command
         print(f"     💡 axle help {tool.name}")

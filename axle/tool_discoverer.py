@@ -197,7 +197,12 @@ class DiscoveredTool:
         main_func = self.get_main_function()
         if main_func:
             args = main_func.get_arg_names()
-            if args:
+            if main_func.arg_count == 0:
+                # Tool with its own CLI interface
+                output.append(f"\n💡 Usage: axle run {self.name}")
+                output.append(f"   Note: This tool uses its own CLI interface (argparse-based)")
+                output.append(f"   Run directly for more options: python {self.tool_path} --help")
+            elif args:
                 args_display = " ".join([f"<{arg}>" for arg in args])
                 output.append(f"\n💡 Usage (main): axle run {self.name}")
             else:
@@ -360,9 +365,28 @@ class ToolDiscoverer:
             # Try to find main function
             main_func = tool.get_main_function()
             if main_func:
-                func_args = args if args else []
-                result = tool.run_function(main_func, func_args)
-                return 0 if result is not None else 1
+                # Check if main() takes no arguments (argparse-based tool)
+                if main_func.arg_count == 0:
+                    # This is likely a standalone script with its own CLI
+                    # Just call main() and let it handle its own argparse
+                    print(f"\n🔧 Running {tool.name} (uses its own CLI interface)...")
+                    print(f"   Use 'python {tool.tool_path} --help' to see its options\n")
+                    try:
+                        main_func.func_obj()
+                        return 0
+                    except SystemExit as e:
+                        # argparse calls sys.exit(), catch it
+                        return e.code if e.code is not None else 0
+                    except Exception as e:
+                        print(f"❌ Error running tool: {e}")
+                        import traceback
+                        traceback.print_exc()
+                        return 1
+                else:
+                    # Main function expects arguments
+                    func_args = args if args else []
+                    result = tool.run_function(main_func, func_args)
+                    return 0 if result is not None else 1
 
             # No main function found, show help
             print(tool.get_help_text())
