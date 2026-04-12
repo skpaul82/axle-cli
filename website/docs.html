@@ -187,6 +187,53 @@
             background-color: var(--success-color);
         }
 
+        .section-group-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.6rem 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 0;
+        }
+
+        .docs-section-group {
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .docs-nav .nav-group-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary-color);
+            padding: 0.75rem 0.5rem 0.25rem;
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .docs-nav .nav-group-label:hover {
+            color: var(--primary-dark, #4f46e5);
+        }
+
+        #advancedNavItems {
+            overflow: hidden;
+            transition: max-height 0.35s ease, opacity 0.3s ease;
+            max-height: 300px;
+            opacity: 1;
+        }
+
+        #advancedNavItems.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
         @media (max-width: 768px) {
             .docs-container {
                 grid-template-columns: 1fr;
@@ -230,16 +277,21 @@
                     <ul>
                         <li><a href="#installation">Installation</a></li>
                         <li><a href="#quick-start">Quick Start</a></li>
+                        <li><a href="#adding-tools">Adding Tools</a></li>
                         <li><a href="#interactive">Interactive Mode</a></li>
                         <li><a href="#direct-execution">Direct Execution</a></li>
                         <li><a href="#per-tool-examples">Per-Tool Examples</a></li>
                         <li><a href="#commands">Commands Reference</a></li>
-                        <li><a href="#adding-tools">Adding Tools</a></li>
-                        <li><a href="#security">Security</a></li>
-                        <li><a href="#code-review">Code Review</a></li>
                         <li><a href="#update">Update Command</a></li>
-                        <li><a href="#metadata">Tool Metadata</a></li>
-                        <li><a href="#troubleshooting">Troubleshooting</a></li>
+                        <li class="nav-group-label" onclick="toggleAdvancedNav()" id="advancedNavLabel" style="cursor:pointer;">
+                            ⚙️ Advanced / Pro <span id="advancedNavArrow">▼</span>
+                        </li>
+                        <ul id="advancedNavItems" style="list-style:none; padding:0; margin:0;">
+                            <li><a href="#security">↳ Security</a></li>
+                            <li><a href="#code-review">↳ Code Review</a></li>
+                            <li><a href="#metadata">↳ Tool Metadata</a></li>
+                            <li><a href="#troubleshooting">↳ Troubleshooting</a></li>
+                        </ul>
                     </ul>
                 </nav>
             </aside>
@@ -287,31 +339,111 @@ pip install -e .</code></pre>
                     <h2>Quick Start</h2>
 
                     <p>After installation, you can immediately start using Axle:</p>
+                    <h3>0. Check Your Version</h3>
+                    <pre><code>axle -V</code></pre>
 
-                    <h3>1. Launch Interactive Mode</h3>
+                    <h3>1. Launch Interactive Mode (Beta)</h3>
                     <pre><code>axle</code></pre>
                     <p>No arguments — an arrow-key scrollable tool picker appears. Navigate with ↑↓ or j/k, press Enter to select, type your args, and run.</p>
 
-                    <h3>2. Run a Tool Directly by Name or Number</h3>
+                    <h3>2. List All Available Tools</h3>
+                    <pre><code>axle list</code></pre>
+
+                    <h3>3. Run a Tool Directly by Name or Number</h3>
                     <pre><code># By tool name
 axle competitor_analysis --urls https://rival.com --target-keyword "web developer"
 
 # By number
 axle 4 --urls https://rival.com --target-keyword "web developer"</code></pre>
 
-                    <h3>3. See a Tool's Usage Examples</h3>
+                    <h3>4. See a Tool's Usage Examples</h3>
                     <pre><code># Type tool name with no args — shows its examples
 axle content_optimizer
 axle 3</code></pre>
 
-                    <h3>4. List All Available Tools</h3>
-                    <pre><code>axle list</code></pre>
-
                     <h3>5. Check Your Environment</h3>
                     <pre><code>axle doctor</code></pre>
+                </section>
 
-                    <h3>6. Check Your Version</h3>
-                    <pre><code>axle -V</code></pre>
+                <!-- Adding Tools -->
+                <section id="adding-tools" class="docs-section">
+                    <h2>Adding Your Own Tools</h2>
+
+                    <p>Drop any Python script into your tools directory and run it immediately. No contract required — Axle auto-discovers the tool type.</p>
+
+                    <h3>1. Find Your Tools Directory</h3>
+                    <pre><code>axle path</code></pre>
+
+                    <h3>2. Choose a Tool Type</h3>
+                    <p>Axle supports three tool types. All are discovered automatically.</p>
+
+                    <h4>Type A — Argparse Tool (recommended for new tools)</h4>
+                    <p>Standard Python script with <code>argparse</code> and a <code>main(args)</code> function. Axle passes CLI flags straight through.</p>
+                    <pre><code>"""
+My Tool — does something useful.
+
+Usage:
+    python my_tool.py --input file.txt --output result.json
+    python my_tool.py --input file.txt --verbose
+"""
+import argparse
+
+def main(args=None):
+    parser = argparse.ArgumentParser(description="My tool")
+    parser.add_argument("--input", required=True, help="Input file")
+    parser.add_argument("--output", default="result.json", help="Output file")
+    parser.add_argument("--verbose", action="store_true")
+    parsed = parser.parse_args(args)
+    # tool logic here
+    print(f"Processing {parsed.input}")</code></pre>
+
+                    <pre><code># Run it directly
+axle my_tool --input data.txt --output out.json
+
+# See usage examples (from the docstring Usage: block)
+axle my_tool</code></pre>
+
+                    <h4>Type B — Contract Tool (simple prompt-based)</h4>
+                    <p>Implements <code>get_description()</code> and <code>main(prompt: str)</code>. Best for tools that take a single text input.</p>
+                    <pre><code">def get_description() -> str:
+    return "Brief description of what this tool does"
+
+def main(prompt: str) -> None:
+    # Your tool logic here
+    print(f"Processing: {prompt}")</code></pre>
+
+                    <pre><code># Run it
+axle my_contract_tool "your input text here"</code></pre>
+
+                    <h4>Type C — Multi-function Script</h4>
+                    <p>Any Python script with multiple top-level functions. Call specific functions by name.</p>
+                    <pre><code">def analyze(text):
+    """Analyze the given text."""
+    print(f"Analyzing: {text}")
+
+def summarize(url):
+    """Fetch and summarize a URL."""
+    print(f"Summarizing: {url}")</code></pre>
+
+                    <pre><code># List functions
+axle my_script
+
+# Call a specific function
+axle my_script analyze "some text to analyze"
+axle my_script summarize https://example.com</code></pre>
+
+                    <h3>3. Run Your Tool</h3>
+                    <pre><code>axle list              # Your tool appears in the list
+axle my_tool           # See its usage examples
+axle my_tool --flags   # Run it directly</code></pre>
+
+                    <h3>Tips</h3>
+                    <ul>
+                        <li>✅ Use numeric prefix for ordering (e.g., <code>04_my_tool.py</code>)</li>
+                        <li>✅ Add a <code>Usage:</code> block in your module docstring for auto-extracted examples</li>
+                        <li>✅ No core code changes needed — just drop the file and run</li>
+                        <li>✅ File must be valid Python 3.10+</li>
+                    </ul>
                 </section>
 
                 <!-- Interactive Mode -->
@@ -533,86 +665,54 @@ axle uninstall
 axle uninstall --remove-tools</code></pre>
                 </section>
 
-                <!-- Adding Tools -->
-                <section id="adding-tools" class="docs-section">
-                    <h2>Adding Your Own Tools</h2>
+                <!-- Update Command -->
+                <section id="update" class="docs-section">
+                    <h2>Update Command</h2>
 
-                    <p>Drop any Python script into your tools directory and run it immediately. No contract required — Axle auto-discovers the tool type.</p>
+                    <p>Axle includes a built-in update command to keep your CLI up-to-date with the latest features and bug fixes from GitHub.</p>
 
-                    <h3>1. Find Your Tools Directory</h3>
-                    <pre><code>axle path</code></pre>
+                    <h3>Updating Axle CLI</h3>
+                    <pre><code># Update to the latest version
+axle update</code></pre>
 
-                    <h3>2. Choose a Tool Type</h3>
-                    <p>Axle supports three tool types. All are discovered automatically.</p>
+                    <p>This will:</p>
+                    <ol>
+                        <li>Fetch the latest changes from GitHub</li>
+                        <li>Pull updates from the origin/main branch</li>
+                        <li>Update dependencies from requirements.txt</li>
+                        <li>Reinstall the package (pip install -e .)</li>
+                        <li>Show the new version number</li>
+                    </ol>
 
-                    <h4>Type A — Argparse Tool (recommended for new tools)</h4>
-                    <p>Standard Python script with <code>argparse</code> and a <code>main(args)</code> function. Axle passes CLI flags straight through.</p>
-                    <pre><code>"""
-My Tool — does something useful.
+                    <h3>Checking for Updates</h3>
+                    <pre><code># Check if updates are available without installing
+axle update --check</code></pre>
 
-Usage:
-    python my_tool.py --input file.txt --output result.json
-    python my_tool.py --input file.txt --verbose
-"""
-import argparse
-
-def main(args=None):
-    parser = argparse.ArgumentParser(description="My tool")
-    parser.add_argument("--input", required=True, help="Input file")
-    parser.add_argument("--output", default="result.json", help="Output file")
-    parser.add_argument("--verbose", action="store_true")
-    parsed = parser.parse_args(args)
-    # tool logic here
-    print(f"Processing {parsed.input}")</code></pre>
-
-                    <pre><code># Run it directly
-axle my_tool --input data.txt --output out.json
-
-# See usage examples (from the docstring Usage: block)
-axle my_tool</code></pre>
-
-                    <h4>Type B — Contract Tool (simple prompt-based)</h4>
-                    <p>Implements <code>get_description()</code> and <code>main(prompt: str)</code>. Best for tools that take a single text input.</p>
-                    <pre><code">def get_description() -> str:
-    return "Brief description of what this tool does"
-
-def main(prompt: str) -> None:
-    # Your tool logic here
-    print(f"Processing: {prompt}")</code></pre>
-
-                    <pre><code># Run it
-axle my_contract_tool "your input text here"</code></pre>
-
-                    <h4>Type C — Multi-function Script</h4>
-                    <p>Any Python script with multiple top-level functions. Call specific functions by name.</p>
-                    <pre><code">def analyze(text):
-    """Analyze the given text."""
-    print(f"Analyzing: {text}")
-
-def summarize(url):
-    """Fetch and summarize a URL."""
-    print(f"Summarizing: {url}")</code></pre>
-
-                    <pre><code># List functions
-axle my_script
-
-# Call a specific function
-axle my_script analyze "some text to analyze"
-axle my_script summarize https://example.com</code></pre>
-
-                    <h3>3. Run Your Tool</h3>
-                    <pre><code>axle list              # Your tool appears in the list
-axle my_tool           # See its usage examples
-axle my_tool --flags   # Run it directly</code></pre>
-
-                    <h3>Tips</h3>
+                    <h3>Safety Features</h3>
+                    <p>The update command includes safety checks to prevent data loss:</p>
                     <ul>
-                        <li>✅ Use numeric prefix for ordering (e.g., <code>04_my_tool.py</code>)</li>
-                        <li>✅ Add a <code>Usage:</code> block in your module docstring for auto-extracted examples</li>
-                        <li>✅ No core code changes needed — just drop the file and run</li>
-                        <li>✅ File must be valid Python 3.10+</li>
+                        <li>✅ Detects uncommitted changes and stops</li>
+                        <li>✅ Shows exactly what will be updated</li>
+                        <li>✅ Provides instructions to stash/commit changes</li>
+                        <li>✅ Timeout protection for network operations</li>
                     </ul>
+
+                    <h3>Requirements</h3>
+                    <ul>
+                        <li>Must be in a git repository</li>
+                        <li>No uncommitted changes (or must be committed first)</li>
+                        <li>Internet connection for fetching updates</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <strong>💡 Tip:</strong> Run <code>axle update --check</code> first to see if updates are available without installing them.
+                    </div>
                 </section>
+
+                <!-- Advanced/Pro -->
+                <div id="advanced" class="docs-section-group">
+                    <h2 class="section-group-title">⚙️ Advanced / Pro</h2>
+                </div>
 
                 <!-- Security -->
                 <section id="security" class="docs-section">
@@ -745,50 +845,6 @@ export AXLE_CODE_REVIEW_VERBOSE=false</code></pre>
                     </div>
                 </section>
 
-                <!-- Update Command -->
-                <section id="update" class="docs-section">
-                    <h2>Update Command</h2>
-
-                    <p>Axle includes a built-in update command to keep your CLI up-to-date with the latest features and bug fixes from GitHub.</p>
-
-                    <h3>Updating Axle CLI</h3>
-                    <pre><code># Update to the latest version
-axle update</code></pre>
-
-                    <p>This will:</p>
-                    <ol>
-                        <li>Fetch the latest changes from GitHub</li>
-                        <li>Pull updates from the origin/main branch</li>
-                        <li>Update dependencies from requirements.txt</li>
-                        <li>Reinstall the package (pip install -e .)</li>
-                        <li>Show the new version number</li>
-                    </ol>
-
-                    <h3>Checking for Updates</h3>
-                    <pre><code># Check if updates are available without installing
-axle update --check</code></pre>
-
-                    <h3>Safety Features</h3>
-                    <p>The update command includes safety checks to prevent data loss:</p>
-                    <ul>
-                        <li>✅ Detects uncommitted changes and stops</li>
-                        <li>✅ Shows exactly what will be updated</li>
-                        <li>✅ Provides instructions to stash/commit changes</li>
-                        <li>✅ Timeout protection for network operations</li>
-                    </ul>
-
-                    <h3>Requirements</h3>
-                    <ul>
-                        <li>Must be in a git repository</li>
-                        <li>No uncommitted changes (or must be committed first)</li>
-                        <li>Internet connection for fetching updates</li>
-                    </ul>
-
-                    <div class="info-box">
-                        <strong>💡 Tip:</strong> Run <code>axle update --check</code> first to see if updates are available without installing them.
-                    </div>
-                </section>
-
                 <!-- Tool Metadata -->
                 <section id="metadata" class="docs-section">
                     <h2>Tool Metadata System</h2>
@@ -889,6 +945,7 @@ axle run your_tool "prompt"</code></pre>
                         <li>Join our <a href="community.html">community</a></li>
                     </ul>
                 </section>
+
             </main>
         </div>
     </div>
@@ -933,6 +990,13 @@ axle run your_tool "prompt"</code></pre>
 
     <script src="js/main.js"></script>
     <script>
+        function toggleAdvancedNav() {
+            const items = document.getElementById('advancedNavItems');
+            const arrow = document.getElementById('advancedNavArrow');
+            const collapsed = items.classList.toggle('collapsed');
+            arrow.textContent = collapsed ? '▶' : '▼';
+        }
+
         function copyCommand(button) {
             const commandBox = button.parentElement;
             const code = commandBox.querySelector('code');
