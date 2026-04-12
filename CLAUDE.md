@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Status
 
-**Axle** is a **production-ready v0.1.0** Python CLI platform for running Python microtools from a shared tools directory. The project has been fully implemented and rebranded from the original "Buddy CLI" concept to "Axle" with platform positioning.
+**Axle** is a **production-ready v1.2.0** Python CLI platform for running Python microtools from a shared tools directory. The project has been fully implemented and rebranded from the original "Buddy CLI" concept to "Axle" with platform positioning.
 
 ## Project Overview
 
@@ -46,6 +46,12 @@ The CLI interface (`axle` command):
 - `axle review --enable` - Enable code review by default
 - `axle review --disable` - Disable code review by default
 - `axle review --show` - Show current code review configuration
+- `axle update` - Update Axle CLI to the latest version
+- `axle update --check` - Check for updates without installing
+- `axle metadata scan` - Scan tools and build metadata cache
+- `axle metadata show <tool>` - Show detailed metadata for a tool
+- `axle metadata search <query>` - Search tools by name, functions, etc.
+- `axle metadata list` - List all tools with summaries
 - `axle help` - Display command help
 
 ## Architecture Principles

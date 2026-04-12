@@ -1,8 +1,8 @@
 # PyPI Publishing Guide
 
-**Status**: Ready for v1.1.0 publishing
+**Status**: Ready for v1.2.0 publishing
 **Package Name**: axle-cli
-**Current Version**: 1.1.0
+**Current Version**: 1.2.0
 **Repository**: https://github.com/skpaul82/axle-cli
 
 ---

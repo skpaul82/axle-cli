@@ -1,4 +1,4 @@
-# Axle
+# Axle v1.2.0
 
 A modular CLI platform for running Python microtools from a shared tools directory.
 
@@ -35,7 +35,34 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-> **Note**: PyPI installation (`pip install axle-cli`) is planned for v1.0.0. For v0.1.0, please use the GitHub installation method above.
+> **Note**: PyPI installation (`pip install axle-cli`) is planned for future releases. For v1.2.0, please use the GitHub installation method above.
+
+---
+
+## 🎉 What's New in v1.2.0
+
+### ✨ Optional Security & Code Review
+- **Security and code review are now DISABLED by default** for faster execution
+- Use `--security` and `--code-review` flags to enable per-run
+- Use `axle security enable` and `axle review enable` to enable persistently
+- Configuration stored in `~/.axle/config.json`
+
+### 🔄 Built-in Update Command
+- **`axle update`** - Update Axle CLI to the latest version
+- **`axle update --check`** - Check for updates without installing
+- Automatic dependency updates and package reinstallation
+
+### 📊 Tool Metadata System
+- **`axle metadata scan`** - Scan all tools and build metadata cache
+- **`axle metadata show <tool>`** - Show detailed tool information
+- **`axle metadata search <query>`** - Search tools by name, functions, or description
+- **`axle metadata list`** - List all tools with summaries
+- View tool functions, parameters, documentation, and imports
+
+### 📚 Improved Documentation
+- Updated command reference with all new commands
+- Better inline help and error messages
+- Enhanced user experience
 
 ---
 
@@ -95,6 +122,12 @@ pip install -e .
 | `axle security --enable` | Enable security validation by default.      |
 | `axle security --disable` | Disable security validation by default.     |
 | `axle security --show`  | Show current security configuration.         |
+| `axle update`           | Update Axle CLI to the latest version.       |
+| `axle update --check`   | Check for updates without installing.        |
+| `axle metadata scan`    | Scan tools and build metadata cache.          |
+| `axle metadata show <tool>` | Show detailed metadata for a tool.       |
+| `axle metadata search <query>` | Search tools by name, functions, etc.  |
+| `axle metadata list`    | List all tools with summaries.               |
 | `axle help`             | Show all commands.                           |
 
 ---

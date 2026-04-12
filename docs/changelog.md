@@ -5,6 +5,83 @@ All notable changes to Axle CLI will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-04-12
+
+### ✨ Major Features
+
+#### Optional Security & Code Review (Breaking Change)
+- **Security validation is now DISABLED by default** (was enabled with "warn" policy)
+- **Code review is now DISABLED by default** (was "auto" policy)
+- Significantly improved performance for trusted tools
+- New `--security` flag to enable security validation per-run
+- New `--code-review` flag to enable code review per-run
+- New `axle security --enable` command to persistently enable security
+- New `axle security --disable` command to persistently disable security
+- New `axle security --show` command to view current security configuration
+- New `axle review --enable` command to persistently enable code review
+- New `axle review --disable` command to persistently disable code review
+- New `axle review --show` command to view current code review configuration
+- Configuration stored in `~/.axle/config.json`
+- Environment variables still work as before
+
+#### Built-in Update Command
+- **New `axle update` command** - Update Axle CLI to latest version
+- **New `axle update --check` command** - Check for updates without installing
+- Automatic git fetch and pull from origin/main
+- Dependency updates from requirements.txt
+- Package reinstallation with pip install -e .
+- Uncommitted changes detection (safety feature)
+- Version comparison and change detection
+- Clear progress indicators and error messages
+
+#### Tool Metadata System
+- **New `axle metadata scan` command** - Scan all tools and build metadata cache
+- **New `axle metadata show <tool>` command** - Show detailed tool information
+- **New `axle metadata search <query>` command** - Search tools by name, functions, or description
+- **New `axle metadata list` command** - List all tools with summaries
+- AST-based Python file analysis
+- Extracts functions, classes, parameters, and docstrings
+- Shows tool contract compliance (get_description, main)
+- Caches metadata in `~/.axle/metadata/tools_metadata.json`
+- Search by tool name, function names, or descriptions
+- View imports, file size, and last modified date
+
+### 📚 Documentation Updates
+- Added "What's New in v1.2.0" section to README
+- Updated all command references with new flags and subcommands
+- Updated CLAUDE.md with new commands
+- Enhanced help text and error messages
+- Better inline documentation
+- Updated version to 1.2.0 across all files
+
+### 🔧 Technical Changes
+- New `axle/config.py` module for persistent configuration
+- New `axle/tool_metadata.py` module for tool metadata extraction
+- Updated `axle/tool_validator.py` - Default policy changed to "permissive"
+- Updated `axle/code_reviewer.py` - Default policy changed to "never"
+- Enhanced `axle/axle.py` with new commands and flags
+- Improved error handling and user feedback
+
+### 🔄 Migration Guide
+- **For existing users** who want the old behavior:
+  ```bash
+  axle security --enable
+  axle review --enable
+  ```
+- **For new users**: Security and code review are disabled by default
+- **Per-run usage**: `axle run <tool> --security --code-review`
+- **Config file**: `~/.axle/config.json` stores persistent settings
+
+### ⚡ Performance Improvements
+- Faster tool execution when checks are disabled (50-100ms saved per run)
+- Metadata caching for instant tool information lookups
+- Optimized git operations in update command
+
+### 🐛 Bug Fixes
+- Fixed configuration file creation and permissions
+- Improved error messages for missing metadata
+- Better handling of edge cases in tool scanning
+
 ## [1.1.1] - 2026-04-09
 
 ### Added

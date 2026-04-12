@@ -32,6 +32,16 @@ from axle.config import (
     show_config,
 )
 
+# Import tool metadata system
+from axle.tool_metadata import (
+    update_metadata,
+    load_metadata,
+    format_tool_metadata,
+    search_tools,
+    list_tools_summarized,
+    get_tool_description_from_file,
+)
+
 TOOLS_DIR = Path(__file__).parent.parent / "tools"
 
 # Version from package
@@ -40,7 +50,7 @@ try:
 
     __version__ = version("axle-cli")
 except Exception:
-    __version__ = "1.1.0"
+    __version__ = "1.2.0"
 
 COMMUNITY_FOOTER = """
 ---
@@ -642,6 +652,217 @@ def uninstall_axle(keep_tools=True, remove_tools=False):
     return 0
 
 
+def update_axle(check_only=False):
+    """Update Axle CLI to the latest version.
+
+    Args:
+        check_only: If True, only check for updates without installing
+
+    Returns:
+        0 on success, 1 on failure
+    """
+    print("\n🔄 Axle Updater")
+    print("=" * 60)
+
+    # Get the current directory
+    current_dir = Path.cwd()
+
+    # Check if we're in a git repository
+    git_dir = current_dir / ".git"
+    if not git_dir.exists():
+        # Try to find .git in parent directories
+        for parent in [current_dir] + list(current_dir.parents):
+            if (parent / ".git").exists():
+                git_dir = parent / ".git"
+                current_dir = parent
+                break
+
+    if not git_dir.exists():
+        print("❌ Not in a git repository.")
+        print("\n💡 To update Axle, navigate to the axle-cli directory and run:")
+        print("   cd /path/to/axle-cli")
+        print("   git pull origin main")
+        print("   pip install -e .")
+        print_community_footer()
+        return 1
+
+    print(f"\n📁 Repository: {current_dir}")
+    print(f"📍 Current directory: {Path.cwd()}")
+
+    # Check current version
+    try:
+        current_version = __version__
+        print(f"📌 Current version: {current_version}")
+    except Exception:
+        print("⚠️  Could not determine current version")
+
+    # Check if there are uncommitted changes
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            capture_output=True,
+            text=True,
+            cwd=current_dir,
+            timeout=10
+        )
+
+        if result.stdout.strip():
+            print("\n⚠️  You have uncommitted changes:")
+            print(result.stdout)
+            print("\n💡 Please commit or stash your changes before updating.")
+            print("   git stash")
+            print("   axle update")
+            print("   git stash pop")
+            print_community_footer()
+            return 1
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        print(f"\n⚠️  Could not check git status: {e}")
+        print_community_footer()
+        return 1
+
+    # Fetch latest changes
+    print("\n📡 Fetching latest changes from GitHub...")
+    try:
+        result = subprocess.run(
+            ["git", "fetch", "origin"],
+            capture_output=True,
+            text=True,
+            cwd=current_dir,
+            timeout=30
+        )
+
+        if result.returncode != 0:
+            print(f"❌ Failed to fetch updates: {result.stderr}")
+            print_community_footer()
+            return 1
+
+        print("✅ Fetched latest changes")
+
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        print(f"❌ Failed to fetch updates: {e}")
+        print_community_footer()
+        return 1
+
+    # Check if we're already up to date
+    try:
+        result = subprocess.run(
+            ["git", "rev-list", "--count", "--left-right", "origin/main...HEAD"],
+            capture_output=True,
+            text=True,
+            cwd=current_dir,
+            timeout=10
+        )
+
+        if result.stdout.strip():
+            behind, ahead = result.stdout.strip().split("\t")
+            behind = int(behind)
+            ahead = int(ahead)
+
+            if behind == 0 and ahead == 0:
+                print("\n✅ Already up to date!")
+                print_community_footer()
+                return 0
+            elif behind > 0:
+                print(f"\n📦 {behind} new commit(s) available")
+            elif ahead > 0:
+                print(f"\n⚠️  Your local branch is {ahead} commit(s) ahead of origin/main")
+                print("   This is unusual. Consider pushing or resetting.")
+
+        if check_only:
+            print("\n💡 To install updates, run:")
+            print("   axle update")
+            print_community_footer()
+            return 0
+
+    except (subprocess.TimeoutExpired, FileNotFoundError, ValueError) as e:
+        print(f"\n⚠️  Could not check for updates: {e}")
+
+    # Pull latest changes
+    print("\n⬇️  Pulling latest changes...")
+    try:
+        result = subprocess.run(
+            ["git", "pull", "origin", "main"],
+            capture_output=True,
+            text=True,
+            cwd=current_dir,
+            timeout=30
+        )
+
+        if result.returncode != 0:
+            print(f"❌ Failed to pull updates: {result.stderr}")
+            print_community_footer()
+            return 1
+
+        print("✅ Pulled latest changes")
+        if result.stdout:
+            print(result.stdout)
+
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        print(f"❌ Failed to pull updates: {e}")
+        print_community_footer()
+        return 1
+
+    # Update dependencies
+    print("\n📦 Updating dependencies...")
+    try:
+        requirements_file = current_dir / "requirements.txt"
+        if requirements_file.exists():
+            result = subprocess.run(
+                [sys.executable, "-m", "pip", "install", "--upgrade", "-r", "requirements.txt"],
+                capture_output=True,
+                text=True,
+                timeout=120
+            )
+
+            if result.returncode == 0:
+                print("✅ Dependencies updated")
+            else:
+                print("⚠️  Some dependencies could not be updated")
+                print(result.stdout)
+        else:
+            print("⏭️  No requirements.txt found, skipping dependency update")
+
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        print(f"⚠️  Could not update dependencies: {e}")
+
+    # Reinstall the package
+    print("\n🔧 Reinstalling Axle CLI...")
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "install", "-e", "."],
+            capture_output=True,
+            text=True,
+            cwd=current_dir,
+            timeout=60
+        )
+
+        if result.returncode == 0:
+            print("✅ Axle CLI reinstalled successfully")
+
+            # Try to get new version
+            try:
+                from importlib.metadata import version
+                new_version = version("axle-cli")
+                print(f"📌 New version: {new_version}")
+            except Exception:
+                pass
+
+        else:
+            print(f"❌ Failed to reinstall: {result.stderr}")
+            print_community_footer()
+            return 1
+
+    except (subprocess.TimeoutExpired, FileNotFoundError) as e:
+        print(f"❌ Failed to reinstall: {e}")
+        print_community_footer()
+        return 1
+
+    print("\n✅ Update complete!")
+    print("\n💡 Run 'axle doctor' to verify your installation.")
+    print_community_footer()
+    return 0
+
+
 def run_code_review_command(tool=None, fix=False, review_all=False, dry_run=False, verbose=False, enable=None, disable=None, show=None):
     """Run code review on tool(s).
 
@@ -807,6 +1028,121 @@ def run_code_review_command(tool=None, fix=False, review_all=False, dry_run=Fals
     return 0
 
 
+def run_metadata_command(action, tool=None, query=None):
+    """Run tool metadata commands.
+
+    Args:
+        action: Action to perform (scan, show, search, list)
+        tool: Tool name (for 'show' action)
+        query: Search query (for 'search' action)
+
+    Returns:
+        0 on success, 1 on failure
+    """
+    if action == "scan":
+        print("\n🔍 Scanning tools for metadata...")
+        print("=" * 60)
+
+        success, message = update_metadata()
+        if success:
+            print(f"✅ {message}")
+
+            # Show summary
+            metadata = load_metadata()
+            if metadata and "_metadata" in metadata:
+                meta_info = metadata["_metadata"]
+                print(f"\n📊 Metadata Summary:")
+                print(f"   Last Updated: {meta_info.get('last_updated', 'Unknown')}")
+                print(f"   Tool Count: {meta_info.get('tool_count', 0)}")
+                print(f"   Axle Version: {meta_info.get('axle_version', 'Unknown')}")
+        else:
+            print(f"❌ {message}")
+
+        print_community_footer()
+        return 0 if success else 1
+
+    elif action == "show":
+        if not tool:
+            print("\n❌ Please provide a tool name")
+            print("   Usage: axle metadata show <tool_name>")
+            print_community_footer()
+            return 1
+
+        metadata = load_metadata()
+        if not metadata or tool not in metadata:
+            print(f"\n❌ Tool '{tool}' not found in metadata")
+            print("   Run 'axle metadata scan' to update metadata")
+            print_community_footer()
+            return 1
+
+        formatted = format_tool_metadata(tool, metadata[tool])
+        print(formatted)
+        print_community_footer()
+        return 0
+
+    elif action == "search":
+        if not query:
+            print("\n❌ Please provide a search query")
+            print("   Usage: axle metadata search <query>")
+            print_community_footer()
+            return 1
+
+        results = search_tools(query)
+        if not results:
+            print(f"\n❌ No results found for '{query}'")
+            print("   Try scanning tools first: axle metadata scan")
+            print_community_footer()
+            return 0
+
+        print(f"\n🔍 Search Results for '{query}':")
+        print("=" * 60)
+
+        for tool_name, tool_metadata in results:
+            print(f"\n📋 {tool_name}")
+
+            # Get description
+            if tool_metadata.get('has_get_description'):
+                tool_path = Path(tool_metadata['path'])
+                description = get_tool_description_from_file(tool_path)
+                if description:
+                    print(f"   {description}")
+
+            # Show matching functions
+            matching_functions = [
+                f for f in tool_metadata.get('functions', [])
+                if query.lower() in f['name'].lower()
+            ]
+            if matching_functions:
+                print(f"   Matching functions: {', '.join([f['name'] for f in matching_functions])}")
+
+        print_community_footer()
+        return 0
+
+    elif action == "list":
+        summaries = list_tools_summarized()
+
+        if not summaries:
+            print("\n⚠️  No tools found in metadata")
+            print("   Run 'axle metadata scan' to scan tools")
+            print_community_footer()
+            return 0
+
+        print(f"\n📋 Available Tools ({len(summaries)}):")
+        print("=" * 60)
+
+        for summary in summaries:
+            status = "✅" if summary['has_contract'] else "⚠️ "
+            print(f"\n{status} {summary['name']}")
+            if summary['description']:
+                print(f"   {summary['description']}")
+            print(f"   Functions: {summary['function_count']}, Classes: {summary['class_count']}")
+
+        print_community_footer()
+        return 0
+
+    return 1
+
+
 def main():
     """Main entry point for the Axle CLI."""
     parser = argparse.ArgumentParser(
@@ -926,6 +1262,32 @@ def main():
         "--remove-tools", action="store_true", help="Also remove tools directory"
     )
 
+    # axle update
+    update_parser = subparsers.add_parser("update", help="Update Axle CLI to latest version")
+    update_parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Only check for updates without installing"
+    )
+
+    # axle metadata
+    metadata_parser = subparsers.add_parser("metadata", help="Manage tool metadata")
+    metadata_subparsers = metadata_parser.add_subparsers(dest="metadata_action", required=True)
+
+    # axle metadata scan
+    metadata_subparsers.add_parser("scan", help="Scan tools and update metadata")
+
+    # axle metadata show
+    metadata_show_parser = metadata_subparsers.add_parser("show", help="Show detailed metadata for a tool")
+    metadata_show_parser.add_argument("tool", help="Tool name")
+
+    # axle metadata search
+    metadata_search_parser = metadata_subparsers.add_parser("search", help="Search tools by name, functions, or description")
+    metadata_search_parser.add_argument("query", help="Search query")
+
+    # axle metadata list
+    metadata_subparsers.add_parser("list", help="List all tools with summaries")
+
     args = parser.parse_args()
 
     # Route to appropriate command
@@ -968,6 +1330,14 @@ def main():
         return uninstall_axle(
             keep_tools=not getattr(args, "remove_tools", False),
             remove_tools=getattr(args, "remove_tools", False),
+        )
+    elif args.command == "update":
+        return update_axle(check_only=getattr(args, "check", False))
+    elif args.command == "metadata":
+        return run_metadata_command(
+            action=getattr(args, "metadata_action", None),
+            tool=getattr(args, "tool", None),
+            query=getattr(args, "query", None),
         )
     elif args.command == "help":
         parser.print_help()
