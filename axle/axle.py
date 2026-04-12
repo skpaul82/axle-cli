@@ -3,6 +3,7 @@
 
 import argparse
 import importlib.util
+import json
 import os
 import platform
 import shutil
@@ -20,6 +21,9 @@ from axle.code_reviewer import (
     get_code_review_policy,
     should_run_code_review,
 )
+
+# Import tool discoverer
+from axle.tool_discoverer import ToolDiscoverer
 
 # Import config management
 from axle.config import (
@@ -70,9 +74,8 @@ def print_community_footer():
 
 def list_tools():
     """List all available tools in the tools directory."""
-    print(
-        "Hey there, let me know how I can help you. Choose a tool from the list or enter a number.\n"
-    )
+    print("\n🔧 Discovering tools...")
+    print("=" * 60)
 
     tools_path = TOOLS_DIR
     if not tools_path.exists():
@@ -81,42 +84,45 @@ def list_tools():
         print(f"\n💡 To get started:")
         print(f"   1. Create the tools directory:")
         print(f"      mkdir -p {tools_path.absolute()}")
-        print(f"   2. Add your Python tools to this directory")
-        print(
-            f"   3. Each tool must implement get_description() and main(prompt) functions"
-        )
-        print(f"   4. Learn more at: https://www.axle.sanjoypaul.com")
+        print(f"   2. Copy your Python scripts to this directory")
+        print(f"   3. Run: axle list")
+        print(f"   4. Run: axle help <tool_name> for usage")
+        print(f"\n   💡 Axle works with ANY Python script!")
+        print(f"   Just drop it in the tools directory and run it.")
         return 1
 
-    files = sorted(
-        [
-            f
-            for f in tools_path.iterdir()
-            if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"
-        ]
-    )
+    # Use discoverer to find all tools
+    discoverer = ToolDiscoverer(tools_path)
+    tools = discoverer.list_tools()
 
-    if not files:
+    if not tools:
         print("No tools found in the tools directory.")
         print(f"\n📁 Tools directory: {tools_path.absolute()}")
         print(f"\n💡 To add tools:")
-        print(f"   1. Create Python files in: {tools_path.absolute()}")
-        print(
-            f"   2. Each tool must implement get_description() and main(prompt) functions"
-        )
-        print(f"   3. Example tool structure:")
-        print(f"      def get_description() -> str:")
-        print(f"          return 'Your tool description'")
-        print(f"      def main(prompt: str) -> None:")
-        print(f"          # Your tool logic here")
-        print(f"          pass")
-        print(f"   4. Learn more at: https://www.axle.sanjoypaul.com")
+        print(f"   1. Copy any Python script (.py file) to: {tools_path.absolute()}")
+        print(f"   2. Run: axle list")
+        print(f"   3. Run: axle help <tool_name> for usage")
+        print(f"\n   💡 Axle works with ANY Python script!")
         return 0
 
-    for i, f in enumerate(files, 1):
-        # Try to get description from tool
-        description = _get_tool_description(f)
-        print(f"  {i}. {f.stem} - {description}")
+    print(f"\nFound {len(tools)} tool(s):\n")
+
+    for i, tool in enumerate(tools, 1):
+        # Check if it has the Axle contract
+        has_contract = tool.metadata.get('has_contract', False)
+        contract_badge = "✅" if has_contract else "📜"
+
+        print(f"  {i}. {contract_badge} {tool.name} - {tool.description}")
+
+        # Show available functions
+        if tool.metadata.get('all_functions'):
+            funcs = tool.metadata['all_functions']
+            main_funcs = tool.metadata.get('main_functions', [])
+            if main_funcs:
+                print(f"     🔴 Main: {', '.join(main_funcs)}")
+
+        # Show help command
+        print(f"     💡 axle help {tool.name}")
 
     print_community_footer()
     return 0
@@ -136,144 +142,156 @@ def _get_tool_description(tool_file):
         return "No description available"
 
 
-def run_tool(tool_identifier, prompt="", enable_security=False, enable_code_review=False):
-    """Run a tool by number or name."""
+def run_tool(tool_identifier, command=None, prompt_or_args=None, enable_security=False, enable_code_review=False):
+    """Run a tool by number or name.
+
+    Args:
+        tool_identifier: Tool number or name
+        command: Optional specific function to run
+        prompt_or_args: Prompt text or arguments as string
+        enable_security: Enable security validation
+        enable_code_review: Enable code review
+    """
     tools_path = TOOLS_DIR
     if not tools_path.exists():
         print(f"❌ Tools directory '{TOOLS_DIR}' not found.")
         return 1
 
-    files = sorted(
-        [
-            f
-            for f in tools_path.iterdir()
-            if f.is_file() and f.suffix == ".py" and f.name != "__init__.py"
-        ]
-    )
-
-    # Determine which tool to run
-    tool_file = None
-    try:
-        # Try as number
-        tool_num = int(tool_identifier)
-        if tool_num < 1 or tool_num > len(files):
-            print(f"❌ Invalid tool number. Choose between 1 and {len(files)}.")
-            return 1
-        tool_file = files[tool_num - 1]
-    except ValueError:
-        # Try as name
-        tool_name = (
-            tool_identifier
-            if tool_identifier.endswith(".py")
-            else f"{tool_identifier}.py"
-        )
-        for f in files:
-            if f.name == tool_name:
-                tool_file = f
-                break
-        if not tool_file:
-            print(f"❌ Tool '{tool_identifier}' not found.")
-            print(f"   Run 'axle list' to see available tools.")
-            return 1
-
     # Check config file for enabled settings if flags are not provided
     should_check_security = enable_security or is_security_enabled()
     should_check_code_review = enable_code_review or is_code_review_enabled()
 
-    # 🔒 SECURITY VALIDATION: Only run if enabled via flag or config
+    # Security validation
+    tool_file = None
     if should_check_security:
-        print(f"\n🔒 Validating tool security...")
-        policy = get_security_policy()
-        print(f"   Security Policy: {policy.upper()}")
+        discoverer = ToolDiscoverer(tools_path)
+        tool = discoverer.get_tool(tool_identifier)
+        if tool:
+            tool_file = tool.tool_path
+            print(f"\n🔒 Validating tool security...")
+            policy = get_security_policy()
+            print(f"   Security Policy: {policy.upper()}")
 
-        if not validate_tool_before_execution(tool_file, policy=policy):
-            print(f"\n❌ Tool execution blocked by security policy.")
-            print(
-                f"   To override: AXLE_SECURITY_POLICY=permissive axle run {tool_identifier}"
-            )
+            if not validate_tool_before_execution(tool_file, policy=policy):
+                print(f"\n❌ Tool execution blocked by security policy.")
+                print(f"   To override: AXLE_SECURITY_POLICY=permissive axle run {tool_identifier}")
+                return 1
+
+            print(f"   ✅ Security validation passed")
+        else:
+            print(f"\n❌ Tool '{tool_identifier}' not found.")
+            print(f"   Run 'axle list' to see available tools.")
             return 1
 
-        print(f"   ✅ Security validation passed")
-    else:
-        print(f"\n⏭️  Security validation skipped")
-        if not is_security_enabled():
-            print(f"   Enable with: axle security enable")
-        print(f"   Or use: axle run {tool_identifier} --security")
-
-    # 🔍 CODE REVIEW: Only run if enabled via flag or config
+    # Code review
     if should_check_code_review:
-        print(f"\n🔍 Running automatic code review...")
-        reviewer = CodeReviewer(verbose=False)
-        issues = reviewer.review_file(tool_file)
+        if not tool_file:
+            discoverer = ToolDiscoverer(tools_path)
+            tool = discoverer.get_tool(tool_identifier)
+            if tool:
+                tool_file = tool.tool_path
 
-        if issues:
-            print(f"   Found {len(issues)} code quality issue(s):")
-            for issue in issues:
-                print(f"   {issue}")
+        if tool_file:
+            print(f"\n🔍 Running automatic code review...")
+            reviewer = CodeReviewer(verbose=False)
+            issues = reviewer.review_file(tool_file)
 
-            # Determine if we should auto-fix
-            auto_fix = get_auto_fix_policy()
-            if auto_fix:
-                auto_fixed, manual_fixes = reviewer.auto_fix_issues(tool_file, issues)
-                if auto_fixed > 0:
-                    print(f"   ✅ Applied {auto_fixed} automatic fix(es)")
-                if manual_fixes > 0:
-                    print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
-            else:
-                # Ask user if they want to fix
-                auto_fixable = sum(1 for i in issues if i.fixable == "AUTO")
-                if auto_fixable > 0:
-                    print(f"\n   📋 Apply {auto_fixable} automatic fix(es)? [Y/n]: ", end="")
-                    try:
-                        user_choice = input().strip().lower()
-                        if user_choice != "n":
-                            auto_fixed, manual_fixes = reviewer.auto_fix_issues(tool_file, issues)
-                            if auto_fixed > 0:
-                                print(f"   ✅ Applied {auto_fixed} automatic fix(es)")
-                            if manual_fixes > 0:
-                                print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
-                        else:
+            if issues:
+                print(f"   Found {len(issues)} code quality issue(s):")
+                for issue in issues:
+                    print(f"   {issue}")
+
+                # Determine if we should auto-fix
+                auto_fix = get_auto_fix_policy()
+                if auto_fix:
+                    auto_fixed, manual_fixes = reviewer.auto_fix_issues(tool_file, issues)
+                    if auto_fixed > 0:
+                        print(f"   ✅ Applied {auto_fixed} automatic fix(es)")
+                    if manual_fixes > 0:
+                        print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+                else:
+                    # Ask user if they want to fix
+                    auto_fixable = sum(1 for i in issues if i.fixable == "AUTO")
+                    if auto_fixable > 0:
+                        print(f"\n   📋 Apply {auto_fixable} automatic fix(es)? [Y/n]: ", end="")
+                        try:
+                            user_choice = input().strip().lower()
+                            if user_choice != "n":
+                                auto_fixed, manual_fixes = reviewer.auto_fix_issues(tool_file, issues)
+                                if auto_fixed > 0:
+                                    print(f"   ✅ Applied {auto_fixed} automatic fix(es)")
+                                if manual_fixes > 0:
+                                    print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+                            else:
+                                manual_fixes = sum(1 for i in issues if i.fixable == "MANUAL")
+                                if manual_fixes > 0:
+                                    print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
+                        except (EOFError, KeyboardInterrupt):
+                            # In non-interactive mode, skip the fixes
                             manual_fixes = sum(1 for i in issues if i.fixable == "MANUAL")
                             if manual_fixes > 0:
                                 print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
-                    except (EOFError, KeyboardInterrupt):
-                        # In non-interactive mode, skip the fixes
+                    else:
                         manual_fixes = sum(1 for i in issues if i.fixable == "MANUAL")
                         if manual_fixes > 0:
                             print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
-                else:
-                    manual_fixes = sum(1 for i in issues if i.fixable == "MANUAL")
-                    if manual_fixes > 0:
-                        print(f"   ⚠️  {manual_fixes} issue(s) need manual attention")
-        else:
-            print(f"   ✅ Code review passed")
-    else:
-        print(f"\n⏭️  Code review skipped")
-        if not is_code_review_enabled():
-            print(f"   Enable with: axle review enable")
-        print(f"   Or use: axle run {tool_identifier} --code-review")
-
-    # Load and run the tool
-    try:
-        spec = importlib.util.spec_from_file_location(tool_file.stem, tool_file)
-        if spec and spec.loader:
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-
-            if hasattr(module, "main"):
-                print(f"\n🔧 Running {tool_file.stem}...\n")
-                module.main(prompt)
-                print_community_footer()
-                return 0
             else:
-                print(f"❌ Tool '{tool_file.stem}' does not have a main() function.")
-                return 1
-    except Exception as e:
-        import traceback
+                print(f"   ✅ Code review passed")
+        else:
+            print(f"\n⏭️  Code review skipped")
+            if not is_code_review_enabled():
+                print(f"   Enable with: axle review enable")
+            print(f"   Or use: axle run {tool_identifier} --code-review")
 
-        print(f"❌ Error running tool: {e}", file=sys.stderr)
-        traceback.print_exc()
+    # Use discoverer to run the tool
+    discoverer = ToolDiscoverer(tools_path)
+
+    # Parse arguments - prompt_or_args is already a list from argparse
+    args_list = []
+    if prompt_or_args:
+        if isinstance(prompt_or_args, list):
+            args_list = prompt_or_args
+        elif isinstance(prompt_or_args, str):
+            # If it's a string, try to parse as JSON first, then split by spaces
+            try:
+                parsed_args = json.loads(prompt_or_args)
+                if isinstance(parsed_args, list):
+                    args_list = parsed_args
+                elif isinstance(parsed_args, str):
+                    args_list = [parsed_args]
+            except json.JSONDecodeError:
+                # Split by spaces
+                args_list = prompt_or_args.split()
+
+    # Run the tool
+    return discoverer.run_tool(tool_identifier, command, args_list)
+
+
+def show_tool_usage_help(tool_identifier):
+    """Show usage help for a specific tool.
+
+    Args:
+        tool_identifier: Tool name or number
+
+    Returns:
+        Exit code (0 for success, 1 for error)
+    """
+    tools_path = TOOLS_DIR
+    if not tools_path.exists():
+        print(f"❌ Tools directory '{TOOLS_DIR}' not found.")
         return 1
+
+    discoverer = ToolDiscoverer(tools_path)
+    tool = discoverer.get_tool(tool_identifier)
+
+    if not tool:
+        print(f"❌ Tool '{tool_identifier}' not found.")
+        print(f"   Run 'axle list' to see available tools.")
+        return 1
+
+    print(tool.get_help_text())
+    print_community_footer()
+    return 0
 
 
 def show_tool_info(tool_name):
@@ -1161,7 +1179,14 @@ def main():
     run_parser = subparsers.add_parser("run", help="Run a tool by number or name")
     run_parser.add_argument("tool", help="Tool number or name (without .py)")
     run_parser.add_argument(
-        "prompt", nargs="?", default="", help="Optional prompt text"
+        "func",
+        nargs="?",
+        help="Optional specific function/command to run within the tool"
+    )
+    run_parser.add_argument(
+        "args",
+        nargs="*",
+        help="Arguments to pass to the tool function (space-separated)"
     )
     run_parser.add_argument(
         "--security",
@@ -1188,7 +1213,8 @@ def main():
     subparsers.add_parser("path", help="Show tools folder location")
 
     # axle help
-    subparsers.add_parser("help", help="Show this help message")
+    help_parser = subparsers.add_parser("help", help="Show this help message")
+    help_parser.add_argument("tool", nargs="?", help="Show help for a specific tool")
 
     # axle security
     security_parser = subparsers.add_parser(
@@ -1294,9 +1320,13 @@ def main():
     if args.command == "list":
         return list_tools()
     elif args.command == "run":
+        # Combine args into prompt_or_args
+        prompt_or_args = args.args if args.args else None
+
         return run_tool(
             args.tool,
-            args.prompt,
+            command=getattr(args, "func", None),
+            prompt_or_args=prompt_or_args,
             enable_security=getattr(args, "security", False),
             enable_code_review=getattr(args, "code_review", False),
         )
@@ -1340,8 +1370,14 @@ def main():
             query=getattr(args, "query", None),
         )
     elif args.command == "help":
-        parser.print_help()
-        return 0
+        tool = getattr(args, "tool", None)
+        if tool:
+            # Show tool-specific help
+            return show_tool_usage_help(tool)
+        else:
+            # Show general help
+            parser.print_help()
+            return 0
 
     return 0
 
