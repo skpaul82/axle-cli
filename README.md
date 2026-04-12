@@ -23,6 +23,16 @@ pip install -e .
 
 ---
 
+## 🎬 Quick Start Video
+
+Watch how Axle works in 2 minutes:
+
+[![Axle CLI Demo](https://img.youtube.com/vi/tjzVi2pIcXc/0.jpg)](https://www.youtube.com/watch?v=tjzVi2pIcXc)
+
+**[▶ Watch on YouTube](https://youtu.be/tjzVi2pIcXc)**
+
+---
+
 ## 🎉 What's New in v1.3.0
 
 ### 🖱️ Interactive Arrow-Key Menu
