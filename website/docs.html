@@ -310,6 +310,11 @@
                         <li>5-8GB free disk space</li>
                         <li>macOS, Linux, or Windows</li>
                     </ul>
+                    <p class="text-muted"><a href="https://skpaul.me/how-to-install-python-3-10-and-pip-on-mac-windows-and-linux-step-by-step-guide/" target="_blank">Step-by-step guide</a> to install or upgrade Python and pip.
+                        <a href="https://skpaul.me/how-to-install-python-3-10-and-pip-on-mac-windows-and-linux-step-by-step-guide/" target="_blank" style="margin-left: 5px;">
+                        <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
+                        </a>
+                    </p>
 
                     <div class="info-box">
                         <strong>💡 Pro Tip:</strong> Use a virtual environment to avoid conflicts with other Python packages.
@@ -323,6 +328,16 @@
                     <h3>Method 1: Install from GitHub (Recommended)</h3>
                     <div class="command-box" style="position: relative; padding-right: 60px;">
                         <code>pip install git+https://github.com/skpaul82/axle-cli.git</code>
+                        <button onclick="copyCommand(this)" class="copy-button-command" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: all 0.3s;">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p>If pip is not working then check your pip version:</p>
+                    <pre><code>pip -V</code></pre>
+                    <p>If you have <strong>Python 3</strong> installed, try using pip3:</p>
+                    <pre><code>pip3 -V</code></pre>
+                    <div class="command-box" style="position: relative; padding-right: 60px;">
+                        <code>pip3 install git+https://github.com/skpaul82/axle-cli.git</code>
                         <button onclick="copyCommand(this)" class="copy-button-command" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: all 0.3s;">
                             <i class="fas fa-copy"></i>
                         </button>
