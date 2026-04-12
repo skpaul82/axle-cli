@@ -535,7 +535,8 @@ def get_code_review_policy() -> str:
     Returns:
         Policy name: 'always', 'auto', or 'never'
     """
-    return os.getenv("AXLE_CODE_REVIEW", "auto").lower()
+    # Default to never (skip code review by default)
+    return os.getenv("AXLE_CODE_REVIEW", "never").lower()
 
 
 def get_auto_fix_policy() -> bool:

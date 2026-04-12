@@ -21,6 +21,17 @@ from axle.code_reviewer import (
     should_run_code_review,
 )
 
+# Import config management
+from axle.config import (
+    is_security_enabled,
+    is_code_review_enabled,
+    set_security_setting,
+    set_code_review_setting,
+    get_security_setting,
+    get_code_review_setting,
+    show_config,
+)
+
 TOOLS_DIR = Path(__file__).parent.parent / "tools"
 
 # Version from package
@@ -115,7 +126,7 @@ def _get_tool_description(tool_file):
         return "No description available"
 
 
-def run_tool(tool_identifier, prompt=""):
+def run_tool(tool_identifier, prompt="", enable_security=False, enable_code_review=False):
     """Run a tool by number or name."""
     tools_path = TOOLS_DIR
     if not tools_path.exists():
@@ -155,22 +166,32 @@ def run_tool(tool_identifier, prompt=""):
             print(f"   Run 'axle list' to see available tools.")
             return 1
 
-    # 🔒 SECURITY VALIDATION: Validate tool before execution
-    print(f"\n🔒 Validating tool security...")
-    policy = get_security_policy()
-    print(f"   Security Policy: {policy.upper()}")
+    # Check config file for enabled settings if flags are not provided
+    should_check_security = enable_security or is_security_enabled()
+    should_check_code_review = enable_code_review or is_code_review_enabled()
 
-    if not validate_tool_before_execution(tool_file, policy=policy):
-        print(f"\n❌ Tool execution blocked by security policy.")
-        print(
-            f"   To override: AXLE_SECURITY_POLICY=permissive axle run {tool_identifier}"
-        )
-        return 1
+    # 🔒 SECURITY VALIDATION: Only run if enabled via flag or config
+    if should_check_security:
+        print(f"\n🔒 Validating tool security...")
+        policy = get_security_policy()
+        print(f"   Security Policy: {policy.upper()}")
 
-    print(f"   ✅ Security validation passed")
+        if not validate_tool_before_execution(tool_file, policy=policy):
+            print(f"\n❌ Tool execution blocked by security policy.")
+            print(
+                f"   To override: AXLE_SECURITY_POLICY=permissive axle run {tool_identifier}"
+            )
+            return 1
 
-    # 🔍 CODE REVIEW: Check code quality after security validation
-    if should_run_code_review(tool_file):
+        print(f"   ✅ Security validation passed")
+    else:
+        print(f"\n⏭️  Security validation skipped")
+        if not is_security_enabled():
+            print(f"   Enable with: axle security enable")
+        print(f"   Or use: axle run {tool_identifier} --security")
+
+    # 🔍 CODE REVIEW: Only run if enabled via flag or config
+    if should_check_code_review:
         print(f"\n🔍 Running automatic code review...")
         reviewer = CodeReviewer(verbose=False)
         issues = reviewer.review_file(tool_file)
@@ -217,9 +238,10 @@ def run_tool(tool_identifier, prompt=""):
         else:
             print(f"   ✅ Code review passed")
     else:
-        # Code review disabled
-        if get_code_review_policy() != "never":
-            print(f"\n⏭️  Code review skipped (auto mode: file not recently modified)")
+        print(f"\n⏭️  Code review skipped")
+        if not is_code_review_enabled():
+            print(f"   Enable with: axle review enable")
+        print(f"   Or use: axle run {tool_identifier} --code-review")
 
     # Load and run the tool
     try:
@@ -484,9 +506,50 @@ def show_tools_path():
     return 0
 
 
-def show_security_config(policy=None):
+def show_security_config(policy=None, enable=None, disable=None, show=None):
     """Show or configure security policy."""
     from axle.tool_validator import POLICY_PERMISSIVE, POLICY_STRICT, POLICY_WARN
+
+    if enable:
+        # Enable security validation
+        set_security_setting(True)
+        print("\n✅ Security validation ENABLED")
+        print("\nSecurity checks will now run by default when using 'axle run'.")
+        print("To disable: axle security disable")
+        print_community_footer()
+        return 0
+
+    if disable:
+        # Disable security validation
+        set_security_setting(False)
+        print("\n❌ Security validation DISABLED")
+        print("\nSecurity checks will be skipped by default.")
+        print("To enable: axle security enable")
+        print("\nYou can still run security checks manually with:")
+        print("  axle run <tool> --security")
+        print_community_footer()
+        return 0
+
+    if show:
+        # Show current configuration
+        config = show_config()
+        current_setting = get_security_setting()
+
+        print("\n🔒 Axle Security Configuration")
+        print("=" * 60)
+
+        if current_setting:
+            status = "ENABLED" if current_setting == "enabled" else "DISABLED"
+            print(f"\nSecurity Validation: {status}")
+        else:
+            print("\nSecurity Validation: DISABLED (default)")
+
+        print("\nUsage:")
+        print("  axle security enable   - Enable security checks by default")
+        print("  axle security disable  - Disable security checks by default")
+        print("  axle run <tool> --security - Run security check for this tool only")
+        print_community_footer()
+        return 0
 
     if policy is None:
         # Show current policy
@@ -511,7 +574,7 @@ def show_security_config(policy=None):
             POLICY_PERMISSIVE: {
                 "description": "Block only on CRITICAL/HIGH findings",
                 "blocks": ["Critical, High severity"],
-                "use_case": "Trusted tools, local development",
+                "use_case": "Trusted tools, local development (default)",
             },
         }
 
@@ -579,7 +642,7 @@ def uninstall_axle(keep_tools=True, remove_tools=False):
     return 0
 
 
-def run_code_review_command(tool=None, fix=False, review_all=False, dry_run=False, verbose=False):
+def run_code_review_command(tool=None, fix=False, review_all=False, dry_run=False, verbose=False, enable=None, disable=None, show=None):
     """Run code review on tool(s).
 
     Args:
@@ -588,7 +651,52 @@ def run_code_review_command(tool=None, fix=False, review_all=False, dry_run=Fals
         review_all: Review all tools
         dry_run: Show what would be fixed without making changes
         verbose: Enable detailed output
+        enable: Enable code review by default
+        disable: Disable code review by default
+        show: Show current code review configuration
     """
+    # Handle enable/disable/show commands
+    if enable:
+        set_code_review_setting(True)
+        print("\n✅ Code review ENABLED")
+        print("\nCode review will now run by default when using 'axle run'.")
+        print("To disable: axle review disable")
+        print_community_footer()
+        return 0
+
+    if disable:
+        set_code_review_setting(False)
+        print("\n❌ Code review DISABLED")
+        print("\nCode review will be skipped by default.")
+        print("To enable: axle review enable")
+        print("\nYou can still run code review manually with:")
+        print("  axle run <tool> --code-review")
+        print("  axle review <tool_name>")
+        print_community_footer()
+        return 0
+
+    if show:
+        config = show_config()
+        current_setting = get_code_review_setting()
+
+        print("\n🔍 Axle Code Review Configuration")
+        print("=" * 60)
+
+        if current_setting:
+            status = "ENABLED" if current_setting == "enabled" else "DISABLED"
+            print(f"\nCode Review: {status}")
+        else:
+            print("\nCode Review: DISABLED (default)")
+
+        print("\nUsage:")
+        print("  axle review enable   - Enable code review by default")
+        print("  axle review disable  - Disable code review by default")
+        print("  axle run <tool> --code-review - Run code review for this tool only")
+        print("  axle review <tool>   - Run code review on a specific tool")
+        print("  axle review --all    - Run code review on all tools")
+        print_community_footer()
+        return 0
+
     print("🔍 Axle Code Review")
     print("=" * 50)
 
@@ -719,6 +827,16 @@ def main():
     run_parser.add_argument(
         "prompt", nargs="?", default="", help="Optional prompt text"
     )
+    run_parser.add_argument(
+        "--security",
+        action="store_true",
+        help="Enable security validation (default: disabled)"
+    )
+    run_parser.add_argument(
+        "--code-review",
+        action="store_true",
+        help="Enable code quality review (default: disabled)"
+    )
 
     # axle info
     info_parser = subparsers.add_parser("info", help="Show tool information")
@@ -745,6 +863,21 @@ def main():
         choices=["strict", "warn", "permissive"],
         help="Set security policy (or use AXLE_SECURITY_POLICY env var)",
     )
+    security_parser.add_argument(
+        "--enable",
+        action="store_true",
+        help="Enable security validation by default"
+    )
+    security_parser.add_argument(
+        "--disable",
+        action="store_true",
+        help="Disable security validation by default"
+    )
+    security_parser.add_argument(
+        "--show",
+        action="store_true",
+        help="Show current security configuration"
+    )
 
     # axle review
     review_parser = subparsers.add_parser("review", help="Run code review on tools")
@@ -762,6 +895,21 @@ def main():
     )
     review_parser.add_argument(
         "--verbose", action="store_true", help="Detailed output"
+    )
+    review_parser.add_argument(
+        "--enable",
+        action="store_true",
+        help="Enable code review by default"
+    )
+    review_parser.add_argument(
+        "--disable",
+        action="store_true",
+        help="Disable code review by default"
+    )
+    review_parser.add_argument(
+        "--show",
+        action="store_true",
+        help="Show current code review configuration"
     )
 
     # axle uninstall
@@ -784,7 +932,12 @@ def main():
     if args.command == "list":
         return list_tools()
     elif args.command == "run":
-        return run_tool(args.tool, args.prompt)
+        return run_tool(
+            args.tool,
+            args.prompt,
+            enable_security=getattr(args, "security", False),
+            enable_code_review=getattr(args, "code_review", False),
+        )
     elif args.command == "info":
         return show_tool_info(args.tool)
     elif args.command == "scan":
@@ -794,7 +947,12 @@ def main():
     elif args.command == "path":
         return show_tools_path()
     elif args.command == "security":
-        return show_security_config(getattr(args, "policy", None))
+        return show_security_config(
+            policy=getattr(args, "policy", None),
+            enable=getattr(args, "enable", False),
+            disable=getattr(args, "disable", False),
+            show=getattr(args, "show", False),
+        )
     elif args.command == "review":
         return run_code_review_command(
             tool=getattr(args, "tool", None),
@@ -802,6 +960,9 @@ def main():
             review_all=getattr(args, "all", False),
             dry_run=getattr(args, "dry_run", False),
             verbose=getattr(args, "verbose", False),
+            enable=getattr(args, "enable", False),
+            disable=getattr(args, "disable", False),
+            show=getattr(args, "show", False),
         )
     elif args.command == "uninstall":
         return uninstall_axle(

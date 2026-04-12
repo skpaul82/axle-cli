@@ -34,10 +34,18 @@ The CLI interface (`axle` command):
 
 - `axle list` - List all available tools in the tools directory
 - `axle run <number_or_name> <prompt>` - Execute a tool by number or filename
+- `axle run <number_or_name> <prompt> --security` - Execute tool with security validation
+- `axle run <number_or_name> <prompt> --code-review` - Execute tool with code review
 - `axle info <tool_name>` - Show tool description
 - `axle scan` - Run dependency vulnerability checks
 - `axle doctor` - Environment and setup diagnostics
 - `axle path` - Show tools folder location
+- `axle security --enable` - Enable security validation by default
+- `axle security --disable` - Disable security validation by default
+- `axle security --show` - Show current security configuration
+- `axle review --enable` - Enable code review by default
+- `axle review --disable` - Disable code review by default
+- `axle review --show` - Show current code review configuration
 - `axle help` - Display command help
 
 ## Architecture Principles

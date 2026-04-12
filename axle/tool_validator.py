@@ -271,10 +271,11 @@ def get_security_policy() -> str:
     """Get security policy from environment or config."""
     import os
 
-    policy = os.getenv("AXLE_SECURITY_POLICY", "warn").lower()
+    # Default to permissive (skip security checks by default)
+    policy = os.getenv("AXLE_SECURITY_POLICY", "permissive").lower()
 
     if policy not in [POLICY_STRICT, POLICY_WARN, POLICY_PERMISSIVE]:
-        policy = POLICY_WARN
+        policy = POLICY_PERMISSIVE
 
     return policy
 

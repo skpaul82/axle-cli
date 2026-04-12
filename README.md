@@ -41,23 +41,24 @@ pip install -e .
 
 ## 📦 Features
 
-### 🔒 Built-in Security (MANDATORY)
+### 🔒 Built-in Security (Optional)
 
-- **Pre-execution validation**: All tools are scanned for security issues BEFORE running
+- **Pre-execution validation**: Tools can be scanned for security issues before running (optional)
 - **Dangerous pattern detection**: Blocks eval(), exec(), shell=True, and more
 - **Hardcoded secret detection**: Finds passwords, API keys, tokens in code
-- **Configurable security policies**: strict, warn (default), permissive modes
-- **Real-time protection**: Automatic validation on every tool execution
+- **Configurable security policies**: strict, warn, permissive modes
+- **On-demand validation**: Enable per-run with `--security` flag or persistently with `axle security enable`
 - **Dependency vulnerability scanning**: Integrated pip-audit for package security
 
-### 🔍 Automatic Code Review (NEW!)
+### 🔍 Automatic Code Review (Optional)
 
-- **Pre-execution code quality checks**: Automatic review before running tools
+- **Pre-execution code quality checks**: Automatic review before running tools (optional)
 - **Auto-fixing**: Fixes formatting (Black) and import sorting (isort) issues
 - **Clear feedback**: Shows exactly what's wrong and how to fix it
 - **Non-blocking**: Won't stop your workflow by default
 - **Manual review**: Run `axle review` anytime for comprehensive checks
 - **CI/CD integration**: Catch issues locally before they reach CI
+- **On-demand review**: Enable per-run with `--code-review` flag or persistently with `axle review enable`
 
 ### Core Features
 
@@ -78,6 +79,8 @@ pip install -e .
 | `axle list`            | List all tools in the `tools/` directory.  |
 | `axle run 1 "prompt"`   | Run tool by number and pass a prompt.        |
 | `axle run tool_name ...`| Run by filename (without `.py`).           |
+| `axle run 1 "prompt" --security` | Run tool with security validation enabled. |
+| `axle run 1 "prompt" --code-review` | Run tool with code review enabled. |
 | `axle info tool_name`   | Show tool description.                       |
 | `axle scan`             | Scan dependencies for known vulnerabilities. |
 | `axle doctor`           | Check Python, disk, and required modules.    |
@@ -85,7 +88,13 @@ pip install -e .
 | `axle review <tool>`    | Run code review on a specific tool.          |
 | `axle review --all`     | Run code review on all tools.                |
 | `axle review --fix`     | Apply automatic fixes to issues found.       |
+| `axle review --enable`  | Enable code review by default.               |
+| `axle review --disable` | Disable code review by default.              |
+| `axle review --show`    | Show current code review configuration.      |
 | `axle security`         | Show or configure security policy.           |
+| `axle security --enable` | Enable security validation by default.      |
+| `axle security --disable` | Disable security validation by default.     |
+| `axle security --show`  | Show current security configuration.         |
 | `axle help`             | Show all commands.                           |
 
 ---
