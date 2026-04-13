@@ -624,6 +624,12 @@ body {
         align-items: center;
         text-align: center;
     }
+    
+    .social-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
 }
 
 /* Smooth Scrolling */
@@ -669,4 +675,39 @@ button:focus {
 ::selection {
     background-color: var(--primary-color);
     color: white;
+}
+.social-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background: var(--bg-card);
+    /* border: 2px solid var(--border-color); */
+    /* border-radius: 12px; */
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 400;
+    transition: var(--transition);
+    min-width: 45px;
+}
+
+.social-link svg {
+    width: 20px;
+    height: 20px;
+}
+
+.social-link:hover {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
 }
